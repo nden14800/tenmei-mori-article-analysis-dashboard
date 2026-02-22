@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>運勢・天命乃杜 — 記事分析ダッシュボード</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Zen+Old+Mincho:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1008;
+    --paper: #faf6ef;
+    --vermillion: #c0392b;
+    --deep-red: #7b1c1c;
+    --gold: #b8860b;
+    --gold-light: #d4a017;
+    --cedar: #5c3317;
+    --mist: #8b7355;
+    --pale-gold: #f5e6c8;
+    --border: #d4c4a0;
+    --shadow: rgba(92,51,23,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(192,57,43,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(184,134,11,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; position: relative; z-index: 1; }
+
+  header {
+    border-bottom: 2px solid var(--vermillion);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    margin-bottom: 3rem;
+  }
+
+  header::before, header::after {
+    content: '◈';
+    position: absolute;
+    bottom: -0.7rem;
+    font-size: 1.2rem;
+    color: var(--vermillion);
+    background: var(--paper);
+    padding: 0 0.5rem;
+  }
+  header::before { left: 50%; transform: translateX(-50%); }
+  header::after { display: none; }
+
+  .header-kamon {
+    display: inline-block;
+    width: 60px; height: 60px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    line-height: 56px;
+    font-size: 1.8rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    position: relative;
+    animation: shimmer 4s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(184,134,11,0); }
+    50% { box-shadow: 0 0 20px 4px rgba(184,134,11,0.3); }
+  }
+
+  h1.site-title {
+    font-family: 'Zen Old Mincho', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 900;
+    color: var(--deep-red);
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--mist);
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .header-meta {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--mist);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 3rem 0 1.5rem;
+    font-family: 'Zen Old Mincho', serif;
+    font-size: 1.15rem;
+    color: var(--deep-red);
+    letter-spacing: 0.08em;
+  }
+  .section-title::before, .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border));
+  }
+  .section-title::after {
+    background: linear-gradient(to left, transparent, var(--border));
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--vermillion);
+    padding: 1.4rem 1.2rem;
+    text-align: center;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px var(--shadow);
+  }
+  .stat-card:nth-child(2) { border-top-color: var(--gold); animation-delay: 0.1s; }
+  .stat-card:nth-child(3) { border-top-color: var(--cedar); animation-delay: 0.2s; }
+  .stat-card:nth-child(4) { border-top-color: var(--deep-red); animation-delay: 0.3s; }
+  .stat-card:nth-child(5) { border-top-color: #4a7c59; animation-delay: 0.4s; }
+  .stat-card:nth-child(6) { border-top-color: #2c5282; animation-delay: 0.5s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-number {
+    font-family: 'Zen Old Mincho', serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--deep-red);
+    line-height: 1;
+  }
+  .stat-card:nth-child(2) .stat-number { color: var(--gold); }
+  .stat-card:nth-child(3) .stat-number { color: var(--cedar); }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--mist);
+    margin-top: 0.4rem;
+    letter-spacing: 0.1em;
+  }
+
+  .stat-sub {
+    font-size: 0.7rem;
+    color: var(--border);
+    margin-top: 0.3rem;
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .charts-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .charts-grid, .charts-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .chart-card {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+  .chart-title {
+    font-size: 0.85rem;
+    color: var(--mist);
+    letter-spacing: 0.12em;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .chart-title::before {
+    content: '▍';
+    color: var(--vermillion);
+    font-size: 0.9rem;
+  }
+  .chart-box { width: 100%; height: 280px; }
+  .chart-box-tall { width: 100%; height: 380px; }
+
+  .insights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 700px) { .insights-grid { grid-template-columns: 1fr; } }
+
+  .insight-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--vermillion);
+    padding: 1.2rem 1.4rem;
+    animation: fadeUp 0.5s ease both;
+  }
+  .insight-box:nth-child(2) { border-left-color: var(--gold); }
+  .insight-box:nth-child(3) { border-left-color: #4a7c59; }
+  .insight-box:nth-child(4) { border-left-color: #2c5282; }
+
+  .insight-title {
+    font-size: 0.78rem;
+    color: var(--mist);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.7rem;
+    font-weight: 600;
+  }
+  .insight-body {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--ink);
+  }
+  .insight-body strong { color: var(--deep-red); }
+  .insight-tag {
+    display: inline-block;
+    background: var(--pale-gold);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.5rem;
+    font-size: 0.72rem;
+    margin: 0.1rem;
+    color: var(--cedar);
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem 1.2rem;
+    background: white;
+    border: 1px solid var(--border);
+  }
+  .filter-bar input, .filter-bar select {
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.8rem;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+  }
+  .filter-bar input:focus, .filter-bar select:focus {
+    border-color: var(--vermillion);
+  }
+  .filter-bar label {
+    font-size: 0.75rem;
+    color: var(--mist);
+    letter-spacing: 0.08em;
+  }
+  .filter-count {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--mist);
+  }
+
+  .table-wrap {
+    background: white;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  thead tr {
+    background: var(--ink);
+    color: var(--pale-gold);
+  }
+  thead th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  thead th:hover { color: var(--gold-light); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--pale-gold);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: rgba(184,134,11,0.05); }
+  tbody tr:nth-child(even) { background: rgba(250,246,239,0.5); }
+  tbody tr:nth-child(even):hover { background: rgba(184,134,11,0.05); }
+
+  td {
+    padding: 0.75rem 1rem;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .id-cell {
+    font-family: 'Crimson Pro', serif;
+    color: var(--mist);
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .tag-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 2px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  .title-cell {
+    font-size: 0.83rem;
+    color: var(--ink);
+    max-width: 320px;
+  }
+
+  .desc-cell {
+    color: var(--mist);
+    font-size: 0.78rem;
+    max-width: 280px;
+    line-height: 1.6;
+  }
+
+  .date-cell {
+    white-space: nowrap;
+    color: var(--cedar);
+    font-size: 0.78rem;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--mist);
+    font-style: italic;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+  }
+  .tab-btn {
+    padding: 0.7rem 2rem;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: var(--pale-gold);
+    color: var(--mist);
+    cursor: pointer;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: white;
+    color: var(--deep-red);
+    font-weight: 600;
+    border-top: 2px solid var(--vermillion);
+  }
+  .tab-btn:hover:not(.active) { background: white; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .ornamental-divider {
+    text-align: center;
+    color: var(--border);
+    margin: 2.5rem 0;
+    letter-spacing: 0.5em;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-kamon">⛩</div>
+  <h1 class="site-title">運勢・天命乃杜 — 記事分析ダッシュボード</h1>
+  <p class="subtitle">Article Analytics Report &nbsp;·&nbsp; Data Intelligence</p>
+  <p class="header-meta">分析対象期間: 2025年12月〜2026年2月 &ensp;|&ensp; 社務所だより: <span id="meta-news-count">--</span>記事 &ensp;|&ensp; 神籤草子: <span id="meta-col-count">--</span>記事</p>
+</header>
+
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <div class="section-title">総覧 — Overview</div>
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-number" id="overview-total-articles">--</div>
+      <div class="stat-label">総記事数</div>
+      <div class="stat-sub">全カテゴリ合計</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="overview-total-news">--</div>
+      <div class="stat-label">社務所だより</div>
+      <div class="stat-sub">ニュース記事</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="overview-total-col">--</div>
+      <div class="stat-label">神籤草子</div>
+      <div class="stat-sub">コラム記事</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">74</div>
+      <div class="stat-label">活動日数</div>
+      <div class="stat-sub">12/10 → 2/21</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="overview-total-chars">--</div>
+      <div class="stat-label">総文字数</div>
+      <div class="stat-sub">全記事本文合計</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="overview-avg-chars">--</div>
+      <div class="stat-label">平均文字数/記事</div>
+      <div class="stat-sub" id="overview-avg-sub">--</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="section-title">投稿分布 — Distribution</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">月別投稿数の推移（ニュース vs コラム）</div>
+      <div class="chart-box" id="chart-monthly"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">日別投稿ヒートマップ（全記事）</div>
+      <div class="chart-box" id="chart-heatmap"></div>
+    </div>
+  </div>
+
+  <!-- WEEKLY -->
+  <div class="section-title">週次推移 — Weekly Breakdown</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">週別投稿数（ニュース vs コラム）</div>
+      <div class="chart-box" id="chart-weekly"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">週別ニュース総文字数（本文合計）</div>
+      <div class="chart-box" id="chart-weekly-chars"></div>
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-bottom:1.5rem;border-left-color:#8e44ad">
+    <div class="insight-title">▍ 週次データから見るプロジェクトの強度と開発の波</div>
+    <div class="insight-body">
+      グラフを概観すると、最も活発だったのは<strong>第3週（01/12〜）</strong>であり、この期間には機能刷新やデータベースの大規模マイグレーションといった大型案件が集中してリリースされました。驚くべきは、開発の波が非常に極端であることです。<strong>第9週（02/02〜）</strong>はニュース記事が0本という完全な「停止週」となっており、これは直前の大規模刷新（1月25日のBento Grid化）を終えて開発者が「燃え尽き症候群」に陥った（コラム内で自白あり）ことに起因しています。しかし、再始動した<strong>第10〜11週</strong>（02月）には1週あたり3〜8本の安定した更新ペースを取り戻しており、プロジェクトが単なる一過性の熱狂で終わらず、持続可能な巡航速度へと見事に軟着陸したことを証明しています。
+    </div>
+  </div>
+
+  <!-- 高度な相関分析 (ADVANCED CORRELATION) -->
+  <div class="section-title">高度な相関分析 — Advanced Correlation</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">カテゴリ別 記事数 vs 平均文字数（バブルチャート）</div>
+      <div class="chart-box" id="chart-tag-bubble"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">記事長クラス分布（ショート / ミドル / ロング）</div>
+      <div class="chart-box" id="chart-length-pie"></div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="charts-grid-3">
+    <div class="chart-card">
+      <div class="chart-title">ニュースタグ分布（主要カテゴリ）</div>
+      <div class="chart-box" id="chart-news-tags"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">コラムカテゴリ分布</div>
+      <div class="chart-box" id="chart-col-cats"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">ニュース属性分類（集約）</div>
+      <div class="chart-box" id="chart-news-grouped"></div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="chart-card" style="margin-bottom:1.5rem">
+    <div class="chart-title">日別投稿タイムライン（全記事）</div>
+    <div class="chart-box-tall" id="chart-timeline"></div>
+  </div>
+
+  <!-- CUMULATIVE GROWTH -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">累積記事数の成長曲線（全期間）</div>
+      <div class="chart-box" id="chart-cumulative"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">累積総文字数の推移（プロジェクトの執筆量）</div>
+      <div class="chart-box" id="chart-cumulative-chars"></div>
+    </div>
+  </div>
+
+  <!-- BEHAVIOR PATTERNS -->
+  <div class="section-title">行動パターン — Posting Behavior</div>
+  <div class="charts-grid-3">
+    <div class="chart-card">
+      <div class="chart-title">投稿時刻の分布（24時間・ニュース）</div>
+      <div class="chart-box" id="chart-hours"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">曜日別投稿数（ニュース）</div>
+      <div class="chart-box" id="chart-dow"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">曜日×時間帯 投稿頻度ヒートマップ</div>
+      <div class="chart-box" id="chart-dow-hour-heatmap"></div>
+    </div>
+  </div>
+
+  <div class="insights-grid" style="margin-bottom:1.5rem">
+    <div class="insight-box">
+      <div class="insight-title">▍ 夕方〜夜間に集中する投稿習慣の深層</div>
+      <div class="insight-body">
+        ニュース記事のうち<strong>16時〜19時台だけで半数以上が集中</strong>しています。これは、開発者が日中の開発作業を終え、夕方にかけて機能の最終テストとリリースを行うというサイクルが定着していることを如実に物語っています。一方で、22時以降の深夜や早朝（8時台など）の投稿は、緊急のバグ修正や予期せぬ障害報告（例：「【復旧】深夜から早朝にかけて発生した表示不具合」等）に紐づく傾向が極めて強く、開発者が昼夜を問わずサイトの安定稼働に尽力している様子が窺えます。このような時間帯別の投稿傾向から、計画的な定期アップデートと突発的なインシデント対応の明確な使い分け、およびユーザー影響を最小限に抑えようとする運用ポリシーがはっきりと読み取れます。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ 土曜が最多・木曜が最少の波状リズム</div>
+      <div class="insight-body">
+        曜日別の集計では<strong>土曜日が最多</strong>となっており、週末の休日を利用して大規模な機能追加やデザイン刷新（Bento Grid化など）といった重いタスクが集中的に消化されていることが確認できます。逆に木曜日は最も投稿が少なく、週末の大型リリースに向けた仕込み（コードの設計や内部テスト）に時間が割かれている、いわゆる「開発の潜伏日」であると推測されます。このような週末偏重の活動リズムは、個人開発プロジェクトにおいて非常に典型的なサイクルでありながら、これほどまでに高い頻度で安定したリリースが継続している点は特筆に値します。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ システム系記事が最も長文になる理由</div>
+      <div class="insight-body">
+        タグを集約した区分別では<strong>システム系（DB移行・セキュリティ強化等）の記事が平均900文字前後</strong>で最長となっており、他のカテゴリを圧倒しています。これは、技術的な変更が単なる裏側の作業に留まらず、「なぜレート制限が必要なのか」「なぜTiDBからTursoへ移行したのか」といった背景や哲学を、非エンジニアの参拝者にも丁寧に説明しようとする運営の強い姿勢の表れです。技術的背景や制限撤廃の理由を透明性高く開示することが、ユーザーからの信頼獲得に繋がると考えている証左です。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ 月を追うごとに長文化・重厚化する情報伝達</div>
+      <div class="insight-body">
+        月別ニュース平均文字数を見ると、開設直後の12月は100文字未満の「プレオープン」等の簡素な告知が中心でしたが、正式リリース後の1月以降は<strong>平均600字〜700字</strong>へと激増しています。システムの進化に伴い、告知内容がより詳細かつドラマチックになったことを示しています。これは、単なる「お知らせ」から「読み物」としてのニュースへと変貌を遂げ、ユーザーのエンゲージメントを高めるための重要なコンテンツへと昇華していることを意味します。
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY INSIGHTS -->
+  <div class="section-title">洞察 — Key Insights</div>
+  <div class="insights-grid">
+    <div class="insight-box">
+      <div class="insight-title">▍ 開発初期の爆発的成長と実装スピード</div>
+      <div class="insight-body">
+        2026年1月のみで<strong>53本ものニュース記事</strong>が投稿され、これは全体の約79%を占める驚異的な数字です。正式リリース（1/2）から約4週間という短期間で、集中的かつ矢継ぎ早に機能追加・不具合修正・UI刷新が行われました。特に<strong>1月5日〜6日</strong>にかけては単日で7〜8本という超高密度な更新ペースが確認でき、開発者の熱量とコミットメントの高さがプロジェクトを強力に牽引していたことがわかります。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ 新機能実装の波と「引き算の美学」</div>
+      <div class="insight-body">
+        初期はユーザーエンゲージメントを高めるために「掲示板機能」や「連続参拝（ログインボーナス）」「実績バッジ」など、様々なゲーム的要素の追加が試みられました。しかし、これらの機能はシステム負荷の増大や表示の不整合を引き起こしただけでなく、「静かに自分と向き合う」という当サイト本来のコンセプト（神社の杜としてのあり方）と相反する結果を招きました。その結果、開発者は勇気を持ってこれらの機能を<strong>『完全廃棄』</strong>するという決断を下しています。この「作っては壊す」「足しては引く」スクラップ＆ビルドの過程は、サービスが『何をしないか』を定義することで独自のアイデンティティを確立していくプロセスそのものを体現しており、現在の洗練されたモダンUIに直結しています。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ DBマイグレーション（遷宮）の激動の変遷</div>
+      <div class="insight-body">
+        プロジェクトの成長とアクセス増に伴い、データベース基盤がわずかな期間に<strong>4回も変更</strong>されています。初期のCloudflare KV（1日1000回制限）から、Cloudflare D1への移行で100倍の書き込み枠を獲得。さらに完全無制限を求めてSupabaseへ移行し、究極のスケーラビリティを狙ってTiDBへと渡り歩きましたが、最終的には「HTTP APIによる軽快な接続」と「エッジでの高速応答」を両立する<strong>Turso（SQLite互換）</strong>へと定住しました。複数回の全データリセットという痛みを伴いながらも、最高のユーザー体験を追求してインフラの限界に挑み続けた技術的探求の軌跡がここにあります。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ セキュリティと利便性のトレードオフの克服</div>
+      <div class="insight-body">
+        システムの成長に伴い、悪意あるアクセスや過剰な負荷を防ぐための『結界（レートリミット）』や『Turnstile認証』といった防壁が幾度となく構築されました。しかし、強固すぎるセキュリティは正規のユーザーの利便性を著しく損なうというジレンマに直面しました。これに対し、開発陣は不要な認証ステップ（Turnstile）を速やかに撤去し、代わりに<strong>ハイブリッド認証方式の導入や、バックエンド側での厳格なレート制限（1分間に60回等）</strong>を実装することで、フロントエンドの快適さを損なわずに堅牢な守りを実現するという理想的な解決策に到達しています。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ 累積100記事到達まで70日のハイスピード進行</div>
+      <div class="insight-body">
+        初投稿（2025/12/10）から<strong>100記事目到達は2026/02/18</strong>（70日目）であり、その後わずか3日で109記事に達しました。特筆すべきは、最初の50記事をわずか27日間（1/17まで）という猛烈なスピードで達成している点です。後半の50記事は33日かかっており、<strong>前半でインフラと主要機能を一気に構築</strong>し、後半はUIのモダン化（Bento Grid化）やバグ修正、コンテンツの拡充といった「質の向上」へシフトして安定ペースに移行したことが明確に読み取れます。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ ニュースとコラムの絶妙な役割分担</div>
+      <div class="insight-body">
+        ニュースは「機能開発・修正告知・システム解説」に特化し、コラムは「神社・おみくじの教養・雑学コンテンツ」を担当するという明確な分業が確立されています。特に1月5〜6日に両者が同時大量投稿され、<strong>ニュース7本＋コラム11本＝計18本がわずか2日間に集中</strong>しています。これは、システムの「インフラ整備（ハード面）」と、サイトの魅力を高める「コンテンツ充実（ソフト面）」を、全く同じ熱量で並行して推進した証であり、個人開発でありながら全体最適を見据えた高度なプロジェクトマネジメントが行われていることを示唆しています。
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAR COUNT ANALYSIS -->
+  <div class="section-title">文字数分析 — Content Length Analysis</div>
+
+  <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:1.5rem">
+    <div class="stat-card" style="border-top-color:#c0392b">
+      <div class="stat-number" style="font-size:2rem;color:#c0392b" id="stat-max-news">--</div>
+      <div class="stat-label">最長ニュース文字数</div>
+      <div class="stat-sub" id="stat-max-news-sub">--</div>
+    </div>
+    <div class="stat-card" style="border-top-color:#b8860b">
+      <div class="stat-number" style="font-size:2rem;color:#b8860b" id="stat-max-col">--</div>
+      <div class="stat-label">最長コラム文字数</div>
+      <div class="stat-sub" id="stat-max-col-sub">--</div>
+    </div>
+    <div class="stat-card" style="border-top-color:#27ae60">
+      <div class="stat-number" style="font-size:2rem;color:#27ae60" id="stat-min-news">--</div>
+      <div class="stat-label">最短ニュース文字数</div>
+      <div class="stat-sub" id="stat-min-news-sub">--</div>
+    </div>
+    <div class="stat-card" style="border-top-color:#2980b9">
+      <div class="stat-number" style="font-size:2rem;color:#2980b9" id="stat-med-news">--</div>
+      <div class="stat-label">中央値（ニュース）</div>
+      <div class="stat-sub" id="stat-med-news-sub">--</div>
+    </div>
+    <div class="stat-card" style="border-top-color:#8e44ad">
+      <div class="stat-number" style="font-size:2rem;color:#8e44ad" id="stat-med-col">--</div>
+      <div class="stat-label">中央値（コラム）</div>
+      <div class="stat-sub" id="stat-med-col-sub">--</div>
+    </div>
+    <div class="stat-card" style="border-top-color:#16a085">
+      <div class="stat-number" style="font-size:2rem;color:#16a085" id="stat-total-news">--</div>
+      <div class="stat-label">ニュース本文合計</div>
+      <div class="stat-sub" id="stat-total-col-sub">--</div>
+    </div>
+  </div>
+
+  <!-- 新規：文字数洞察 (Content Length Insights) -->
+  <div class="section-title">文字数洞察 — Content Length Insights</div>
+  <div class="insights-grid" style="margin-bottom:1.5rem">
+    <div class="insight-box">
+      <div class="insight-title">▍ ニュース記事の長文化傾向とその背景</div>
+      <div class="insight-body">
+        開発初期（12月）のニュース記事は100文字未満の簡素な告知が中心でしたが、1月中旬以降は平均して600〜900文字、長いものでは1,700文字を超える長文へと変貌を遂げています。これは、単なる「更新のお知らせ」から、「なぜその変更を行ったのか」「どのような技術的背景があるのか」といった<strong>開発者の思想や哲学をユーザーに直接語りかけるスタイル</strong>へと、ニュースの役割自体が進化・深化していることを示しています。特にデータベースの移行や制限の撤廃といった重要なシステム更新の際には、非常に丁寧で熱意のある長文が投稿されています。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ コラム記事における最適な文字数の探求</div>
+      <div class="insight-body">
+        神籤草子（コラム）の文字数は平均して500〜700文字の間に収束しています。これは、スマートフォンでスクロールしながらサクッと読める<strong>「約1〜2画面分」の最適な分量</strong>を意図的に狙っていると推測されます。ただし、「特別クイズ（超難問10番勝負）」のようなユーザー参加型のコンテンツにおいては、解説を含めて1,600文字〜2,200文字という圧倒的なボリュームが投下されており、日常的に消費される短時間のコンテンツと、腰を据えて楽しむ特別コンテンツとで、明確に文字数のメリハリがつけられている点が非常に効果的です。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ 最長・最短記事から読み解く情報密度の変化</div>
+      <div class="insight-body">
+        ニュースにおける最長記事は「【最終報告】データベースの最終着地（Turso）と、参拝記録表示の最適化について」で、実に1,765文字に達します。この一連のデータベース刷新に関わる記事群はどれも長文であり、開発プロセスの苦労や技術選定の理由がドラマチックに描かれています。一方で最短記事は初期の「サイト開設準備室より」（84文字）です。<strong>文字数の劇的な増加は、サイトが単なる「占いツール」から、独自のストーリーと世界観を持つ「コミュニティ空間」へと成長していく軌跡</strong>そのものを表していると言っても過言ではありません。
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">▍ 文字数とタグ（カテゴリ）の強い相関性</div>
+      <div class="insight-body">
+        タグ区分別の平均文字数グラフからは、特定のトピックにおいて文字数が跳ね上がる明確な相関が見られます。特に「システム関連」や「重要事項」にカテゴライズされる記事は平均900文字前後と最長を記録しており、障害報告やシステム改修における<strong>透明性の高い情報開示（ユーザーへの真摯な説明責任）</strong>を重んじる運営スタンスが数字に如実に表れています。対照的に「バグ修正」や「機能改善」の小規模なアップデートは300〜500文字程度にコンパクトにまとめられており、情報伝達の効率化が図られています。
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">文字数分布ヒストグラム（ニュース vs コラム）</div>
+      <div class="chart-box" id="chart-hist"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">記事IDごとの文字数（時系列散布図）</div>
+      <div class="chart-box" id="chart-scatter"></div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">タグ別・平均文字数（社務所だより）</div>
+      <div class="chart-box-tall" id="chart-tag-len"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">カテゴリ別・平均文字数（神籤草子）</div>
+      <div class="chart-box-tall" id="chart-cat-len"></div>
+    </div>
+  </div>
+
+  <!-- Top/Bottom Articles -->
+  <div class="charts-grid" style="margin-bottom:1.5rem">
+    <div class="chart-card">
+      <div class="chart-title">文字数ランキング TOP 10（ニュース）</div>
+      <div style="overflow-x:auto">
+        <table style="font-size:0.78rem">
+          <thead><tr style="background:#1a1008;color:#f5e6c8">
+            <th style="padding:0.5rem 0.8rem">順位</th>
+            <th style="padding:0.5rem 0.8rem">ID</th>
+            <th style="padding:0.5rem 0.8rem">タイトル</th>
+            <th style="padding:0.5rem 0.8rem">文字数</th>
+          </tr></thead>
+          <tbody id="top-news-chars"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">文字数ランキング TOP 10（コラム）</div>
+      <div style="overflow-x:auto">
+        <table style="font-size:0.78rem">
+          <thead><tr style="background:#1a1008;color:#f5e6c8">
+            <th style="padding:0.5rem 0.8rem">順位</th>
+            <th style="padding:0.5rem 0.8rem">ID</th>
+            <th style="padding:0.5rem 0.8rem">タイトル</th>
+            <th style="padding:0.5rem 0.8rem">文字数</th>
+          </tr></thead>
+          <tbody id="top-col-chars"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARTICLE TABLES -->
+  <div class="section-title">記事一覧 — Article Index</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('news')">社務所だより（ニュース）</button>
+    <button class="tab-btn" onclick="switchTab('col')">神籤草子（コラム）</button>
+  </div>
+
+  <!-- NEWS TAB -->
+  <div id="tab-news" class="tab-content active">
+    <div class="filter-bar">
+      <label>検索:</label>
+      <input type="text" id="news-search" placeholder="タイトル・説明で絞り込み..." oninput="filterNews()" style="width:220px">
+      <label>タグ:</label>
+      <select id="news-tag-filter" onchange="filterNews()">
+        <option value="">すべて</option>
+      </select>
+      <span class="filter-count" id="news-count">--件表示中</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable('news','id')">ID ↕</th>
+            <th onclick="sortTable('news','date')">日時 ↕</th>
+            <th>タグ</th>
+            <th>タイトル</th>
+            <th onclick="sortTable('news','chars')">文字数 ↕</th>
+            <th>内容（抜粋）</th>
+          </tr>
+        </thead>
+        <tbody id="news-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COLUMN TAB -->
+  <div id="tab-col" class="tab-content">
+    <div class="filter-bar">
+      <label>検索:</label>
+      <input type="text" id="col-search" placeholder="タイトルで絞り込み..." oninput="filterCol()" style="width:220px">
+      <label>カテゴリ:</label>
+      <select id="col-cat-filter" onchange="filterCol()">
+        <option value="">すべて</option>
+      </select>
+      <span class="filter-count" id="col-count">--件表示中</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable('col','id')">ID ↕</th>
+            <th onclick="sortTable('col','date')">日付 ↕</th>
+            <th>カテゴリ</th>
+            <th>タイトル</th>
+            <th onclick="sortTable('col','chars')">文字数 ↕</th>
+          </tr>
+        </thead>
+        <tbody id="col-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ornamental-divider">⊰ &ensp; 天命乃杜 &ensp; ⊱</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  DATA & PROCESSING
+// ═══════════════════════════════════════════
+
+const newsData = [{"id":5,"title":"サイト開設準備室より","date":"2025/12/10","time":"12:00","tag":"お知らせ","desc":"現在、正式公開に向けて最終調整を行っております。"},{"id":4,"title":"サーバーメンテナンス完了","date":"2025/12/20","time":"18:00","tag":"メンテナンス","desc":"予定されていたメンテナンスは無事終了しました。"},{"id":3,"title":"プレオープンのお知らせ","date":"2025/12/25","time":"10:00","tag":"お知らせ","desc":"一部機能を先行公開いたしました。"},{"id":1,"title":"新年、明けましておめでとうございます。","date":"2026/1/1","time":"00:00","tag":"ご挨拶","desc":"謹んで新年のご祝詞を申し上げます。"},{"id":2,"title":"「運勢・天命乃杜」を公開いたしました。","date":"2026/1/2","time":"16:00","tag":"お知らせ","desc":"本サービスを正式にリリースいたしました。"},{"id":6,"title":"新機能「TENMEI Labs」を公開いたしました。","date":"2026/1/3","time":"17:01","tag":"お知らせ","desc":"実験的な新機能を体験できるLabsページを会員様限定で追加しました。"},{"id":7,"title":"【重要】認証システムに関する不具合の修正とお詫び","date":"2026/1/4","time":"08:00","tag":"障害報告","desc":"ログインおよびアカウント管理に関する重大な不具合を修正いたしました。"},{"id":13,"title":"【復活】「全国・土地の運気予報」をテキスト版として再実装いたしました","date":"2026/1/5","time":"22:28","tag":"新機能","desc":"開発中止をお伝えした土地の運気機能ですが、地図を使わない「ランキング形式」として復活させました。"},{"id":12,"title":"【機能追加】過去記事の検索およびページ送り機能の実装","date":"2026/1/5","time":"21:45","tag":"機能追加","desc":"「社務所だより」と「神籤草子」に、キーワード検索機能とページ切り替え機能を追加しました。"},{"id":11,"title":"【システム】サーバー負荷軽減対策と理論値データ公開（修正版）","date":"2026/1/5","time":"17:44","tag":"システム","desc":"Cloudflare Workers KVの更新間隔調整によるデータベース負荷の改善結果（実測値）を公開しました。"},{"id":9,"title":"【修正】TENMEI Labs機能の挙動改善について","date":"2026/1/5","time":"16:05","tag":"機能改善","desc":"「宵闇の刻」および「言霊の増幅」に関する表示不具合を修正しました。"},{"id":8,"title":"【重要】「全国・土地の運気予報」の開発中止に関するお知らせ","date":"2026/1/5","time":"14:30","tag":"重要","desc":"技術的な不具合により、マップ機能の開発を完全に中止いたしました。代替案もございません。"},{"id":10,"title":"【更新】TENMEI LabsのUIを大幅に変更いたしました","date":"2026/1/5","time":"12:55","tag":"デザイン","desc":"実験室（Labs）の画面デザインを、より現代的で没入感のある形式に刷新しました。"},{"id":16,"title":"【改善】スマートフォンでの「おみくじ結果」の表示崩れを修正いたしました","date":"2026/1/6","time":"17:30","tag":"機能改善","desc":"結果カードの一部が画面外に見切れてしまう問題を解消し、横スクロールで全文を閲覧できるようにいたしました。"},{"id":14,"title":"【重要】12星座占いの未来予報（カレンダー）における実装不備と、過去の誤表示に関する深いお詫び","date":"2026/1/6","time":"15:30","tag":"障害報告","desc":"「向こう30日間のラッキーデー」の表示内容が、実際の判定ロジックに基づかない「でたらめ」な状態であったことを深くお詫び申し上げます。"},{"id":15,"title":"【復旧】深夜から早朝にかけて発生した表示不具合およびログイン表示エラーに関するお詫びとご報告","date":"2026/1/6","time":"08:30","tag":"障害報告","desc":"サイドメニュー操作時の画面消失、および各種数値が表示されない不具合が発生しておりました。現在は復旧しております。"},{"id":17,"title":"【修正】ダークモード時における「半凶」グラフの表示色を調整いたしました","date":"2026/1/13","time":"16:15","tag":"デザイン修正","desc":"おみくじの轍（統計）において、背景色と同化して見えなくなっていた箇所を修正しました。"},{"id":20,"title":"【新機能】「デジタル御守授与所」の開設および利用規約の改定について","date":"2026/1/14","time":"20:45","tag":"新機能・規約","desc":"願いに合わせて作る「デジタル御守」機能を公開しました。併せて画像利用に関する規約を更新しました。"},{"id":19,"title":"【システム】サーバーメンテナンス機能の実装と、黄金のカラーコーンについて","date":"2026/1/14","time":"18:30","tag":"システム更新","desc":"安定したサービス提供のため、メンテナンス画面の表示機能を実装いたしました。"},{"id":18,"title":"【更新】おみくじの轍におけるページ機能追加と、件数表示の不具合修正について","date":"2026/1/14","time":"10:00","tag":"機能追加・修正","desc":"履歴（轍）の表示パフォーマンス向上のための改修と、検索結果数の表示バグを修正しました。"},{"id":21,"title":"【重要】神域（サーバー）の守りを固める大規模セキュリティアップデートおよび処理高速化について","date":"2026/1/15","time":"18:45","tag":"セキュリティ・システム","desc":"APIレート制限の導入、XSS脆弱性への対策、および非同期処理による応答速度の向上を実施しました。"},{"id":25,"title":"【重要】データベースシステムの刷新と、それに伴う制限撤廃の詳細報告","date":"2026/1/16","time":"23:34","tag":"システム更新","desc":"データベース基盤を「Cloudflare D1」へ完全移行いたしました。KV時代の書き込み制限（1日1,000回）を突破し、神速の10万回書き込みを実現した詳細な技術比較を公開いたします。"},{"id":24,"title":"【技術解説】「連打参拝」における記録の整合性修正と、個人記録に関する仕様について","date":"2026/1/16","time":"21:22","tag":"システム解説","desc":"全体の記録数のズレを修正いたしました。一方で、個人の記録が一部欠落する現象については、連打制限を行わないため「仕様」となります。"},{"id":23,"title":"【改装】授与所の意匠変更および「黄金の輝き」演出の追加について","date":"2026/1/16","time":"19:35","tag":"デザイン・作法","desc":"おみくじを選ぶ画面を一新。札のデザイン統一、黄金に輝く演出、および参拝作法の案内を刷新いたしました。"},{"id":22,"title":"【完全復旧】「おみくじの轍」等の読み込み不具合解消と、認証結界の再構築について","date":"2026/1/16","time":"16:45","tag":"不具合解消","desc":"一部の環境で発生していた「情報の取得に失敗しました」というエラーを完全に解消する、新しい認証方式を導入いたしました。"},{"id":29,"title":"【重要】神域の静寂を守るための「結界（レート制限）」設置と、無限ではない資源について","date":"2026/1/17","time":"19:00","tag":"システム・規律","desc":"データベースの強化により制限は大幅に緩和されましたが、資源は無限ではありません。公平な参拝環境を守るため、過度な連打に対する結界を設けました。"},{"id":28,"title":"【追記】大吉における「黄金」の輝きを、より本物に近づけるための再調整について","date":"2026/1/17","time":"15:50","tag":"意匠変更","desc":"最高位である「大吉」の地紙について、より鮮やかで深みのある山吹色と、手漉き和紙の質感を再現する調整を行いました。"},{"id":27,"title":"【改装】「純白」への回帰と、影に潜んでいた「二重の記述（ドッペルゲンガー）」の解消について","date":"2026/1/17","time":"15:15","tag":"開発秘話","desc":"サイト背景と御神籤の地紙を「純白」へ統一し、文字色を魔除けの「紅」に改めました。また、デザイン修正を阻んでいた技術的な「怪奇現象」についてもご報告します。"},{"id":31,"title":"【新機能】「参拝者台帳（プロフィール）」の公開と、功徳の証について","date":"2026/1/17","time":"13:30","tag":"新機能","desc":"皆様の参拝記録や獲得した実績（バッジ）を閲覧できる「参拝者台帳」を実装いたしました。自己紹介やアイコンの設定も可能です。"},{"id":26,"title":"【改装】御神籤（おみくじ）結果画面の意匠刷新と、格式向上について","date":"2026/1/17","time":"12:35","tag":"デザイン刷新","desc":"皆様にお渡しする御神籤のデザインを大幅に刷新いたしました。伝統的な縦書きへの変更や、地紙（背景色）の純白化による視認性向上を行っております。"},{"id":32,"title":"【改善】参拝時の「お告げ（通知）」と、神札（メール）の書式を整えました","date":"2026/1/18","time":"14:40","tag":"機能改善","desc":"混雑時の制限解除時間を正確にお伝えするように改良し、認証メールの書式を杜の雰囲気に合わせて統一いたしました。"},{"id":30,"title":"【開発秘話】幻となった「参拝掲示板」機能の完全廃棄と、深夜の苦闘について","date":"2026/1/18","time":"08:45","tag":"機能廃棄","desc":"昨夜から開発を進めていた投稿・交流機能ですが、技術的な欠陥と理念上の理由により、実装を断念しコードを完全削除いたしました。"},{"id":33,"title":"【重要】神域の『大遷宮（サーバー完全移行）』完了と、全データ一新のお知らせ","date":"2026/1/19","time":"17:50","tag":"重要・システム","desc":"旧来の制限を撤廃するため、データベース基盤を無制限の広大な土地（Supabase）へ移しました。これに伴い、全ての記録を「ゼロ」から再スタートいたしました。"},{"id":34,"title":"【聖域拡張】「Supabase（無尽蔵の書庫）」への遷宮完了と、制限の完全撤廃について","date":"2026/1/20","time":"12:00","tag":"システム刷新","desc":"Cloudflare D1をも超える、真に制限のないデータベース「Supabase」へ完全移行いたしました。これにより書き込み制限という概念そのものが消滅しました。"},{"id":35,"title":"【極致】宇宙最強のデータベース『TiDB（タイタン）』への到達と、真の無限について","date":"2026/1/22","time":"17:30","tag":"システム刷新","desc":"Supabaseの限界を超え、理論上の上限が存在しない分散型SQL「TiDB」へ完全移行しました。これにより、もはや物理的な制約は消滅しました。"},{"id":36,"title":"【解禁】おみくじの「連打制限」を大幅に緩和しました。心ゆくまでお引きください。","date":"2026/1/22","time":"22:00","tag":"制限緩和","desc":"データベース基盤を「Turso」へ刷新したことに伴い、おみくじを引く際の回数制限（レートリミット）を事実上撤廃に近いレベルまで緩和いたしました。"},{"id":38,"title":"【最終報告】データベースの最終着地（Turso）と、参拝記録表示の最適化について","date":"2026/1/23","time":"23:45","tag":"システム・仕様","desc":"参拝記録の表示項目を整理し、実績バッジへの一元化を行いました。また、幾多の変遷を経て辿り着いたデータベース「Turso」と他社技術の比較を公開します。"},{"id":37,"title":"【完全復旧】大規模障害のお詫びと、全データリセット及び「参拝の記録」への刷新について","date":"2026/1/23","time":"18:45","tag":"重要・復旧","desc":"昨夜より発生していた深刻なシステム障害が復旧しました。これに伴い全データをリセットし、機能を「参拝の記録」へと刷新いたしました。"},{"id":40,"title":"【重要】「功徳の証（実績バッジ）」機能の完全撤去に関するお詫びとご報告","date":"2026/1/24","time":"12:35","tag":"機能撤去","desc":"表示上の不整合が解消されないため、誠に遺憾ながら実績機能を廃止いたしました。"},{"id":39,"title":"【機能変更】「連続参拝（ログインボーナス）」機能の廃止と、参拝記録の表示修正について","date":"2026/1/24","time":"11:35","tag":"機能変更","desc":"日数のカウントが正常に動作しない不具合が確認されたため、連続参拝機能を廃止いたしました。併せて数値の表示形式を修正しました。"},{"id":47,"title":"【撤去】セキュリティ認証（Turnstile）の廃止と、参拝手順の簡略化について","date":"2026/1/25","time":"20:50","tag":"機能撤去","desc":"認証コード送信時に試験導入したセキュリティチェック機能を、不具合および利便性向上のため完全に撤去いたしました。"},{"id":46,"title":"【修繕】「アカウント削除」機能における不具合修正のご報告","date":"2026/1/25","time":"18:00","tag":"不具合修正","desc":"特定条件下において、アカウント削除処理が正常に完了せずエラーとなる問題を解消いたしました。"},{"id":45,"title":"【修復】おみくじ処における「結界（連打制限）」の再設定について","date":"2026/1/25","time":"17:41","tag":"結界修復","desc":"おみくじを引く際の回数制限が一時的に機能していない状態でした。現在は正常に「1分間に60回」の制限が動作しております。"},{"id":44,"title":"【復旧】TENMEI Labsの「入室結界（ロック画面）」が霧に包まれていた不具合の修正","date":"2026/1/25","time":"17:15","tag":"不具合修正","desc":"未ログイン時に表示されるLabsのロック画面が、過度なぼかし処理により視認できなくなっていた問題を解消いたしました。"},{"id":43,"title":"【更新】TENMEI Labsに『詳細設定』機能を実装。実験機能を自分好みに微調整可能に。","date":"2026/1/25","time":"16:20","tag":"新機能","desc":"TENMEI Labsの各機能を大幅強化。これまでの説明表示のみの状態から、スライダーやスイッチで数値を操作できる『詳細設定パネル』へと進化しました。"},{"id":42,"title":"【完了】境内（UI）の大規模刷新工事が完了しました。より美しく、使いやすい「現代の杜」へ。","date":"2026/1/25","time":"14:52","tag":"大規模更新","desc":"ホーム、参拝記録、アカウント、そして授与所まで、サイト全体のデザインを「Bento Grid」スタイルへ統一・刷新いたしました。"},{"id":41,"title":"【重要】「参拝の記録」機能刷新と、重大な不具合に伴う全データ浄化（リセット）のご報告","date":"2026/1/25","time":"09:20","tag":"重要・仕様変更","desc":"参拝者数が異常に増加する不具合を修正しました。正確な記録を期すため、誠に遺憾ながら再度全データをリセットいたしました。"},{"id":50,"title":"【修繕】おみくじの轍（履歴）の機能更新と、読み込み不具合の解消について","date":"2026/1/26","time":"21:55","tag":"修繕・更新","desc":"おみくじの轍の利便性を向上させ、読み込みが止まる深刻な問題を修正しました。また、グラフ機能の実装見送りについてご報告します。"},{"id":49,"title":"【意匠変更】「宵闇（ダークモード）」における「紅」の統一について","date":"2026/1/26","time":"18:16","tag":"デザイン統一","desc":"サイト全体の配色を見直し、ダークモード時においても文字色を伝統的な「深紅」へ統一いたしました。"},{"id":48,"title":"【改善とご報告】「二次元コード（QR）」の鮮明化と、画像保存機能の現状について","date":"2026/1/26","time":"18:09","tag":"システム報告","desc":"結果画像のQRコード画質を向上させました。また、画像生成時のレイアウト微調整につきましては、技術的課題により現状維持とさせていただきます。"},{"id":51,"title":"【修繕】神籤草子における「記述所（回答欄）」の配色および入力線の修正","date":"2026/1/27","time":"16:43","tag":"不具合修正","desc":"入力式クイズにおいて、回答欄の背景色が黒く固定されていた問題、および入力位置を示す縦棒（カーソル）が見えなくなる不具合を修正いたしました。"},{"id":55,"title":"【修繕】スマートフォン等における表示崩れおよび操作不能箇所の修正について","date":"2026/1/28","time":"20:37","tag":"不具合修正","desc":"一部のスマートフォンやタブレット端末において、画面の一部が見切れたり、スクロールができなくなる不具合を解消いたしました。"},{"id":54,"title":"【改善】参拝メニュー（サイドバー）の表示調整と、画面からはみ出る問題の解消について","date":"2026/1/28","time":"17:20","tag":"意匠調整","desc":"一部の端末でメニューの下部が見切れてしまう不具合を修正しました。これに伴い、ボタンの配置間隔が変更されております。"},{"id":53,"title":"【重要】一時的な境内閉鎖（サイト停止）のお詫びと、全国運気ランキングの意匠変更について","date":"2026/1/28","time":"16:58","tag":"重要・お詫び","desc":"システム更新時の不手際により、約10分間にわたり杜が完全に閉鎖（サイト停止）状態に陥っておりました。現在は復旧し、全国運気の表示も最適化されております。"},{"id":52,"title":"【重要】境内住所（URL）の変更と、記録（データ）の継承に関するご報告","date":"2026/1/28","time":"15:42","tag":"重要・お知らせ","desc":"覚えやすく短いURLへと移転いたしました。移転に伴うデータの消失を懸念しておりましたが、すべての参拝記録は無事に継承されております。"},{"id":56,"title":"【改善】おみくじ結果画面の意匠調整とスマートフォン表示の最適化について","date":"2026/1/30","time":"21:28","tag":"機能改善","desc":"おみくじ結果画面のデザインを微調整し、スマートフォンでの閲覧時に横スクロールなしで全体を確認できるよう最適化いたしました。"},{"id":59,"title":"【統一】通知・確認の作法を刷新 — 境内における『警告』と『決断』の意匠統一について","date":"2026/2/14","time":"20:34","tag":"機能改善","desc":"杜の各所に残っていた古い通知形式を一掃し、全ての警告と確認のUIを最新の意匠へと統一いたしました。特に重大な決断を伴う操作には、新たな確認画面を導入しています。"},{"id":58,"title":"【新機能】「会員ランク制度」の正式実装 — 参拝の積み重ねが「位（くらい）」となる","date":"2026/2/14","time":"19:53","tag":"新機能","desc":"以前の更新告知にて触れていたものの、試験運用（表示のみ）に留まっていた会員ランク機能を、実績データと連動する正式なシステムとして実装いたしました。"},{"id":57,"title":"【表記修正】統計グラフの名称を「本日の傾向」から「全体の傾向」へ変更しました","date":"2026/2/14","time":"19:15","tag":"表記修正","desc":"表示されているグラフが「当日分」ではなく「全期間の累計」であることを正しく伝えるため、見出しの文言を実態に合わせて修正いたしました。"},{"id":60,"title":"【昇格】実験室（Labs）からの卒業 — 3つの機能が「正式設定」として環境設定へ統合されました","date":"2026/2/17","time":"17:05","tag":"機能昇格","desc":"安定稼働が確認された「宵闇の刻」「神速の祈り」「雅モード」の3機能を、実験室からアカウント設定内の「環境設定」へ正式に移行いたしました。"},{"id":63,"title":"【完遂】境内（UI）の最終改装工事が完了 — 文書閲覧の快適化と、書斎の整理について","date":"2026/2/18","time":"22:00","tag":"大規模更新","desc":"記事詳細、利用規約、プライバシーポリシーの表示デザインを刷新し、全ページのモダナイズを完了しました。また、ホーム画面の統計表示をスッキリと整理いたしました。"},{"id":62,"title":"【修繕】案内板（試験運用）折り畳み時にクリック位置がズレる不具合の解消について","date":"2026/2/18","time":"18:43","tag":"不具合修正","desc":"本日実施した大規模刷新（ベータ版）より確認されていた、サイドメニューを折り畳んだ状態でアイコンをクリックすると、意図とは異なる一つ上の項目が開いてしまう不具合を解消いたしました。"},{"id":61,"title":"【試験運用】案内板（サイドメニュー）の大規模刷新と、モダンな「硝子細工」への意匠変更について","date":"2026/2/18","time":"16:30","tag":"UI刷新 (β)","desc":"サイト左側のメニューバーを、より美しく使いやすい「Bento UI × グラスモーフィズム」デザインへと刷新しました。現在は試験的な導入となります。"},{"id":64,"title":"【意匠整理】神籤草子の記事一覧に添えられていた「飾りの栞（しおり）」を撤去いたしました","date":"2026/2/19","time":"18:19","tag":"意匠調整","desc":"神籤草子の各記事カードに表示されていたブックマーク（栞）アイコンは、押しても何も起きない純粋な飾りでした。誤解を招く恐れがあるため、静かに取り除きました。"},{"id":67,"title":"【刷新】12星座占いの「神託（文章）」拡充と、吉日予報カレンダーの大型化について","date":"2026/2/21","time":"22:17","tag":"機能改善","desc":"12星座占いの文章バリエーションを大幅に増やし、内容の重複を解消しました。また、見づらかったカレンダーを大きく見やすい形式にリニューアルしました。"},{"id":66,"title":"【修繕】「全国・土地の運気」における表示崩れおよび神託（文章）の重複問題について","date":"2026/2/21","time":"21:35","tag":"不具合修正","desc":"全国運気ランキングにて、上位3県の枠の高さが不揃いになるレイアウト崩れと、同じ文章や助言が繰り返される不具合を解消いたしました。"},{"id":65,"title":"【防壁】神域の不可侵性を高める「絶対防御（アクセス制御）」の敷設について","date":"2026/2/21","time":"19:19","tag":"システム強化","desc":"TENMEI Labsに対し、ブラウザの特殊操作を用いて不正に操作しようとする試みを完全に無効化し、弾き返す強固な結界を実装いたしました。"}];
+
+const colData = [{"id":5,"title":"「待ち人」は恋愛だけじゃない","date":"2025/12/25","category":"開運"},{"id":4,"title":"「失せ物」の本当の意味","date":"2025/12/28","category":"豆知識"},{"id":3,"title":"神社での正しい参拝マナー","date":"2025/12/30","category":"作法"},{"id":1,"title":"おみくじの順番（正しい吉凶の順）","date":"2026/01/01","category":"雑学"},{"id":2,"title":"悪い結果が出ても実は大丈夫？","date":"2026/01/01","category":"豆知識"},{"id":6,"title":"【クイズ】おみくじの常識、意外と知らない？（全3問）","date":"2026/1/5","category":"クイズ"},{"id":16,"title":"【クイズ】知れば参拝が楽しくなる！神社の道具・作法編","date":"2026/01/06","category":"クイズ"},{"id":15,"title":"拝殿の鏡が映し出すもの —「かがみ」から「が」を取ると？","date":"2026/01/06","category":"読み解き"},{"id":14,"title":"なぜ神社の鳥居や社殿は「赤（朱色）」なのか？","date":"2026/01/06","category":"雑学"},{"id":13,"title":"【特別クイズ】目指せ参拝の達人！神社検定・超難問10番勝負","date":"2026/01/06","category":"特別クイズ"},{"id":12,"title":"和歌の心を読む — おみくじの裏側に隠された真実","date":"2026/01/06","category":"読み解き"},{"id":11,"title":"鳥居の向こう側 — 神域と俗界を分ける境界線","date":"2026/01/06","category":"建築"},{"id":10,"title":"【クイズ】神社の「動物」にまつわる謎（全3問）","date":"2026/01/06","category":"クイズ"},{"id":9,"title":"最強の開運日を知る—天赦日と一粒万倍日","date":"2026/01/06","category":"開運"},{"id":8,"title":"おみくじの起源—元三大師と伝統の「百籤」","date":"2026/01/06","category":"歴史"},{"id":7,"title":"「忖度なき天命」— 当杜のおみくじ確率について","date":"2026/01/06","category":"開発秘話"},{"id":19,"title":"【検定・中級】知っていると自慢できる？神社の名称クイズ","date":"2026/01/12","category":"クイズ"},{"id":18,"title":"【検定】神社の常識、漢字で書けますか？（入力式クイズ）","date":"2026/01/12","category":"クイズ"},{"id":17,"title":"【歳時記】大人の仲間入りと神様への報告 — 成人の日によせて","date":"2026/01/12","category":"歳時記"},{"id":24,"title":"【クイズ】意外と知らない？「狛犬」と「参道」の秘密","date":"2026/01/16","category":"クイズ"},{"id":23,"title":"【クイズ】神話と歴史で紐解く！三種の神器と伊勢神宮","date":"2026/01/16","category":"クイズ"},{"id":22,"title":"「神社」と「お寺」の決定的違い — 参拝作法が異なる理由","date":"2026/01/16","category":"基礎知識"},{"id":21,"title":"【検定・上級】神様と人をつなぐ「食事」と「榊」の作法","date":"2026/01/16","category":"クイズ"},{"id":20,"title":"【由来】願いを託す「絵馬（えま）」— なぜ馬の絵を描くのか？","date":"2026/01/16","category":"歴史"},{"id":27,"title":"【特別クイズ】神社検定・超難問10番勝負（5択・改）","date":"2026/01/25","category":"特別クイズ"},{"id":26,"title":"【クイズ】この動物は神使？それともただの動物？（5択クイズ）","date":"2026/01/25","category":"クイズ"},{"id":25,"title":"【季節】なぜ節分に豆を撒くのか？「魔を滅する」言霊の力","date":"2026/01/25","category":"年中行事"},{"id":30,"title":"【知識】60年に一度の強運年？「丙午（ひのえうま）」の真実","date":"2026/01/27","category":"干支・暦"},{"id":29,"title":"【季節】2月4日は「立春」。運気における本当の元旦","date":"2026/01/27","category":"歳時記"},{"id":28,"title":"【検定・上級】神職の言葉を読み解く（入力式クイズ）","date":"2026/01/27","category":"クイズ"},{"id":33,"title":"【クイズ】春を告げる花と学問の神様（全3問）","date":"2026/02/06","category":"クイズ"},{"id":32,"title":"【語源】二月はなぜ「如月（きさらぎ）」と呼ぶのか？ 寒さと再生の物語","date":"2026/02/06","category":"歳時記"},{"id":31,"title":"【季節】お稲荷様の誕生日？「初午（はつうま）」と感謝の団子","date":"2026/02/06","category":"歳時記"},{"id":34,"title":"【行事】2月17日は「祈年祭（きねんさい）」。未来の豊かさを先に祝う日","date":"2026/02/14","category":"歳時記"},{"id":36,"title":"【読み解き】なぜ神社では手を叩くのか？「拍手（かしわで）」に秘められた音霊の力","date":"2026/02/15","category":"読み解き"},{"id":35,"title":"【知識】お守りに「有効期限」はある？ 複数持つと神様は喧嘩する？","date":"2026/02/15","category":"基礎知識"},{"id":37,"title":"【由来】ひな祭りのルーツは「厄払い」？ 人形が背負う本当の役割","date":"2026/02/16","category":"歴史"},{"id":38,"title":"【季節】雪が雨に変わる日「雨水（うすい）」。雛人形を飾るのに最適な日はいつ？","date":"2026/02/17","category":"歳時記"},{"id":39,"title":"【建築】なぜ神社の地面には「砂利」が敷かれているのか？ 足元の浄化","date":"2026/02/18","category":"建築"},{"id":40,"title":"【運勢】おみくじの「旅立（たびだち）」項目。単なる旅行ではない、人生の出発","date":"2026/02/19","category":"読み解き"},{"id":41,"title":"【知識】神社の「屋根」は何でできている？ 檜皮葺（ひわだぶき）の美学","date":"2026/02/20","category":"雑学"},{"id":42,"title":"【話題】2月22日は「猫の日」。神社と猫の不思議な関係","date":"2026/02/21","category":"豆知識"}];
+
+const newsChars = {"1":196,"2":277,"3":107,"4":98,"5":84,"6":295,"7":417,"8":386,"9":320,"10":290,"11":835,"12":394,"13":630,"14":1318,"15":1399,"16":352,"17":269,"18":548,"19":537,"20":457,"21":1265,"22":800,"23":702,"24":662,"25":950,"26":767,"27":1184,"28":602,"29":983,"30":863,"31":562,"32":441,"33":830,"34":680,"35":819,"36":550,"37":941,"38":1765,"39":475,"40":485,"41":826,"42":908,"43":432,"44":391,"45":359,"46":332,"47":514,"48":592,"49":398,"50":889,"51":431,"52":581,"53":625,"54":475,"55":353,"56":650,"57":649,"58":579,"59":774,"60":542,"61":636,"62":787,"63":820,"64":725,"65":764,"66":666,"67":691};
+const colChars = {"1":786,"2":571,"3":439,"4":368,"5":338,"6":744,"7":869,"8":584,"9":607,"10":659,"11":554,"12":529,"13":1613,"14":449,"15":444,"16":693,"17":582,"18":507,"19":499,"20":587,"21":732,"22":569,"23":688,"24":691,"25":496,"26":477,"27":2248,"28":539,"29":499,"30":526,"31":674,"32":472,"33":743,"34":701,"35":931,"36":710,"37":805,"38":604,"39":649,"40":548,"41":767,"42":748};
+
+// データのマージと集計
+let totalNewsChars = 0;
+newsData.forEach(a => {
+  a.chars = newsChars[String(a.id)] || 0;
+  totalNewsChars += a.chars;
+});
+
+let totalColChars = 0;
+colData.forEach(a => {
+  a.chars = colChars[String(a.id)] || 0;
+  totalColChars += a.chars;
+});
+
+const totalArticles = newsData.length + colData.length;
+const totalChars = totalNewsChars + totalColChars;
+const avgNewsChars = Math.round(totalNewsChars / newsData.length);
+const avgColChars = Math.round(totalColChars / colData.length);
+const avgTotalChars = Math.round(totalChars / totalArticles);
+
+document.getElementById('overview-total-articles').innerText = totalArticles;
+document.getElementById('overview-total-news').innerText = newsData.length;
+document.getElementById('overview-total-col').innerText = colData.length;
+document.getElementById('overview-total-chars').innerText = totalChars.toLocaleString();
+document.getElementById('overview-avg-chars').innerText = avgTotalChars.toLocaleString();
+document.getElementById('overview-avg-sub').innerText = `ニュース${avgNewsChars} / コラム${avgColChars}`;
+document.getElementById('meta-news-count').innerText = newsData.length;
+document.getElementById('meta-col-count').innerText = colData.length;
+
+// Min/Max/Medians
+const sortedNews = [...newsData].sort((a,b) => b.chars - a.chars);
+const sortedCol = [...colData].sort((a,b) => b.chars - a.chars);
+const medianNews = sortedNews[Math.floor(sortedNews.length/2)].chars;
+const medianCol = sortedCol[Math.floor(sortedCol.length/2)].chars;
+
+document.getElementById('stat-max-news').innerText = sortedNews[0].chars.toLocaleString();
+document.getElementById('stat-max-news-sub').innerText = `#${sortedNews[0].id} ${sortedNews[0].title.slice(0,10)}...`;
+document.getElementById('stat-max-col').innerText = sortedCol[0].chars.toLocaleString();
+document.getElementById('stat-max-col-sub').innerText = `#${sortedCol[0].id} ${sortedCol[0].title.slice(0,10)}...`;
+document.getElementById('stat-min-news').innerText = sortedNews[sortedNews.length-1].chars.toLocaleString();
+document.getElementById('stat-min-news-sub').innerText = `#${sortedNews[sortedNews.length-1].id} ${sortedNews[sortedNews.length-1].title.slice(0,10)}...`;
+document.getElementById('stat-med-news').innerText = medianNews.toLocaleString();
+document.getElementById('stat-med-news-sub').innerText = `平均${avgNewsChars}字`;
+document.getElementById('stat-med-col').innerText = medianCol.toLocaleString();
+document.getElementById('stat-med-col-sub').innerText = `平均${avgColChars}字`;
+document.getElementById('stat-total-news').innerText = totalNewsChars.toLocaleString();
+document.getElementById('stat-total-col-sub').innerText = `コラム${totalColChars.toLocaleString()}字`;
+
+// Top 10 tables
+const top10News = [...newsData].sort((a,b) => b.chars - a.chars).slice(0,10);
+document.getElementById('top-news-chars').innerHTML = top10News.map((a,i) => `
+  <tr>
+    <td style="padding:0.4rem 0.8rem;color:#8b7355;text-align:center">${i+1}</td>
+    <td style="padding:0.4rem 0.8rem;font-family:'Crimson Pro',serif;color:#5c3317">#${a.id}</td>
+    <td style="padding:0.4rem 0.8rem;max-width:220px;line-height:1.4">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
+    <td style="padding:0.4rem 0.8rem;color:#c0392b;font-weight:bold;white-space:nowrap">${a.chars.toLocaleString()}</td>
+  </tr>
+`).join('');
+
+const top10Col = [...colData].sort((a,b) => b.chars - a.chars).slice(0,10);
+document.getElementById('top-col-chars').innerHTML = top10Col.map((a,i) => `
+  <tr>
+    <td style="padding:0.4rem 0.8rem;color:#8b7355;text-align:center">${i+1}</td>
+    <td style="padding:0.4rem 0.8rem;font-family:'Crimson Pro',serif;color:#5c3317">#${a.id}</td>
+    <td style="padding:0.4rem 0.8rem;max-width:220px;line-height:1.4">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
+    <td style="padding:0.4rem 0.8rem;color:#b8860b;font-weight:bold;white-space:nowrap">${a.chars.toLocaleString()}</td>
+  </tr>
+`).join('');
+
+// ヘルパー
+function charBar(n, max=2400) {
+  const pct = Math.round(n/max*100);
+  const col = n < 400 ? '#95a5a6' : n < 700 ? '#2980b9' : n < 1000 ? '#e67e22' : '#c0392b';
+  return `<div style="display:flex;align-items:center;gap:6px;white-space:nowrap">
+    <div style="width:60px;height:6px;background:#f5e6c8;border-radius:3px;overflow:hidden">
+      <div style="width:${pct}%;height:100%;background:${col};border-radius:3px"></div>
+    </div>
+    <span style="font-family:'Crimson Pro',serif;font-size:0.85rem;color:${col}">${n ? n.toLocaleString() : '—'}</span>
+  </div>`;
+}
+
+const tagColors = {
+  '機能改善': '#2980b9', '不具合修正': '#27ae60', '不具合解消': '#27ae60',
+  'システム強化': '#c0392b', 'システム更新': '#8e44ad', '大規模更新': '#2c3e50',
+  '新機能': '#e67e22', 'お知らせ': '#7f8c8d', '障害報告': '#c0392b',
+  'UI刷新 (β)': '#9b59b6', '意匠調整': '#95a5a6', '機能撤去': '#7f8c8d',
+  '機能変更': '#e74c3c', '機能昇格': '#f39c12', '重要・システム': '#c0392b',
+  '重要・復旧': '#c0392b', '重要・お詫び': '#c0392b', '重要・お知らせ': '#c0392b',
+  '重要・仕様変更': '#c0392b', '重要': '#c0392b', '修繕・更新': '#16a085',
+  '開発秘話': '#8e44ad', 'デザイン刷新': '#1abc9c', 'デザイン': '#1abc9c',
+  'デザイン修正': '#1abc9c', 'デザイン統一': '#1abc9c', 'デザイン・作法': '#1abc9c',
+  'システム・規律': '#e74c3c', 'システム・仕様': '#8e44ad', 'システム解説': '#3498db',
+  'システム報告': '#3498db', 'セキュリティ・システム': '#c0392b', '結界修復': '#e74c3c',
+  '機能廃棄': '#7f8c8d', '機能追加': '#e67e22', '機能追加・修正': '#e67e22',
+  '新機能・規約': '#e67e22', '表記修正': '#95a5a6', 'メンテナンス': '#7f8c8d',
+  'ご挨拶': '#f39c12', 'システム': '#8e44ad', '意匠変更': '#95a5a6',
+  'システム刷新': '#8e44ad', '制限緩和': '#27ae60'
+};
+const catColors = {
+  'クイズ': '#c0392b', '歳時記': '#27ae60', '読み解き': '#2980b9',
+  '豆知識': '#e67e22', '雑学': '#8e44ad', '歴史': '#7f8c8d',
+  '開運': '#f39c12', '建築': '#16a085', '基礎知識': '#2c3e50',
+  '特別クイズ': '#e74c3c', '年中行事': '#1abc9c', '干支・暦': '#d35400',
+  '作法': '#95a5a6', '開発秘話': '#9b59b6'
+};
+
+function tagBadge(tag, map) {
+  const color = map[tag] || '#7f8c8d';
+  return `<span class="tag-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${tag}</span>`;
+}
+
+function pd(d) { return new Date(d); }
+
+// ═══════════════════════════════════════════
+//  DYNAMIC DATA AGGREGATION FOR CHARTS
+// ═══════════════════════════════════════════
+
+const allArticles = [
+  ...newsData.map(a => ({ date: a.date, type: 'news', title: a.title, chars: a.chars, id: a.id, tag: a.tag, time: a.time })),
+  ...colData.map(a => ({ date: a.date, type: 'col', title: a.title, chars: a.chars, id: a.id, cat: a.category }))
+];
+
+// 月別データ
+const monthlyStats = {};
+allArticles.forEach(a => {
+  const dObj = new Date(a.date);
+  const ymKey = `${dObj.getFullYear()}年${dObj.getMonth()+1}月`;
+  if (!monthlyStats[ymKey]) monthlyStats[ymKey] = { newsCnt:0, colCnt:0, newsChars:0, colChars:0 };
+  if (a.type === 'news') {
+    monthlyStats[ymKey].newsCnt++;
+    monthlyStats[ymKey].newsChars += a.chars;
+  } else {
+    monthlyStats[ymKey].colCnt++;
+    monthlyStats[ymKey].colChars += a.chars;
+  }
+});
+const sortedMonths = Object.keys(monthlyStats).sort();
+const mNewsCnt = sortedMonths.map(m => monthlyStats[m].newsCnt);
+const mColCnt = sortedMonths.map(m => monthlyStats[m].colCnt);
+const mNewsChars = sortedMonths.map(m => monthlyStats[m].newsChars);
+const mNewsAvg = sortedMonths.map(m => monthlyStats[m].newsCnt > 0 ? Math.round(monthlyStats[m].newsChars / monthlyStats[m].newsCnt) : 0);
+
+// 週別データ
+function getWeekKey(dateStr) {
+  const d = new Date(dateStr);
+  const day = d.getDay();
+  d.setDate(d.getDate() - day);
+  return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+}
+const weeklyStats = {};
+allArticles.forEach(a => {
+  const wKey = getWeekKey(a.date);
+  if (!weeklyStats[wKey]) weeklyStats[wKey] = { newsCnt:0, colCnt:0, newsChars:0 };
+  if (a.type === 'news') {
+    weeklyStats[wKey].newsCnt++;
+    weeklyStats[wKey].newsChars += a.chars;
+  } else {
+    weeklyStats[wKey].colCnt++;
+  }
+});
+const sortedWeeks = Object.keys(weeklyStats).sort((a,b) => {
+  const [am, ad] = a.split('/').map(Number);
+  const [bm, bd] = b.split('/').map(Number);
+  const ay = am >= 11 ? 2025 : 2026;
+  const by = bm >= 11 ? 2025 : 2026;
+  return (ay - by) || (am - bm) || (ad - bd);
+});
+const wLabels = sortedWeeks;
+const wNews = sortedWeeks.map(w => weeklyStats[w].newsCnt);
+const wCol = sortedWeeks.map(w => weeklyStats[w].colCnt);
+const wChars = sortedWeeks.map(w => weeklyStats[w].newsChars);
+
+// タイムライン・累積データ
+const dailyCum = {};
+allArticles.sort((a,b) => new Date(a.date) - new Date(b.date));
+let cn = 0, cc = 0;
+allArticles.forEach(a => {
+  const dObj = new Date(a.date);
+  const dStr = `${dObj.getFullYear()}-${String(dObj.getMonth()+1).padStart(2,'0')}-${String(dObj.getDate()).padStart(2,'0')}`;
+  if (!dailyCum[dStr]) {
+    dailyCum[dStr] = { newsCnt: 0, colCnt: 0, newsCum: cn, colCum: cc };
+  }
+  if (a.type === 'news') {
+    cn++;
+    dailyCum[dStr].newsCnt++;
+  } else {
+    cc++;
+    dailyCum[dStr].colCnt++;
+  }
+  dailyCum[dStr].newsCum = cn;
+  dailyCum[dStr].colCum = cc;
+  dailyCum[dStr].totalCum = cn + cc;
+});
+const tlDates = Object.keys(dailyCum).sort();
+const tlNewsData = tlDates.map(d => dailyCum[d].newsCnt);
+const tlColData = tlDates.map(d => dailyCum[d].colCnt);
+const cumDataDynamic = tlDates.map(d => ({ date: d, news: dailyCum[d].newsCum, col: dailyCum[d].colCum, total: dailyCum[d].totalCum }));
+
+// 曜日・時間データ
+const hourCounts = Array(24).fill(0);
+const dowCounts = Array(7).fill(0);
+newsData.forEach(a => {
+  if(a.time) {
+    const h = parseInt(a.time.split(':')[0], 10);
+    if(!isNaN(h)) hourCounts[h]++;
+  }
+  const dObj = new Date(a.date);
+  let dow = dObj.getDay() - 1;
+  if(dow === -1) dow = 6;
+  dowCounts[dow]++;
+});
+const dowLabels = ['月','火','水','木','金','土','日'];
+
+// 新規：曜日×時間帯 ヒートマップデータ
+const dowHourData = []; // [dow, hour, count]
+for (let d=0; d<7; d++) {
+  for (let h=0; h<24; h++) {
+    dowHourData.push([h, d, 0]);
+  }
+}
+newsData.forEach(a => {
+  if (a.time) {
+    const dObj = new Date(a.date);
+    let dow = dObj.getDay() - 1;
+    if(dow === -1) dow = 6;
+    const h = parseInt(a.time.split(':')[0], 10);
+    if (!isNaN(h)) {
+      const idx = dow * 24 + h;
+      dowHourData[idx][2]++;
+    }
+  }
+});
+
+// ヒストグラムデータ
+const histBins = ['〜300', '300〜500', '500〜700', '700〜900', '900〜1,200', '1,200以上'];
+const hNews = [0,0,0,0,0,0];
+const hCol = [0,0,0,0,0,0];
+const categorize = (c, arr) => {
+  if (c <= 300) arr[0]++;
+  else if (c <= 500) arr[1]++;
+  else if (c <= 700) arr[2]++;
+  else if (c <= 900) arr[3]++;
+  else if (c <= 1200) arr[4]++;
+  else arr[5]++;
+};
+newsData.forEach(a => categorize(a.chars, hNews));
+colData.forEach(a => categorize(a.chars, hCol));
+
+// 散布図データ
+const scatterNews = newsData.map(a => [a.id, a.chars, a.title, a.tag]);
+const scatterCol  = colData.map(a =>  [a.id, a.chars, a.title, a.category]);
+
+// タグ別平均文字数（ニュース）
+const tagGroups = {};
+newsData.forEach(a => {
+  if (!tagGroups[a.tag]) tagGroups[a.tag] = [];
+  tagGroups[a.tag].push(a.chars);
+});
+const tagAvg = Object.entries(tagGroups)
+  .map(([tag, chars]) => ({
+    tag,
+    avg: Math.round(chars.reduce((s,v) => s+v, 0) / chars.length),
+    count: chars.length
+  }))
+  .sort((a,b) => a.avg - b.avg);
+
+// カテゴリ別平均文字数（コラム）
+const catGroups = {};
+colData.forEach(a => {
+  if (!catGroups[a.category]) catGroups[a.category] = [];
+  catGroups[a.category].push(a.chars);
+});
+const catAvg = Object.entries(catGroups)
+  .map(([cat, chars]) => ({
+    cat,
+    avg: Math.round(chars.reduce((s,v) => s+v, 0) / chars.length),
+    count: chars.length
+  }))
+  .sort((a,b) => a.avg - b.avg);
+
+// 新規：タグ・カテゴリ バブルチャートデータ
+const bubbleData = [
+  ...tagAvg.map(t => ({
+    name: t.tag,
+    value: [t.count, t.avg, t.count * t.avg, 'news'],
+    itemStyle: { color: tagColors[t.tag] || '#c0392b' }
+  })),
+  ...catAvg.map(c => ({
+    name: c.cat,
+    value: [c.count, c.avg, c.count * c.avg, 'col'],
+    itemStyle: { color: catColors[c.cat] || '#b8860b' }
+  }))
+];
+
+// 新規：記事長クラス分布（パイチャート）データ
+const lengthClasses = { 'ショート (〜500字)': 0, 'ミドル (500〜1000字)': 0, 'ロング (1000字〜)': 0 };
+allArticles.forEach(a => {
+  if (a.chars < 500) lengthClasses['ショート (〜500字)']++;
+  else if (a.chars < 1000) lengthClasses['ミドル (500〜1000字)']++;
+  else lengthClasses['ロング (1000字〜)']++;
+});
+const lengthPieData = Object.entries(lengthClasses).map(([name, value]) => ({ name, value }));
+
+// 新規：累積文字数の推移データ
+let cumNewsChars = 0, cumColChars = 0;
+const cumCharsData = tlDates.map(d => {
+  const dayArticles = allArticles.filter(a => {
+    const dObj = new Date(a.date);
+    const dStr = `${dObj.getFullYear()}-${String(dObj.getMonth()+1).padStart(2,'0')}-${String(dObj.getDate()).padStart(2,'0')}`;
+    return dStr === d;
+  });
+  dayArticles.forEach(a => {
+    if (a.type === 'news') cumNewsChars += a.chars;
+    else cumColChars += a.chars;
+  });
+  return { date: d, news: cumNewsChars, col: cumColChars, total: cumNewsChars + cumColChars };
+});
+
+// タグ区分別平均文字数（chart-grouped-chars 用）
+const groupCharData = {
+  'バグ修正系':   newsData.filter(a => ['不具合修正','不具合解消','障害報告','結界修復'].includes(a.tag)),
+  '新機能追加':   newsData.filter(a => ['新機能','新機能・規約','機能追加','機能追加・修正','機能昇格'].includes(a.tag)),
+  'デザイン改善': newsData.filter(a => a.tag.includes('デザイン') || ['意匠調整','意匠変更','UI刷新 (β)'].includes(a.tag)),
+  'システム関連': newsData.filter(a => a.tag.startsWith('システム') || ['セキュリティ・システム'].includes(a.tag)),
+  'お知らせ系':   newsData.filter(a => ['お知らせ','ご挨拶','メンテナンス'].includes(a.tag)),
+  '機能撤去廃棄': newsData.filter(a => ['機能撤去','機能廃棄','機能変更'].includes(a.tag)),
+  '重要事項':     newsData.filter(a => a.tag.startsWith('重要')),
+  '機能改善':     newsData.filter(a => ['機能改善','制限緩和'].includes(a.tag)),
+};
+const groupAvgCharsArr = Object.entries(groupCharData)
+  .map(([name, articles]) => ({
+    name,
+    avg: articles.length > 0 ? Math.round(articles.reduce((s,a) => s+a.chars, 0) / articles.length) : 0
+  }))
+  .sort((a,b) => a.avg - b.avg);
+
+// ═══════════════════════════════════════════
+//  CHARTS INITIALIZATION
+// ═══════════════════════════════════════════
+
+const chartMonthly = echarts.init(document.getElementById('chart-monthly'));
+chartMonthly.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '5%', right: '5%', bottom: '15%', top: '10%', containLabel: true },
+  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [
+    { name: '社務所だより', type: 'bar', data: mNewsCnt, itemStyle: { color: '#c0392b' }, barMaxWidth: 40 },
+    { name: '神籤草子', type: 'bar', data: mColCnt, itemStyle: { color: '#b8860b' }, barMaxWidth: 40 }
+  ]
+});
+
+const dailyCounts = {};
+allArticles.forEach(a => {
+  const dObj = new Date(a.date);
+  const dStr = `${dObj.getFullYear()}-${String(dObj.getMonth()+1).padStart(2,'0')}-${String(dObj.getDate()).padStart(2,'0')}`;
+  dailyCounts[dStr] = (dailyCounts[dStr] || 0) + 1;
+});
+const heatmapData = Object.entries(dailyCounts).map(([d, v]) => [d, v]);
+const maxDay = Math.max(...Object.values(dailyCounts), 1);
+
+const chartHeatmap = echarts.init(document.getElementById('chart-heatmap'));
+chartHeatmap.setOption({
+  tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 5, left: 'center', inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] }, textStyle: { color: '#8b7355', fontSize: 10 } },
+  calendar: { range: ['2025-12-01', '2026-02-28'], cellSize: ['auto', 16], left: 40, right: 10, top: 20, bottom: 40,
+    itemStyle: { borderColor: '#d4c4a0', borderWidth: 0.5 },
+    dayLabel: { color: '#8b7355', fontSize: 9, nameMap: ['日','月','火','水','木','金','土'] },
+    monthLabel: { color: '#5c3317', fontSize: 10, nameMap: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
+    yearLabel: { show: false } },
+  series: [{ type: 'heatmap', coordinateSystem: 'calendar', data: heatmapData }]
+});
+
+const chartWeekly = echarts.init(document.getElementById('chart-weekly'));
+chartWeekly.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: wLabels.map(l => `週${l}`),
+    axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 10, rotate: 30 },
+    axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [
+    { name: '社務所だより', type: 'bar', data: wNews, itemStyle: { color: '#c0392b' }, barMaxWidth: 22, stack: 'w' },
+    { name: '神籤草子',     type: 'bar', data: wCol,  itemStyle: { color: '#b8860b' }, barMaxWidth: 22, stack: 'w',
+      markPoint: { data: [{ type: 'max', name: '最大' }], itemStyle: { color: '#5c3317' } } }
+  ]
+});
+
+const chartWeeklyChars = echarts.init(document.getElementById('chart-weekly-chars'));
+chartWeeklyChars.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' }, formatter: p => `週${p[0].name}<br>総文字数: <strong>${p[0].value.toLocaleString()}字</strong>` },
+  grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: wLabels,
+    axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 10, rotate: 30 },
+    axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [{
+    type: 'bar', data: wChars,
+    itemStyle: {
+      color: (p) => {
+        const v = p.value;
+        if (v === 0) return '#e8d5b7';
+        if (v < 2000) return '#d4a017';
+        if (v < 6000) return '#c0392b';
+        return '#7b1c1c';
+      }
+    },
+    barMaxWidth: 30,
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 9, formatter: p => p.value > 0 ? (p.value/1000).toFixed(1)+'k' : '0' }
+  }]
+});
+
+// 新規：タグ・カテゴリ バブルチャート
+const chartTagBubble = echarts.init(document.getElementById('chart-tag-bubble'));
+chartTagBubble.setOption({
+  tooltip: {
+    formatter: p => `${p.data.name}<br>記事数: ${p.data.value[0]}本<br>平均文字数: ${p.data.value[1]}字<br>総文字数: ${p.data.value[2].toLocaleString()}字`,
+    backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 }
+  },
+  grid: { left: '10%', right: '10%', bottom: '15%', top: '15%', containLabel: true },
+  xAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  yAxis: { type: 'value', name: '平均文字数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  series: [{
+    type: 'scatter',
+    data: bubbleData,
+    symbolSize: p => Math.sqrt(p[2]) * 0.4,
+    label: { show: true, formatter: '{b}', position: 'top', color: '#5c3317', fontSize: 9 }
+  }]
+});
+
+// 新規：記事長クラス分布
+const chartLengthPie = echarts.init(document.getElementById('chart-length-pie'));
+chartLengthPie.setOption({
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { bottom: 0, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: 'Noto Serif JP' } },
+  series: [{
+    type: 'pie', radius: ['40%', '70%'], center: ['50%', '45%'],
+    data: lengthPieData,
+    itemStyle: { borderColor: '#faf6ef', borderWidth: 2 },
+    label: { color: '#5c3317', fontSize: 11, fontFamily: 'Noto Serif JP' },
+    color: ['#95a5a6', '#f39c12', '#c0392b']
+  }]
+});
+
+const tagCount = {};
+newsData.forEach(a => { tagCount[a.tag] = (tagCount[a.tag] || 0) + 1; });
+const mainTags = {};
+Object.entries(tagCount).forEach(([k, v]) => {
+  if (v >= 2) mainTags[k] = v;
+  else mainTags['その他（各1件）'] = (mainTags['その他（各1件）'] || 0) + 1;
+});
+const tagPieData = Object.entries(mainTags).map(([k, v]) => ({ name: k, value: v })).sort((a,b) => b.value - a.value);
+
+const chartNewsTags = echarts.init(document.getElementById('chart-news-tags'));
+chartNewsTags.setOption({
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  series: [{
+    type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
+    data: tagPieData,
+    label: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
+  }],
+  color: ['#c0392b','#27ae60','#e67e22','#2980b9','#8e44ad','#f39c12','#7f8c8d','#1abc9c','#2c3e50','#95a5a6','#d4c4a0']
+});
+
+const catCount = {};
+colData.forEach(a => { catCount[a.category] = (catCount[a.category] || 0) + 1; });
+const catPieData = Object.entries(catCount).map(([k,v]) => ({ name: k, value: v })).sort((a,b) => b.value - a.value);
+
+const chartColCats = echarts.init(document.getElementById('chart-col-cats'));
+chartColCats.setOption({
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  series: [{
+    type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
+    data: catPieData,
+    label: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
+  }],
+  color: ['#c0392b','#27ae60','#2980b9','#e67e22','#8e44ad','#7f8c8d','#f39c12','#16a085','#2c3e50','#e74c3c','#1abc9c','#d35400','#95a5a6','#9b59b6']
+});
+
+const groups = {
+  'バグ修正系': newsData.filter(a => ['不具合修正','不具合解消','障害報告','結界修復'].includes(a.tag)).length,
+  '新機能追加': newsData.filter(a => ['新機能','新機能・規約','機能追加','機能追加・修正','機能昇格'].includes(a.tag)).length,
+  'デザイン改善': newsData.filter(a => a.tag.includes('デザイン') || ['意匠調整','意匠変更','UI刷新 (β)'].includes(a.tag)).length,
+  'システム関連': newsData.filter(a => a.tag.startsWith('システム') || ['セキュリティ・システム'].includes(a.tag)).length,
+  'お知らせ系': newsData.filter(a => ['お知らせ','ご挨拶','メンテナンス'].includes(a.tag)).length,
+  '機能撤去廃棄': newsData.filter(a => ['機能撤去','機能廃棄','機能変更'].includes(a.tag)).length,
+  '重要事項': newsData.filter(a => a.tag.startsWith('重要')).length,
+};
+const improvementCount = newsData.filter(a => ['機能改善','制限緩和'].includes(a.tag)).length;
+const groupsFinal = { '機能改善': improvementCount, ...groups };
+
+const chartGrouped = echarts.init(document.getElementById('chart-news-grouped'));
+chartGrouped.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  grid: { left: 5, right: 40, top: 10, bottom: 5, containLabel: true },
+  xAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 9 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: {
+    type: 'category',
+    data: Object.keys(groupsFinal),
+    axisLabel: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    axisLine: { lineStyle: { color: '#d4c4a0' } }
+  },
+  series: [{
+    type: 'bar',
+    data: Object.values(groupsFinal),
+    barMaxWidth: 18,
+    itemStyle: {
+      color: (params) => {
+        const colors = ['#2980b9','#27ae60','#1abc9c','#8e44ad','#7f8c8d','#e74c3c','#c0392b','#f39c12'];
+        return colors[params.dataIndex % colors.length];
+      }
+    },
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9 }
+  }]
+});
+
+const chartTimeline = echarts.init(document.getElementById('chart-timeline'));
+chartTimeline.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '3%', right: '3%', bottom: '15%', top: '5%', containLabel: true },
+  xAxis: { type: 'category', data: tlDates, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: 'Noto Serif JP' }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } }, max: 9 },
+  series: [
+    { name: '社務所だより', type: 'bar', data: tlNewsData, itemStyle: { color: '#c0392b' }, barMaxWidth: 12, stack: 'total' },
+    { name: '神籤草子', type: 'bar', data: tlColData, itemStyle: { color: '#b8860b' }, barMaxWidth: 12, stack: 'total' }
+  ]
+});
+
+const chartCumulative = echarts.init(document.getElementById('chart-cumulative'));
+chartCumulative.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { data: ['累積ニュース','累積コラム','累積合計'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '8%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
+  xAxis: { type: 'category', data: cumDataDynamic.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [
+    { name: '累積ニュース', type: 'line', data: cumDataDynamic.map(d=>d.news), itemStyle: { color: '#c0392b' }, lineStyle: { color: '#c0392b', width: 2 }, areaStyle: { color: 'rgba(192,57,43,0.08)' }, showSymbol: false, smooth: 0.2 },
+    { name: '累積コラム',   type: 'line', data: cumDataDynamic.map(d=>d.col),  itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2 }, areaStyle: { color: 'rgba(184,134,11,0.08)' }, showSymbol: false, smooth: 0.2 },
+    { name: '累積合計',     type: 'line', data: cumDataDynamic.map(d=>d.total), itemStyle: { color: '#2c3e50' }, lineStyle: { color: '#2c3e50', width: 2.5, type: 'dashed' }, showSymbol: false, smooth: 0.2,
+      markPoint: { data: [{ name: '100記事', coord: ['2026-02-18', 100], value: '100!' }], label: { color: '#f5e6c8', fontSize: 10, fontFamily: 'Noto Serif JP' }, itemStyle: { color: '#c0392b' } }
+    }
+  ]
+});
+
+// 新規：累積文字数チャート
+const chartCumChars = echarts.init(document.getElementById('chart-cumulative-chars'));
+chartCumChars.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { data: ['ニュース累積文字数','コラム累積文字数','合計文字数'], bottom: 0, textStyle: { color: '#8b7355', fontSize: 11 } },
+  grid: { left: '8%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
+  xAxis: { type: 'category', data: cumCharsData.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10, formatter: v => (v/1000).toFixed(0)+'k' }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  series: [
+    { name: 'ニュース累積文字数', type: 'line', data: cumCharsData.map(d=>d.news), color: '#c0392b', smooth: true, showSymbol: false, areaStyle: { opacity: 0.05 } },
+    { name: 'コラム累積文字数', type: 'line', data: cumCharsData.map(d=>d.col), color: '#b8860b', smooth: true, showSymbol: false, areaStyle: { opacity: 0.05 } },
+    { name: '合計文字数', type: 'line', data: cumCharsData.map(d=>d.total), color: '#2c3e50', smooth: true, showSymbol: false, lineStyle: { type: 'dashed', width: 2 } }
+  ]
+});
+
+const chartHours = echarts.init(document.getElementById('chart-hours'));
+chartHours.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' }, formatter: p => `${p[0].name}台: <strong>${p[0].value}本</strong>` },
+  grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: Array.from({length:24}, (_,i) => i+'時'),
+    axisLabel: { color: '#8b7355', fontSize: 9, interval: 1 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  visualMap: { show: false, min: 0, max: Math.max(...hourCounts), inRange: { color: ['#f5e6c8', '#e8a87c', '#c0392b'] } },
+  series: [{ type: 'bar', data: hourCounts, barMaxWidth: 16,
+    markArea: { data: [[{ xAxis: '16時' }, { xAxis: '19時' }]], itemStyle: { color: 'rgba(192,57,43,0.08)' } }
+  }]
+});
+
+const chartDow = echarts.init(document.getElementById('chart-dow'));
+chartDow.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [{
+    type: 'bar', data: dowCounts, barMaxWidth: 30,
+    itemStyle: { color: (p) => ['#8e44ad','#2980b9','#27ae60','#7f8c8d','#e67e22','#c0392b','#b8860b'][p.dataIndex] },
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: 'Noto Serif JP' }
+  }]
+});
+
+// 新規：曜日×時間帯 ヒートマップ
+const chartDowHour = echarts.init(document.getElementById('chart-dow-hour-heatmap'));
+chartDowHour.setOption({
+  tooltip: { position: 'top', formatter: p => `${dowLabels[p.data[1]]}曜日 ${p.data[0]}時台: <strong>${p.data[2]}本</strong>`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '10%', right: '5%', bottom: '15%', top: '5%', containLabel: true },
+  xAxis: { type: 'category', data: Array.from({length:24}, (_,i)=>i+'時'), axisLabel: { color: '#8b7355', fontSize: 9 } },
+  yAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#5c3317', fontSize: 10, fontFamily: 'Noto Serif JP' } },
+  visualMap: { show: false, min: 0, max: Math.max(...dowHourData.map(d=>d[2]), 1), inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] } },
+  series: [{ type: 'heatmap', data: dowHourData, label: { show: true, color: '#1a1008', fontSize: 8, formatter: p => p.data[2] > 0 ? p.data[2] : '' }, itemStyle: { borderColor: '#f5e6c8', borderWidth: 1 } }]
+});
+
+const chartHist = echarts.init(document.getElementById('chart-hist'));
+chartHist.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '5%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
+  xAxis: {
+    type: 'category', data: histBins,
+    axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 10, rotate: 10 },
+    axisLine: { lineStyle: { color: '#d4c4a0' } }
+  },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [
+    { name: '社務所だより', type: 'bar', data: hNews, itemStyle: { color: '#c0392b' }, barMaxWidth: 30 },
+    { name: '神籤草子',     type: 'bar', data: hCol,  itemStyle: { color: '#b8860b' }, barMaxWidth: 30 }
+  ]
+});
+
+const chartScatter = echarts.init(document.getElementById('chart-scatter'));
+chartScatter.setOption({
+  tooltip: {
+    trigger: 'item',
+    backgroundColor: '#1a1008ee',
+    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    formatter: p => `#${p.data[0]} [${p.data[3]}]<br>${p.data[2].slice(0,28)}…<br><strong>${p.data[1].toLocaleString()}字</strong>`
+  },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '5%', right: '5%', bottom: '15%', top: '5%', containLabel: true },
+  xAxis: { type: 'value', name: 'ID', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [
+    { name: '社務所だより', type: 'scatter', data: scatterNews, symbolSize: 7, itemStyle: { color: '#c0392b', opacity: 0.75 } },
+    { name: '神籤草子',     type: 'scatter', data: scatterCol,  symbolSize: 7, itemStyle: { color: '#b8860b', opacity: 0.75 } }
+  ]
+});
+
+const chartTagLen = echarts.init(document.getElementById('chart-tag-len'));
+chartTagLen.setOption({
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: '#1a1008dd',
+    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
+  },
+  grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
+  xAxis: {
+    type: 'value',
+    axisLabel: { color: '#8b7355', fontSize: 9 },
+    splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
+    max: 1900
+  },
+  yAxis: {
+    type: 'category',
+    data: tagAvg.map(t => t.tag),
+    axisLabel: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 9 },
+    axisLine: { lineStyle: { color: '#d4c4a0' } }
+  },
+  series: [{
+    type: 'bar',
+    data: tagAvg.map(t => ({
+      value: t.avg,
+      itemStyle: { color: tagColors[t.tag] || '#7f8c8d' }
+    })),
+    barMaxWidth: 14,
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, formatter: p => `${p.value}字` }
+  }]
+});
+
+const chartCatLen = echarts.init(document.getElementById('chart-cat-len'));
+chartCatLen.setOption({
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: '#1a1008dd',
+    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong> (${catGroups[p[0].name].length}件)`
+  },
+  grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
+  xAxis: {
+    type: 'value',
+    axisLabel: { color: '#8b7355', fontSize: 9 },
+    splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
+    max: 2500
+  },
+  yAxis: {
+    type: 'category',
+    data: catAvg.map(t => t.cat),
+    axisLabel: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    axisLine: { lineStyle: { color: '#d4c4a0' } }
+  },
+  series: [{
+    type: 'bar',
+    data: catAvg.map(t => ({
+      value: t.avg,
+      itemStyle: { color: catColors[t.cat] || '#7f8c8d' }
+    })),
+    barMaxWidth: 18,
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, formatter: p => `${p.value}字` }
+  }]
+});
+
+// ═══════════════════════════════════════════
+//  TABLES
+// ═══════════════════════════════════════════
+
+let newsSortKey = 'date', newsSortDir = -1;
+let colSortKey = 'date', colSortDir = -1;
+let newsFiltered = [...newsData].sort((a,b) => pd(b.date).getTime() - pd(a.date).getTime() || b.id - a.id);
+let colFiltered  = [...colData].sort((a,b) => pd(b.date).getTime() - pd(a.date).getTime() || b.id - a.id);
+
+const tagSel = document.getElementById('news-tag-filter');
+const allTags = [...new Set(newsData.map(a => a.tag))].sort();
+allTags.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; tagSel.appendChild(o); });
+
+const catSel = document.getElementById('col-cat-filter');
+const allCats = [...new Set(colData.map(a => a.category))].sort();
+allCats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; catSel.appendChild(o); });
+
+function renderNewsTable(data) {
+  const tb = document.getElementById('news-tbody');
+  if (!data.length) { tb.innerHTML = `<tr><td colspan="6" class="no-results">該当する記事がありません</td></tr>`; return; }
+  tb.innerHTML = data.map(a => `
+    <tr>
+      <td class="id-cell">#${a.id}</td>
+      <td class="date-cell">${a.date}<br><span style="color:#b8860b;font-size:0.72rem">${a.time}</span></td>
+      <td>${tagBadge(a.tag, tagColors)}</td>
+      <td class="title-cell">${a.title}</td>
+      <td>${charBar(a.chars)}</td>
+      <td class="desc-cell">${a.desc.length > 80 ? a.desc.slice(0,80) + '…' : a.desc}</td>
+    </tr>
+  `).join('');
+  document.getElementById('news-count').textContent = `${data.length}件表示中`;
+}
+
+function renderColTable(data) {
+  const tb = document.getElementById('col-tbody');
+  if (!data.length) { tb.innerHTML = `<tr><td colspan="5" class="no-results">該当する記事がありません</td></tr>`; return; }
+  tb.innerHTML = data.map(a => `
+    <tr>
+      <td class="id-cell">#${a.id}</td>
+      <td class="date-cell">${a.date}</td>
+      <td>${tagBadge(a.category, catColors)}</td>
+      <td class="title-cell">${a.title}</td>
+      <td>${charBar(a.chars, 2400)}</td>
+    </tr>
+  `).join('');
+  document.getElementById('col-count').textContent = `${data.length}件表示中`;
+}
+
+function filterNews() {
+  const q = document.getElementById('news-search').value.toLowerCase();
+  const tag = document.getElementById('news-tag-filter').value;
+  newsFiltered = newsData.filter(a =>
+    (!q || a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q)) &&
+    (!tag || a.tag === tag)
+  );
+  sortAndRender('news');
+}
+
+function filterCol() {
+  const q = document.getElementById('col-search').value.toLowerCase();
+  const cat = document.getElementById('col-cat-filter').value;
+  colFiltered = colData.filter(a =>
+    (!q || a.title.toLowerCase().includes(q)) &&
+    (!cat || a.category === cat)
+  );
+  sortAndRender('col');
+}
+
+function sortTable(type, key) {
+  if (type === 'news') {
+    if (newsSortKey === key) newsSortDir *= -1; else { newsSortKey = key; newsSortDir = -1; }
+    sortAndRender('news');
+  } else {
+    if (colSortKey === key) colSortDir *= -1; else { colSortKey = key; colSortDir = -1; }
+    sortAndRender('col');
+  }
+}
+
+function sortAndRender(type) {
+  if (type === 'news') {
+    newsFiltered.sort((a, b) => {
+      let av = newsSortKey === 'date' ? pd(a.date).getTime() : a[newsSortKey];
+      let bv = newsSortKey === 'date' ? pd(b.date).getTime() : b[newsSortKey];
+      if (av === bv && newsSortKey === 'date') return (b.id - a.id) * newsSortDir;
+      return (av > bv ? 1 : -1) * newsSortDir;
+    });
+    renderNewsTable(newsFiltered);
+  } else {
+    colFiltered.sort((a, b) => {
+      let av = colSortKey === 'date' ? pd(a.date).getTime() : a[colSortKey];
+      let bv = colSortKey === 'date' ? pd(b.date).getTime() : b[colSortKey];
+      if (av === bv && colSortKey === 'date') return (b.id - a.id) * colSortDir;
+      return (av > bv ? 1 : -1) * colSortDir;
+    });
+    renderColTable(colFiltered);
+  }
+}
+
+renderNewsTable(newsFiltered);
+renderColTable(colFiltered);
+
+// ═══════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════
+function switchTab(t) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i === 0 && t === 'news') || (i === 1 && t === 'col')));
+  document.getElementById('tab-news').classList.toggle('active', t === 'news');
+  document.getElementById('tab-col').classList.toggle('active', t === 'col');
+}
+
+// RESIZE
+window.addEventListener('resize', () => {
+  [chartMonthly, chartHeatmap, chartNewsTags, chartColCats, chartGrouped, chartTimeline,
+   chartHist, chartScatter, chartTagLen, chartCatLen, chartTagBubble, chartLengthPie,
+   chartWeekly, chartWeeklyChars, chartCumulative, chartCumChars,
+   chartHours, chartDow, chartDowHour].forEach(c => c && c.resize());
+});
+
+</script>
+</body>
+</html>
