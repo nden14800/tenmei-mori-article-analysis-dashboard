@@ -610,6 +610,20 @@
     </div>
   </div>
 
+  <!-- 神籤草子 行動パターン -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">曜日別投稿数（神籤草子）</div>
+      <div class="chart-box" id="chart-col-dow"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>神籤草子42本の投稿曜日の分布だ。ニュース（社務所だより）が緊急修正や機能リリースというシステム上の要求に引きずられる形で曜日分布が形成されるのに対し、コラムはより「執筆者の意志」が反映された分布になるはずだという仮説を検証できるグラフだ。<strong>木曜・金曜・土曜への集中</strong>が見られる場合、週後半に「書く時間」が確保されていることを示す。一方でニュースとは異なり、特定の曜日へのかたよりが穏やかであれば、コラムが「気が向いたときに書く」スタイルであることが読み取れる。ニュースは「リリース後に書かざるを得ない」反応型の曜日分布を持つが、コラムは「書きたいときに書く」能動型の分布を持つと考えられる。この2つを比較することで、同じ開発者がニュースとコラムでどれほど異なるリズムで制作活動をしていたかが浮かび上がる。</div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">曜日別投稿数 比較（ニュース vs 神籤草子）</div>
+      <div class="chart-box" id="chart-dow-compare"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>ニュース（赤）と神籤草子（金）の曜日別投稿数を1つのグラフで重ねた比較棒グラフだ。両者の曜日パターンのズレや一致を直接読み比べることができる。<strong>注目点は「ニュースが多い曜日にコラムも多いか、それとも逆位相になるか」</strong>だ。もし土曜など高密度更新日にコラムも集中していれば、開発とコンテンツ制作が同じエネルギーを燃料として走っていたことの証明になる。逆にニュースの少ない木曜にコラムが多ければ、「開発の仕込み日」に読み物を書くという精神的な切り替えが行われていた可能性がある。また、コラムは月別で見ると2月に向けて比重が増す傾向があり（1月の機能開発ラッシュが落ち着いた後）、週次の曜日分布よりも「フェーズ」として読むべき側面もある。このグラフはその両面を補完的に整理する基盤となる。</div>
+    </div>
+  </div>
+
   <!-- CHAR COUNT ANALYSIS -->
   <div class="section-title">文字数分析 — Content Length Analysis</div>
 
@@ -727,7 +741,7 @@
     <p style="margin-bottom:1.2rem">このプロジェクトの最も秀逸な特徴の一つは、社務所だより（ニュース）と神籤草子（コラム）という二つの媒体が、明確に役割を分担していることだ。ニュースは「機能開発・不具合修正・システム変更・設計思想の透明な開示」に徹し、コラムは「神社・おみくじ・日本の暦や習慣に関する教養コンテンツの発信」に専念している。この分業は1月5〜6日の超高密度更新日に特に顕著で、この2日間にニュース7本とコラム11本が同時並行で公開されており、<strong>インフラ整備（ハード面）とコンテンツ充実（ソフト面）が全く同じ熱量で並行推進</strong>されていたことを示している。コラムのカテゴリ構成グラフを見ると、クイズ（約26%）・歳時記・読み解き・雑学・歴史という幅広いラインナップが揃っており、神社文化への興味を持つあらゆる層の読者に対して何らかの接点を提供できる設計になっている。特に「クイズ」が最多カテゴリであることは、単に情報を「受け取る」だけでなく「参加する」体験を設計しているという、エンゲージメント戦略の核心を示している。</p>
 
     <p style="font-family:'Zen Old Mincho',serif;color:var(--cedar);margin:1.6rem 0 0.6rem;font-size:0.95rem">▍ 開発者の行動リズムが示す持続可能性</p>
-    <p style="margin-bottom:1.2rem">投稿時刻の分布（24時間ヒストグラム）・曜日別投稿数・曜日×時間帯ヒートマップという3つの行動パターングラフは、開発者の日常的なワークサイクルを驚くほど詳細に浮かび上がらせる。<strong>16〜19時台への集中、土曜日の高密度更新、木曜日の潜伏</strong>というパターンは互いに補完し合っており、「平日夕方に日常更新、土曜に大型リリース、木曜に翌週の仕込み」というリズムが自然発生的に確立されていることがわかる。深夜・早朝の投稿が散在していることは、緊急インシデントへの迅速な対応能力の証でもある。このようなリズムは、プロジェクトが長期にわたって継続するための重要な基盤だ。短期的な爆発的活動（1月の超高密度更新）の後に適切な休息期間（2月上旬の停止週）を経て安定した巡航速度へ移行するという流れは、個人開発プロジェクトが「燃え尽きずに走り続ける」ための理想的なサイクルと言える。累積成長曲線グラフの傾きの変化は、まさにこの「加速→充電→巡航」の三段階を美しく可視化している。</p>
+    <p style="margin-bottom:1.2rem">投稿時刻の分布（24時間ヒストグラム）・曜日別投稿数・曜日×時間帯ヒートマップという3つのニュース行動パターングラフに加え、神籤草子の曜日分布と両媒体の比較グラフを対照することで、開発者の活動リズムの全体像が浮かび上がる。<strong>16〜19時台への集中、土曜日の高密度更新、木曜日の潜伏</strong>というニュースパターンに対し、神籤草子はより穏やかな曜日分布を示しており、「システムに引きずられて書くニュース」と「自らの意志で書くコラム」という対照的な制作スタイルの差異が数値として確認できる。深夜・早朝のニュース投稿が散在していることは、緊急インシデントへの迅速な対応能力の証でもある。このようなリズムは、プロジェクトが長期にわたって継続するための重要な基盤だ。短期的な爆発的活動（1月の超高密度更新）の後に適切な休息期間（2月上旬の停止週）を経て安定した巡航速度へ移行するという流れは、個人開発プロジェクトが「燃え尽きずに走り続ける」ための理想的なサイクルと言える。累積成長曲線グラフの傾きの変化は、まさにこの「加速→充電→巡航」の三段階を美しく可視化している。</p>
 
     <p style="font-family:'Zen Old Mincho',serif;color:var(--cedar);margin:1.6rem 0 0.6rem;font-size:0.95rem">▍ 文字数に宿るプロダクト哲学</p>
     <p style="margin-bottom:1.2rem">このプロジェクトにおける文字数の変遷は、単なる執筆量の推移を超えた深い意味を持っている。ニュース記事の平均文字数が12月の約96字程度から2月には約700字へと激増したこと、そしてシステム関連・重要事項タグの記事が平均900字超で最長クラスであることは、<strong>「変更の背景と理由を丁寧に伝えることが信頼構築の礎」</strong>という運営哲学が数字として具現化されたものだ。「なぜDBを移行したのか」「なぜ実績バッジを廃棄したのか」「なぜTurnstile認証を撤去したのか」——これらの問いに対して、非エンジニアの参拝者にも伝わる言葉で誠実に答え続けてきたことが、このサービスの透明性と信頼性の源泉であると言えるだろう。一方でコラムが500〜700字の「黄金帯」に収束していることは、読者のスマートフォン体験を最優先にした意図的な文字数設計であり、特別クイズのみ1,900〜2,200字という超長文となっている点も「日常消費コンテンツ」と「腰を据えて楽しむ特別体験」を明確に分けた設計の結果だ。文字数分布ヒストグラム・散布図・タグ別/カテゴリ別平均文字数グラフが総じて語るのは、「情報の重さに見合った文字数を選ぶ」という一貫した情報設計の美学である。</p>
@@ -1045,6 +1059,15 @@ newsData.forEach(a => {
       dowHourData[idx][2]++;
     }
   }
+});
+
+// コラム 曜日データ（timeフィールドなし → 曜日のみ集計）
+const colDowCounts = Array(7).fill(0);
+colData.forEach(a => {
+  const dObj = new Date(a.date);
+  let dow = dObj.getDay() - 1;
+  if(dow === -1) dow = 6;
+  colDowCounts[dow]++;
 });
 
 // ヒストグラムデータ
@@ -1481,6 +1504,34 @@ chartDowHour.setOption({
   yAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#5c3317', fontSize: 10, fontFamily: 'Noto Serif JP' } },
   visualMap: { show: false, min: 0, max: Math.max(...dowHourData.map(d=>d[2]), 1), inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] } },
   series: [{ type: 'heatmap', data: dowHourData, label: { show: true, color: '#1a1008', fontSize: 8, formatter: p => p.data[2] > 0 ? p.data[2] : '' }, itemStyle: { borderColor: '#f5e6c8', borderWidth: 1 } }]
+});
+
+// 神籤草子 曜日別
+const chartColDow = echarts.init(document.getElementById('chart-col-dow'));
+chartColDow.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [{
+    type: 'bar', data: colDowCounts, barMaxWidth: 30,
+    itemStyle: { color: (p) => ['#b8860b','#c5a028','#d4b845','#a0782a','#e8c45a','#b8860b','#8b6914'][p.dataIndex] },
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: 'Noto Serif JP' }
+  }]
+});
+
+// ニュース vs コラム 曜日比較
+const chartDowCompare = echarts.init(document.getElementById('chart-dow-compare'));
+chartDowCompare.setOption({
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [
+    { name: '社務所だより', type: 'bar', data: dowCounts,    itemStyle: { color: '#c0392b' }, barMaxWidth: 22 },
+    { name: '神籤草子',     type: 'bar', data: colDowCounts, itemStyle: { color: '#b8860b' }, barMaxWidth: 22 }
+  ]
 });
 
 const chartHist = echarts.init(document.getElementById('chart-hist'));
