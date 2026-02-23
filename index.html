@@ -1179,11 +1179,12 @@ const groupAvgCharsArr = Object.entries(groupCharData)
 
 const chartMonthly = echarts.init(document.getElementById('chart-monthly'));
 chartMonthly.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '15%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: mNewsCnt, itemStyle: { color: '#c0392b' }, barMaxWidth: 40 },
     { name: '神籤草子', type: 'bar', data: mColCnt, itemStyle: { color: '#b8860b' }, barMaxWidth: 40 }
@@ -1193,26 +1194,27 @@ chartMonthly.setOption({
 // 新規：月別ニュース 総文字数（棒）＋平均文字数（折れ線）複合チャート
 const chartMonthlyAvg = echarts.init(document.getElementById('chart-monthly-avg'));
 chartMonthlyAvg.setOption({
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
     formatter: params => {
       let s = `<strong>${params[0].axisValueLabel}</strong><br>`;
       params.forEach(p => { s += `${p.marker}${p.seriesName}: <strong>${p.value.toLocaleString()}${p.seriesIndex === 1 ? '字（平均）' : '字（合計）'}</strong><br>`; });
       return s;
     }
   },
-  legend: { data: ['月別ニュース総文字数', 'ニュース1記事平均文字数'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  legend: { data: ['月別ニュース総文字数', 'ニュース1記事平均文字数'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '5%', right: '8%', bottom: '18%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
   yAxis: [
-    { type: 'value', name: '総文字数', nameTextStyle: { color: '#c0392b', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10, formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
-    { type: 'value', name: '平均文字数', nameTextStyle: { color: '#b8860b', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { show: false }, min: 0 }
+    { type: 'value', name: '総文字数', nameTextStyle: { color: '#c0392b', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+    { type: 'value', name: '平均文字数', nameTextStyle: { color: '#b8860b', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { show: false }, min: 0 }
   ],
   series: [
     { name: '月別ニュース総文字数', type: 'bar', data: mNewsChars, yAxisIndex: 0, itemStyle: { color: '#c0392b' }, barMaxWidth: 50 },
-    { name: 'ニュース1記事平均文字数', type: 'line', data: mNewsAvg, yAxisIndex: 1, itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2.5 }, symbol: 'circle', symbolSize: 8, label: { show: true, position: 'top', color: '#b8860b', fontSize: 10, fontFamily: 'Noto Serif JP', formatter: p => p.value+'字' } }
+    { name: 'ニュース1記事平均文字数', type: 'line', data: mNewsAvg, yAxisIndex: 1, itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2.5 }, symbol: 'circle', symbolSize: 8, label: { show: true, position: 'top', color: '#b8860b', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: p => p.value+'字' } }
   ]
 });
 
@@ -1227,25 +1229,27 @@ const maxDay = Math.max(...Object.values(dailyCounts), 1);
 
 const chartHeatmap = echarts.init(document.getElementById('chart-heatmap'));
 chartHeatmap.setOption({
-  tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 5, left: 'center', inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] }, textStyle: { color: '#8b7355', fontSize: 10 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 5, left: 'center', inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] }, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
   calendar: { range: ['2025-12-01', '2026-02-28'], cellSize: ['auto', 16], left: 40, right: 10, top: 20, bottom: 40,
     itemStyle: { borderColor: '#d4c4a0', borderWidth: 0.5 },
-    dayLabel: { color: '#8b7355', fontSize: 9, nameMap: ['日','月','火','水','木','金','土'] },
-    monthLabel: { color: '#5c3317', fontSize: 10, nameMap: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
+    dayLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", nameMap: ['日','月','火','水','木','金','土'] },
+    monthLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif", nameMap: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
     yearLabel: { show: false } },
   series: [{ type: 'heatmap', coordinateSystem: 'calendar', data: heatmapData }]
 });
 
 const chartWeekly = echarts.init(document.getElementById('chart-weekly'));
 chartWeekly.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
   xAxis: { type: 'category', data: wLabels.map(l => `週${l}`),
-    axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 10, rotate: 30 },
+    axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 10, rotate: 30 },
     axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: wNews, itemStyle: { color: '#c0392b' }, barMaxWidth: 22, stack: 'w' },
     { name: '神籤草子',     type: 'bar', data: wCol,  itemStyle: { color: '#b8860b' }, barMaxWidth: 22, stack: 'w',
@@ -1255,12 +1259,13 @@ chartWeekly.setOption({
 
 const chartWeeklyChars = echarts.init(document.getElementById('chart-weekly-chars'));
 chartWeeklyChars.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' }, formatter: p => `週${p[0].name}<br>総文字数: <strong>${p[0].value.toLocaleString()}字</strong>` },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" }, formatter: p => `週${p[0].name}<br>総文字数: <strong>${p[0].value.toLocaleString()}字</strong>` },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
   xAxis: { type: 'category', data: wLabels,
-    axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 10, rotate: 30 },
+    axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 10, rotate: 30 },
     axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [{
     type: 'bar', data: wChars,
     itemStyle: {
@@ -1273,38 +1278,40 @@ chartWeeklyChars.setOption({
       }
     },
     barMaxWidth: 30,
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 9, formatter: p => p.value > 0 ? (p.value/1000).toFixed(1)+'k' : '0' }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => p.value > 0 ? (p.value/1000).toFixed(1)+'k' : '0' }
   }]
 });
 
 // 新規：タグ・カテゴリ バブルチャート
 const chartTagBubble = echarts.init(document.getElementById('chart-tag-bubble'));
 chartTagBubble.setOption({
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
   tooltip: {
     formatter: p => `${p.data.name}<br>記事数: ${p.data.value[0]}本<br>平均文字数: ${p.data.value[1]}字<br>総文字数: ${p.data.value[2].toLocaleString()}字`,
-    backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 }
+    backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 }
   },
   grid: { left: '10%', right: '10%', bottom: '15%', top: '15%', containLabel: true },
-  xAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
-  yAxis: { type: 'value', name: '平均文字数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  xAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  yAxis: { type: 'value', name: '平均文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
   series: [{
     type: 'scatter',
     data: bubbleData,
     symbolSize: p => Math.sqrt(p[2]) * 0.4,
-    label: { show: true, formatter: '{b}', position: 'top', color: '#5c3317', fontSize: 9 }
+    label: { show: true, formatter: '{b}', position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }
   }]
 });
 
 // 新規：記事長クラス分布
 const chartLengthPie = echarts.init(document.getElementById('chart-length-pie'));
 chartLengthPie.setOption({
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  legend: { bottom: 0, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: 'Noto Serif JP' } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  legend: { bottom: 0, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
   series: [{
     type: 'pie', radius: ['40%', '70%'], center: ['50%', '45%'],
     data: lengthPieData,
     itemStyle: { borderColor: '#faf6ef', borderWidth: 2 },
-    label: { color: '#5c3317', fontSize: 11, fontFamily: 'Noto Serif JP' },
+    label: { color: '#5c3317', fontSize: 11, fontFamily: "'Noto Serif JP', serif" },
     color: ['#95a5a6', '#f39c12', '#c0392b']
   }]
 });
@@ -1320,11 +1327,12 @@ const tagPieData = Object.entries(mainTags).map(([k, v]) => ({ name: k, value: v
 
 const chartNewsTags = echarts.init(document.getElementById('chart-news-tags'));
 chartNewsTags.setOption({
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
   series: [{
     type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
     data: tagPieData,
-    label: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    label: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
     itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
   }],
   color: ['#c0392b','#27ae60','#e67e22','#2980b9','#8e44ad','#f39c12','#7f8c8d','#1abc9c','#2c3e50','#95a5a6','#d4c4a0']
@@ -1336,11 +1344,12 @@ const catPieData = Object.entries(catCount).map(([k,v]) => ({ name: k, value: v 
 
 const chartColCats = echarts.init(document.getElementById('chart-col-cats'));
 chartColCats.setOption({
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
   series: [{
     type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
     data: catPieData,
-    label: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    label: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
     itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
   }],
   color: ['#c0392b','#27ae60','#2980b9','#e67e22','#8e44ad','#7f8c8d','#f39c12','#16a085','#2c3e50','#e74c3c','#1abc9c','#d35400','#95a5a6','#9b59b6']
@@ -1360,13 +1369,14 @@ const groupsFinal = { '機能改善': improvementCount, ...groups };
 
 const chartGrouped = echarts.init(document.getElementById('chart-news-grouped'));
 chartGrouped.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
   grid: { left: 5, right: 40, top: 10, bottom: 5, containLabel: true },
-  xAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 9 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   yAxis: {
     type: 'category',
     data: Object.keys(groupsFinal),
-    axisLabel: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1379,30 +1389,31 @@ chartGrouped.setOption({
         return colors[params.dataIndex % colors.length];
       }
     },
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9 }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }
   }]
 });
 
 // 新規：ニュース属性別・平均文字数チャート
 const chartGroupAvgChars = echarts.init(document.getElementById('chart-group-avg-chars'));
 chartGroupAvgChars.setOption({
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
   },
   grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
-    axisLabel: { color: '#8b7355', fontSize: 9 },
+    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
     max: 1200
   },
   yAxis: {
     type: 'category',
     data: groupAvgCharsArr.map(g => g.name),
-    axisLabel: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1421,17 +1432,18 @@ chartGroupAvgChars.setOption({
       }
     })),
     barMaxWidth: 18,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => `${p.value}字` }
   }]
 });
 
 const chartTimeline = echarts.init(document.getElementById('chart-timeline'));
 chartTimeline.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '3%', right: '3%', bottom: '15%', top: '5%', containLabel: true },
-  xAxis: { type: 'category', data: tlDates, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: 'Noto Serif JP' }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } }, max: 9 },
+  xAxis: { type: 'category', data: tlDates, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } }, max: 9 },
   series: [
     { name: '社務所だより', type: 'bar', data: tlNewsData, itemStyle: { color: '#c0392b' }, barMaxWidth: 12, stack: 'total' },
     { name: '神籤草子', type: 'bar', data: tlColData, itemStyle: { color: '#b8860b' }, barMaxWidth: 12, stack: 'total' }
@@ -1440,16 +1452,17 @@ chartTimeline.setOption({
 
 const chartCumulative = echarts.init(document.getElementById('chart-cumulative'));
 chartCumulative.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  legend: { data: ['累積ニュース','累積コラム','累積合計'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  legend: { data: ['累積ニュース','累積コラム','累積合計'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '8%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: cumDataDynamic.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: cumDataDynamic.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '累積ニュース', type: 'line', data: cumDataDynamic.map(d=>d.news), itemStyle: { color: '#c0392b' }, lineStyle: { color: '#c0392b', width: 2 }, areaStyle: { color: 'rgba(192,57,43,0.08)' }, showSymbol: false, smooth: 0.2 },
     { name: '累積コラム',   type: 'line', data: cumDataDynamic.map(d=>d.col),  itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2 }, areaStyle: { color: 'rgba(184,134,11,0.08)' }, showSymbol: false, smooth: 0.2 },
     { name: '累積合計',     type: 'line', data: cumDataDynamic.map(d=>d.total), itemStyle: { color: '#2c3e50' }, lineStyle: { color: '#2c3e50', width: 2.5, type: 'dashed' }, showSymbol: false, smooth: 0.2,
-      markPoint: { data: [{ name: '100記事', coord: ['2026-02-18', 100], value: '100!' }], label: { color: '#f5e6c8', fontSize: 10, fontFamily: 'Noto Serif JP' }, itemStyle: { color: '#c0392b' } }
+      markPoint: { data: [{ name: '100記事', coord: ['2026-02-18', 100], value: '100!' }], label: { color: '#f5e6c8', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, itemStyle: { color: '#c0392b' } }
     }
   ]
 });
@@ -1457,11 +1470,12 @@ chartCumulative.setOption({
 // 新規：累積文字数チャート
 const chartCumChars = echarts.init(document.getElementById('chart-cumulative-chars'));
 chartCumChars.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
   legend: { data: ['ニュース累積文字数','コラム累積文字数','合計文字数'], bottom: 0, textStyle: { color: '#8b7355', fontSize: 11 } },
   grid: { left: '8%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: cumCharsData.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10, formatter: v => (v/1000).toFixed(0)+'k' }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  xAxis: { type: 'category', data: cumCharsData.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: v => (v/1000).toFixed(0)+'k' }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
   series: [
     { name: 'ニュース累積文字数', type: 'line', data: cumCharsData.map(d=>d.news), color: '#c0392b', smooth: true, showSymbol: false, areaStyle: { opacity: 0.05 } },
     { name: 'コラム累積文字数', type: 'line', data: cumCharsData.map(d=>d.col), color: '#b8860b', smooth: true, showSymbol: false, areaStyle: { opacity: 0.05 } },
@@ -1471,11 +1485,12 @@ chartCumChars.setOption({
 
 const chartHours = echarts.init(document.getElementById('chart-hours'));
 chartHours.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' }, formatter: p => `${p[0].name}台: <strong>${p[0].value}本</strong>` },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" }, formatter: p => `${p[0].name}台: <strong>${p[0].value}本</strong>` },
   grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
   xAxis: { type: 'category', data: Array.from({length:24}, (_,i) => i+'時'),
-    axisLabel: { color: '#8b7355', fontSize: 9, interval: 1 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+    axisLabel: { color: '#8b7355', fontSize: 9, interval: 1, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   visualMap: { show: false, min: 0, max: Math.max(...hourCounts), inRange: { color: ['#f5e6c8', '#e8a87c', '#c0392b'] } },
   series: [{ type: 'bar', data: hourCounts, barMaxWidth: 16,
     markArea: { data: [[{ xAxis: '16時' }, { xAxis: '19時' }]], itemStyle: { color: 'rgba(192,57,43,0.08)' } }
@@ -1484,24 +1499,26 @@ chartHours.setOption({
 
 const chartDow = echarts.init(document.getElementById('chart-dow'));
 chartDow.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
   grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [{
     type: 'bar', data: dowCounts, barMaxWidth: 30,
     itemStyle: { color: (p) => ['#8e44ad','#2980b9','#27ae60','#7f8c8d','#e67e22','#c0392b','#b8860b'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: 'Noto Serif JP' }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }
   }]
 });
 
 // 新規：曜日×時間帯 ヒートマップ
 const chartDowHour = echarts.init(document.getElementById('chart-dow-hour-heatmap'));
 chartDowHour.setOption({
-  tooltip: { position: 'top', formatter: p => `${dowLabels[p.data[1]]}曜日 ${p.data[0]}時台: <strong>${p.data[2]}本</strong>`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { position: 'top', formatter: p => `${dowLabels[p.data[1]]}曜日 ${p.data[0]}時台: <strong>${p.data[2]}本</strong>`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '10%', right: '5%', bottom: '15%', top: '5%', containLabel: true },
-  xAxis: { type: 'category', data: Array.from({length:24}, (_,i)=>i+'時'), axisLabel: { color: '#8b7355', fontSize: 9 } },
-  yAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#5c3317', fontSize: 10, fontFamily: 'Noto Serif JP' } },
+  xAxis: { type: 'category', data: Array.from({length:24}, (_,i)=>i+'時'), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" } },
+  yAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
   visualMap: { show: false, min: 0, max: Math.max(...dowHourData.map(d=>d[2]), 1), inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] } },
   series: [{ type: 'heatmap', data: dowHourData, label: { show: true, color: '#1a1008', fontSize: 8, formatter: p => p.data[2] > 0 ? p.data[2] : '' }, itemStyle: { borderColor: '#f5e6c8', borderWidth: 1 } }]
 });
@@ -1509,25 +1526,27 @@ chartDowHour.setOption({
 // 神籤草子 曜日別
 const chartColDow = echarts.init(document.getElementById('chart-col-dow'));
 chartColDow.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
   grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [{
     type: 'bar', data: colDowCounts, barMaxWidth: 30,
     itemStyle: { color: (p) => ['#b8860b','#c5a028','#d4b845','#a0782a','#e8c45a','#b8860b','#8b6914'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: 'Noto Serif JP' }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }
   }]
 });
 
 // ニュース vs コラム 曜日比較
 const chartDowCompare = echarts.init(document.getElementById('chart-dow-compare'));
 chartDowCompare.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: dowCounts,    itemStyle: { color: '#c0392b' }, barMaxWidth: 22 },
     { name: '神籤草子',     type: 'bar', data: colDowCounts, itemStyle: { color: '#b8860b' }, barMaxWidth: 22 }
@@ -1536,15 +1555,16 @@ chartDowCompare.setOption({
 
 const chartHist = echarts.init(document.getElementById('chart-hist'));
 chartHist.setOption({
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP' } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
   xAxis: {
     type: 'category', data: histBins,
-    axisLabel: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 10, rotate: 10 },
+    axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 10, rotate: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
-  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: hNews, itemStyle: { color: '#c0392b' }, barMaxWidth: 30 },
     { name: '神籤草子',     type: 'bar', data: hCol,  itemStyle: { color: '#b8860b' }, barMaxWidth: 30 }
@@ -1553,16 +1573,17 @@ chartHist.setOption({
 
 const chartScatter = echarts.init(document.getElementById('chart-scatter'));
 chartScatter.setOption({
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
   tooltip: {
     trigger: 'item',
     backgroundColor: '#1a1008ee',
-    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
     formatter: p => `#${p.data[0]} [${p.data[3]}]<br>${p.data[2].slice(0,28)}…<br><strong>${p.data[1].toLocaleString()}字</strong>`
   },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: 'Noto Serif JP', fontSize: 11 } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '15%', top: '5%', containLabel: true },
-  xAxis: { type: 'value', name: 'ID', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
-  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10 }, axisLabel: { color: '#8b7355', fontSize: 10 }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'value', name: 'ID', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'scatter', data: scatterNews, symbolSize: 7, itemStyle: { color: '#c0392b', opacity: 0.75 } },
     { name: '神籤草子',     type: 'scatter', data: scatterCol,  symbolSize: 7, itemStyle: { color: '#b8860b', opacity: 0.75 } }
@@ -1571,23 +1592,24 @@ chartScatter.setOption({
 
 const chartTagLen = echarts.init(document.getElementById('chart-tag-len'));
 chartTagLen.setOption({
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
   },
   grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
-    axisLabel: { color: '#8b7355', fontSize: 9 },
+    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
     max: 1900
   },
   yAxis: {
     type: 'category',
     data: tagAvg.map(t => t.tag),
-    axisLabel: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 9 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 9 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1597,29 +1619,30 @@ chartTagLen.setOption({
       itemStyle: { color: tagColors[t.tag] || '#7f8c8d' }
     })),
     barMaxWidth: 14,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => `${p.value}字` }
   }]
 });
 
 const chartCatLen = echarts.init(document.getElementById('chart-cat-len'));
 chartCatLen.setOption({
+  textStyle: { fontFamily: "'Noto Serif JP', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: 'Noto Serif JP', fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong> (${catGroups[p[0].name].length}件)`
   },
   grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
-    axisLabel: { color: '#8b7355', fontSize: 9 },
+    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
     max: 2500
   },
   yAxis: {
     type: 'category',
     data: catAvg.map(t => t.cat),
-    axisLabel: { color: '#5c3317', fontFamily: 'Noto Serif JP', fontSize: 10 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1629,7 +1652,7 @@ chartCatLen.setOption({
       itemStyle: { color: catColors[t.cat] || '#7f8c8d' }
     })),
     barMaxWidth: 18,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => `${p.value}字` }
   }]
 });
 
