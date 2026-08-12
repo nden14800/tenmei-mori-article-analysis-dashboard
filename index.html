@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- 天命乃杜本体と同一のBootstrap Icons 1.13.1 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <style>
   :root {
     /* 天命乃杜本体と同一の書体定義 */
@@ -84,17 +86,18 @@
   header::after { display: none; }
 
   .header-kamon {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 60px; height: 60px;
     border: 2px solid var(--gold);
     border-radius: 50%;
-    line-height: 56px;
-    font-size: 1.8rem;
     color: var(--gold);
     margin-bottom: 1rem;
     position: relative;
     animation: shimmer 4s ease-in-out infinite;
   }
+  .header-kamon .bi { font-size: 1.6rem; line-height: 1; }
   @keyframes shimmer {
     0%, 100% { box-shadow: 0 0 0 0 rgba(184,134,11,0); }
     50% { box-shadow: 0 0 20px 4px rgba(184,134,11,0.3); }
@@ -537,7 +540,7 @@
 <body>
 
 <header>
-  <div class="header-kamon">⛩</div>
+  <div class="header-kamon" aria-label="天命乃杜"><i class="bi bi-house-door-fill" aria-hidden="true"></i></div>
   <h1 class="site-title">運勢・天命乃杜 — 記事分析ダッシュボード</h1>
   <p class="subtitle">Article Analytics Report &nbsp;·&nbsp; Data Intelligence</p>
   <p class="header-meta">分析対象期間: <span id="meta-period">--</span> &ensp;|&ensp; 社務所だより: <span id="meta-news-count">--</span>記事 &ensp;|&ensp; 神籤草子: <span id="meta-col-count">--</span>記事</p>
@@ -928,7 +931,8 @@
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<!-- Apache ECharts 6.1.0：公式配布の最新版。Canvasを固定2倍DPIで描画する。 -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@6.1.0/dist/echarts.min.js"></script>
 <script>
 // ═══════════════════════════════════════════
 //  DATA & PROCESSING
@@ -1345,7 +1349,18 @@ const groupAvgCharsArr = Object.entries(groupCharData)
 //  CHARTS INITIALIZATION
 // ═══════════════════════════════════════════
 
-const chartMonthly = echarts.init(document.getElementById('chart-monthly'));
+// 高DPI端末・埋め込み環境でも内部Canvasを十分な密度で描画する。
+// 23グラフを同時表示するため、品質とメモリ使用量の均衡点として2倍へ固定する。
+const dashboardCanvasDpr = 2;
+function createDashboardChart(element) {
+  return echarts.init(element, null, {
+    renderer: 'canvas',
+    devicePixelRatio: dashboardCanvasDpr,
+    useDirtyRect: false
+  });
+}
+
+const chartMonthly = createDashboardChart(document.getElementById('chart-monthly'));
 chartMonthly.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1360,7 +1375,7 @@ chartMonthly.setOption({
 });
 
 // 新規：月別ニュース 総文字数（棒）＋平均文字数（折れ線）複合チャート
-const chartMonthlyAvg = echarts.init(document.getElementById('chart-monthly-avg'));
+const chartMonthlyAvg = createDashboardChart(document.getElementById('chart-monthly-avg'));
 chartMonthlyAvg.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
@@ -1430,7 +1445,7 @@ const heatmapSeries = heatmapYears.map((year, calendarIndex) => ({
   emphasis: { itemStyle: { borderColor: '#5c3317', borderWidth: 1.4 } }
 }));
 
-const chartHeatmap = echarts.init(heatmapChartElement);
+const chartHeatmap = createDashboardChart(heatmapChartElement);
 chartHeatmap.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1439,7 +1454,7 @@ chartHeatmap.setOption({
   series: heatmapSeries
 });
 
-const chartWeekly = echarts.init(document.getElementById('chart-weekly'));
+const chartWeekly = createDashboardChart(document.getElementById('chart-weekly'));
 chartWeekly.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1456,7 +1471,7 @@ chartWeekly.setOption({
   ]
 });
 
-const chartWeeklyChars = echarts.init(document.getElementById('chart-weekly-chars'));
+const chartWeeklyChars = createDashboardChart(document.getElementById('chart-weekly-chars'));
 chartWeeklyChars.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, formatter: p => `${p[0].name}<br>総文字数: <strong>${p[0].value.toLocaleString()}字</strong>` },
@@ -1482,7 +1497,7 @@ chartWeeklyChars.setOption({
 });
 
 // 新規：タグ・カテゴリ バブルチャート
-const chartTagBubble = echarts.init(document.getElementById('chart-tag-bubble'));
+const chartTagBubble = createDashboardChart(document.getElementById('chart-tag-bubble'));
 chartTagBubble.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
@@ -1501,7 +1516,7 @@ chartTagBubble.setOption({
 });
 
 // 新規：記事長クラス分布
-const chartLengthPie = echarts.init(document.getElementById('chart-length-pie'));
+const chartLengthPie = createDashboardChart(document.getElementById('chart-length-pie'));
 chartLengthPie.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1524,7 +1539,7 @@ Object.entries(tagCount).forEach(([k, v]) => {
 });
 const tagPieData = Object.entries(mainTags).map(([k, v]) => ({ name: k, value: v })).sort((a,b) => b.value - a.value);
 
-const chartNewsTags = echarts.init(document.getElementById('chart-news-tags'));
+const chartNewsTags = createDashboardChart(document.getElementById('chart-news-tags'));
 chartNewsTags.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1541,7 +1556,7 @@ const catCount = {};
 colData.forEach(a => { catCount[a.category] = (catCount[a.category] || 0) + 1; });
 const catPieData = Object.entries(catCount).map(([k,v]) => ({ name: k, value: v })).sort((a,b) => b.value - a.value);
 
-const chartColCats = echarts.init(document.getElementById('chart-col-cats'));
+const chartColCats = createDashboardChart(document.getElementById('chart-col-cats'));
 chartColCats.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1566,7 +1581,7 @@ const groups = {
 const improvementCount = newsData.filter(a => ['機能改善','制限緩和'].includes(a.tag)).length;
 const groupsFinal = { '機能改善': improvementCount, ...groups };
 
-const chartGrouped = echarts.init(document.getElementById('chart-news-grouped'));
+const chartGrouped = createDashboardChart(document.getElementById('chart-news-grouped'));
 chartGrouped.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1593,7 +1608,7 @@ chartGrouped.setOption({
 });
 
 // 新規：ニュース属性別・平均文字数チャート
-const chartGroupAvgChars = echarts.init(document.getElementById('chart-group-avg-chars'));
+const chartGroupAvgChars = createDashboardChart(document.getElementById('chart-group-avg-chars'));
 chartGroupAvgChars.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
@@ -1635,7 +1650,7 @@ chartGroupAvgChars.setOption({
   }]
 });
 
-const chartTimeline = echarts.init(document.getElementById('chart-timeline'));
+const chartTimeline = createDashboardChart(document.getElementById('chart-timeline'));
 chartTimeline.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1649,7 +1664,7 @@ chartTimeline.setOption({
   ]
 });
 
-const chartCumulative = echarts.init(document.getElementById('chart-cumulative'));
+const chartCumulative = createDashboardChart(document.getElementById('chart-cumulative'));
 chartCumulative.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1667,7 +1682,7 @@ chartCumulative.setOption({
 });
 
 // 新規：累積文字数チャート
-const chartCumChars = echarts.init(document.getElementById('chart-cumulative-chars'));
+const chartCumChars = createDashboardChart(document.getElementById('chart-cumulative-chars'));
 chartCumChars.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1682,7 +1697,7 @@ chartCumChars.setOption({
   ]
 });
 
-const chartHours = echarts.init(document.getElementById('chart-hours'));
+const chartHours = createDashboardChart(document.getElementById('chart-hours'));
 chartHours.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, formatter: p => `${p[0].name}台: <strong>${p[0].value}本</strong>` },
@@ -1696,7 +1711,7 @@ chartHours.setOption({
   }]
 });
 
-const chartDow = echarts.init(document.getElementById('chart-dow'));
+const chartDow = createDashboardChart(document.getElementById('chart-dow'));
 chartDow.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1711,7 +1726,7 @@ chartDow.setOption({
 });
 
 // 新規：曜日×時間帯 ヒートマップ
-const chartDowHour = echarts.init(document.getElementById('chart-dow-hour-heatmap'));
+const chartDowHour = createDashboardChart(document.getElementById('chart-dow-hour-heatmap'));
 chartDowHour.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { position: 'top', formatter: p => `${dowLabels[p.data[1]]}曜日 ${p.data[0]}時台: <strong>${p.data[2]}本</strong>`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
@@ -1723,7 +1738,7 @@ chartDowHour.setOption({
 });
 
 // 神籤草子 曜日別
-const chartColDow = echarts.init(document.getElementById('chart-col-dow'));
+const chartColDow = createDashboardChart(document.getElementById('chart-col-dow'));
 chartColDow.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1738,7 +1753,7 @@ chartColDow.setOption({
 });
 
 // ニュース vs コラム 曜日比較
-const chartDowCompare = echarts.init(document.getElementById('chart-dow-compare'));
+const chartDowCompare = createDashboardChart(document.getElementById('chart-dow-compare'));
 chartDowCompare.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1752,7 +1767,7 @@ chartDowCompare.setOption({
   ]
 });
 
-const chartHist = echarts.init(document.getElementById('chart-hist'));
+const chartHist = createDashboardChart(document.getElementById('chart-hist'));
 chartHist.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
@@ -1770,7 +1785,7 @@ chartHist.setOption({
   ]
 });
 
-const chartScatter = echarts.init(document.getElementById('chart-scatter'));
+const chartScatter = createDashboardChart(document.getElementById('chart-scatter'));
 chartScatter.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
@@ -1789,7 +1804,7 @@ chartScatter.setOption({
   ]
 });
 
-const chartTagLen = echarts.init(document.getElementById('chart-tag-len'));
+const chartTagLen = createDashboardChart(document.getElementById('chart-tag-len'));
 chartTagLen.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
@@ -1824,7 +1839,7 @@ chartTagLen.setOption({
   }]
 });
 
-const chartCatLen = echarts.init(document.getElementById('chart-cat-len'));
+const chartCatLen = createDashboardChart(document.getElementById('chart-cat-len'));
 chartCatLen.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
@@ -1909,10 +1924,45 @@ function createChartToolbox(label, options = {}) {
     top: 5,
     itemSize: 14,
     itemGap: 8,
+    padding: [3, 4],
+    backgroundColor: 'rgba(255,253,250,0.94)',
+    borderColor: '#eadfc9',
+    borderWidth: 1,
     iconStyle: { borderColor: '#5c3317' },
     emphasis: { iconStyle: { borderColor: '#c0392b' } },
     feature
   };
+}
+
+// 全グラフで上部38pxをツールボックス専用領域として予約する。
+// 各グラフのデータ・ラベル・円グラフの外周が操作アイコンと重ならないようにする。
+function reserveChartToolbarSpace(chart) {
+  const option = chart.getOption();
+  const safeOption = {};
+
+  if (option.grid?.length) {
+    safeOption.grid = option.grid.map((grid, index) => {
+      const rect = chart.getModel()?.getComponent('grid', index)?.coordinateSystem?.getRect();
+      return { top: Math.max(38, Math.round(rect?.y || 0)) };
+    });
+  }
+
+  if (option.calendar?.length) {
+    safeOption.calendar = option.calendar.map(() => ({ top: 38 }));
+  }
+
+  if (option.series?.some(series => series.type === 'pie')) {
+    safeOption.series = option.series.map(series => {
+      if (series.type !== 'pie') return {};
+      const hasInnerRadius = Array.isArray(series.radius);
+      return {
+        center: ['50%', '54%'],
+        radius: hasInnerRadius ? ['36%', '62%'] : '62%'
+      };
+    });
+  }
+
+  if (Object.keys(safeOption).length) chart.setOption(safeOption);
 }
 
 function createChartAria(label) {
@@ -1953,6 +2003,7 @@ function addChartCapabilities(chart, label, options = {}) {
     aria: createChartAria(label),
     textStyle: { fontFamily: dashboardChartFont }
   });
+  reserveChartToolbarSpace(chart);
 
   if (brush) {
     chart.setOption({
