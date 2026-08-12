@@ -259,8 +259,9 @@
   }
   .chart-box { height: 280px; }
   .chart-box-tall { height: 380px; }
-  .chart-box.zoomable-chart { height: 332px; }
-  .chart-box-tall.zoomable-chart { height: 412px; }
+  /* dataZoomのタッチ操作領域を広げても、プロット領域を圧迫しない高さを確保する。 */
+  .chart-box.zoomable-chart { height: 348px; }
+  .chart-box-tall.zoomable-chart { height: 428px; }
 
   /* EChartsの操作を発見しやすくする共通ガイド */
   .chart-interaction-guide {
@@ -468,10 +469,40 @@
     letter-spacing: 0.1em;
     font-weight: 400;
     font-size: 0.75rem;
-    cursor: pointer;
+    cursor: default;
     white-space: nowrap;
   }
-  thead th:hover { color: var(--gold-light); }
+  .sortable-column { padding: 0; }
+  .sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42rem;
+    width: 100%;
+    min-height: 2.85rem;
+    padding: 0.8rem 1rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+  }
+  .sort-button:hover { color: var(--gold-light); }
+  .sort-button:focus-visible {
+    outline: 2px solid var(--gold-light);
+    outline-offset: -3px;
+  }
+  .sort-icon {
+    flex: 0 0 auto;
+    color: var(--gold-light);
+    font-size: 0.78rem;
+    line-height: 1;
+  }
+  .sortable-column[aria-sort="ascending"] .sort-icon,
+  .sortable-column[aria-sort="descending"] .sort-icon { color: #fffdfa; }
+  .sortable-column[aria-sort="ascending"] .sort-button,
+  .sortable-column[aria-sort="descending"] .sort-button { color: var(--gold-light); }
 
   tbody tr {
     border-bottom: 1px solid var(--pale-gold);
@@ -917,11 +948,11 @@
       <table>
         <thead>
           <tr>
-            <th onclick="sortTable('news','id')">ID ↕</th>
-            <th onclick="sortTable('news','date')">日時 ↕</th>
+            <th class="sortable-column" scope="col" data-sort-table="news" data-sort-key="id" data-sort-label="ID" aria-sort="none"><button class="sort-button" type="button" onclick="sortTable('news','id')"><span>ID</span><i class="bi bi-arrow-down-up sort-icon" aria-hidden="true"></i></button></th>
+            <th class="sortable-column" scope="col" data-sort-table="news" data-sort-key="date" data-sort-label="日時" aria-sort="none"><button class="sort-button" type="button" onclick="sortTable('news','date')"><span>日時</span><i class="bi bi-arrow-down-up sort-icon" aria-hidden="true"></i></button></th>
             <th>タグ</th>
             <th>タイトル</th>
-            <th onclick="sortTable('news','chars')">文字数 ↕</th>
+            <th class="sortable-column" scope="col" data-sort-table="news" data-sort-key="chars" data-sort-label="文字数" aria-sort="none"><button class="sort-button" type="button" onclick="sortTable('news','chars')"><span>文字数</span><i class="bi bi-arrow-down-up sort-icon" aria-hidden="true"></i></button></th>
             <th>内容（抜粋）</th>
           </tr>
         </thead>
@@ -945,11 +976,11 @@
       <table>
         <thead>
           <tr>
-            <th onclick="sortTable('col','id')">ID ↕</th>
-            <th onclick="sortTable('col','date')">日付 ↕</th>
+            <th class="sortable-column" scope="col" data-sort-table="col" data-sort-key="id" data-sort-label="ID" aria-sort="none"><button class="sort-button" type="button" onclick="sortTable('col','id')"><span>ID</span><i class="bi bi-arrow-down-up sort-icon" aria-hidden="true"></i></button></th>
+            <th class="sortable-column" scope="col" data-sort-table="col" data-sort-key="date" data-sort-label="日付" aria-sort="none"><button class="sort-button" type="button" onclick="sortTable('col','date')"><span>日付</span><i class="bi bi-arrow-down-up sort-icon" aria-hidden="true"></i></button></th>
             <th>カテゴリ</th>
             <th>タイトル</th>
-            <th onclick="sortTable('col','chars')">文字数 ↕</th>
+            <th class="sortable-column" scope="col" data-sort-table="col" data-sort-key="chars" data-sort-label="文字数" aria-sort="none"><button class="sort-button" type="button" onclick="sortTable('col','chars')"><span>文字数</span><i class="bi bi-arrow-down-up sort-icon" aria-hidden="true"></i></button></th>
           </tr>
         </thead>
         <tbody id="col-tbody"></tbody>
@@ -1851,8 +1882,8 @@ chartTagLen.setOption({
     textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
   },
-  // 上部は操作アイコン専用、右側は値ラベルと縦方向スライダー専用として確保する。
-  grid: { left: 5, right: 96, top: 38, bottom: 5, containLabel: true },
+  // 上部は操作アイコン専用、右側は値ラベルと指で操作できる縦方向スライダー専用として確保する。
+  grid: { left: 5, right: 112, top: 38, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
     axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
@@ -1881,22 +1912,28 @@ chartTagLen.setOption({
       type: 'slider',
       yAxisIndex: 0,
       orient: 'vertical',
-      right: 7,
+      right: 9,
       top: 44,
-      bottom: 10,
-      width: 8,
+      bottom: 12,
+      width: 16,
       start: tagChartZoomStart,
       end: 100,
       showDetail: false,
       showDataShadow: false,
+      brushSelect: false,
       borderColor: '#d4c4a0',
-      borderRadius: 4,
+      borderWidth: 1,
+      borderRadius: 6,
       backgroundColor: '#fffdfa',
-      fillerColor: 'rgba(197,160,89,0.28)',
-      handleSize: '130%',
-      handleStyle: { color: '#c5a059', borderColor: '#8b6914', borderWidth: 1 },
-      moveHandleSize: 0,
-      moveHandleStyle: { opacity: 0 },
+      fillerColor: 'rgba(197,160,89,0.42)',
+      handleSize: '100%',
+      handleStyle: { color: '#fffdfa', borderColor: '#8b6914', borderWidth: 1.5 },
+      moveHandleSize: 12,
+      moveHandleStyle: { color: '#b8860b', opacity: 0.92 },
+      emphasis: {
+        handleStyle: { color: '#f5e6c8', borderColor: '#5c3317', borderWidth: 1.5 },
+        moveHandleStyle: { color: '#8b6914', opacity: 1 }
+      },
       textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 9 }
     }
   ],
@@ -2078,7 +2115,7 @@ function adaptiveAxisMax(value) {
 }
 
 function addChartCapabilities(chart, label, options = {}) {
-  const { zoom = false, zoomGridBottom = 68, zoomLegendBottom = 30, brush = false, magic = false } = options;
+  const { zoom = false, zoomGridBottom = 80, zoomLegendBottom = 36, brush = false, magic = false } = options;
   chart.setOption({
     toolbox: createChartToolbox(label, { brush, zoom, magic }),
     aria: createChartAria(label),
@@ -2126,20 +2163,26 @@ function addChartCapabilities(chart, label, options = {}) {
           type: 'slider',
           xAxisIndex: 0,
           filterMode: 'filter',
-          left: 18,
-          right: 18,
-          height: 8,
-          bottom: 7,
+          left: 16,
+          right: 16,
+          height: 16,
+          bottom: 8,
           showDetail: false,
           showDataShadow: false,
+          brushSelect: false,
           borderColor: '#d4c4a0',
-          borderRadius: 4,
+          borderWidth: 1,
+          borderRadius: 6,
           backgroundColor: '#fffdfa',
-          fillerColor: 'rgba(197,160,89,0.28)',
-          handleSize: '130%',
-          handleStyle: { color: '#c5a059', borderColor: '#8b6914', borderWidth: 1 },
-          moveHandleSize: 0,
-          moveHandleStyle: { opacity: 0 },
+          fillerColor: 'rgba(197,160,89,0.42)',
+          handleSize: '100%',
+          handleStyle: { color: '#fffdfa', borderColor: '#8b6914', borderWidth: 1.5 },
+          moveHandleSize: 12,
+          moveHandleStyle: { color: '#b8860b', opacity: 0.92 },
+          emphasis: {
+            handleStyle: { color: '#f5e6c8', borderColor: '#5c3317', borderWidth: 1.5 },
+            moveHandleStyle: { color: '#8b6914', opacity: 1 }
+          },
           textStyle: { color: '#8b7355', fontFamily: dashboardChartFont, fontSize: 9 }
         }
       ]
@@ -2309,6 +2352,31 @@ function sortTable(type, key) {
   }
 }
 
+// Unicode記号ではなく、本サイトと同じBootstrap Iconsで並べ替え状態を示す。
+function updateSortHeaders(type) {
+  const activeKey = type === 'news' ? newsSortKey : colSortKey;
+  const direction = type === 'news' ? newsSortDir : colSortDir;
+  const directionText = direction === 1 ? '昇順' : '降順';
+
+  document.querySelectorAll(`.sortable-column[data-sort-table="${type}"]`).forEach(header => {
+    const key = header.dataset.sortKey;
+    const label = header.dataset.sortLabel;
+    const active = key === activeKey;
+    const button = header.querySelector('.sort-button');
+    const icon = header.querySelector('.sort-icon');
+
+    header.setAttribute('aria-sort', active ? (direction === 1 ? 'ascending' : 'descending') : 'none');
+    icon.className = `bi ${active ? (direction === 1 ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up'} sort-icon`;
+    button.setAttribute(
+      'aria-label',
+      active
+        ? `${label}を${directionText}で並べ替え中。もう一度押すと並び順を反転します。`
+        : `${label}で並べ替える`
+    );
+    button.title = active ? `${label}: ${directionText}` : `${label}で並べ替え`;
+  });
+}
+
 function sortAndRender(type) {
   if (type === 'news') {
     newsFiltered.sort((a, b) => {
@@ -2318,6 +2386,7 @@ function sortAndRender(type) {
       return (av > bv ? 1 : -1) * newsSortDir;
     });
     renderNewsTable(newsFiltered);
+    updateSortHeaders('news');
   } else {
     colFiltered.sort((a, b) => {
       let av = colSortKey === 'date' ? pd(a.date).getTime() : a[colSortKey];
@@ -2326,11 +2395,12 @@ function sortAndRender(type) {
       return (av > bv ? 1 : -1) * colSortDir;
     });
     renderColTable(colFiltered);
+    updateSortHeaders('col');
   }
 }
 
-renderNewsTable(newsFiltered);
-renderColTable(colFiltered);
+sortAndRender('news');
+sortAndRender('col');
 
 // ═══════════════════════════════════════════
 //  TABS
