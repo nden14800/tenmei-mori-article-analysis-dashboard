@@ -10,9 +10,13 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
 <link rel="manifest" href="/favicon/site.webmanifest" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Zen+Old+Mincho:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
+    /* 天命乃杜本体と同一の書体定義 */
+    --font-main: 'Zen Old Mincho', 'Shippori Mincho', serif;
+    --font-ui: 'Zen Kaku Gothic New', 'Zen Old Mincho', serif;
     --ink: #1a1008;
     --paper: #faf6ef;
     --vermillion: #c0392b;
@@ -31,7 +35,7 @@
   body {
     background: var(--paper);
     color: var(--ink);
-    font-family: 'Noto Serif JP', serif;
+    font-family: var(--font-main);
     min-height: 100vh;
     position: relative;
   }
@@ -106,7 +110,7 @@
   }
 
   .subtitle {
-    font-family: 'Crimson Pro', serif;
+    font-family: var(--font-main);
     font-style: italic;
     color: var(--mist);
     font-size: 1rem;
@@ -234,6 +238,54 @@
   }
   .chart-box { width: 100%; height: 280px; }
   .chart-box-tall { width: 100%; height: 380px; }
+  .chart-box.zoomable-chart { height: 332px; }
+  .chart-box-tall.zoomable-chart { height: 412px; }
+
+  /* EChartsの操作を発見しやすくする共通ガイド */
+  .chart-interaction-guide {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin: 0 0 2rem;
+    padding: 1rem 1.2rem;
+    background: linear-gradient(135deg, rgba(250,246,239,0.96), #fff 60%, rgba(245,230,200,0.65));
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+  }
+  .chart-interaction-guide h2 {
+    margin: 0 0 0.3rem;
+    color: var(--deep-red);
+    font-family: var(--font-main);
+    font-size: 0.98rem;
+    letter-spacing: 0.08em;
+  }
+  .chart-interaction-guide p {
+    margin: 0;
+    color: var(--mist);
+    font-family: var(--font-main);
+    font-size: 0.78rem;
+    line-height: 1.8;
+  }
+  .chart-interaction-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.7rem; flex-wrap: wrap; }
+  .chart-reset-button {
+    appearance: none;
+    border: 1px solid var(--cedar);
+    background: var(--cedar);
+    color: #fff;
+    padding: 0.55rem 0.8rem;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-size: 0.76rem;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .chart-reset-button:hover, .chart-reset-button:focus-visible { background: var(--deep-red); transform: translateY(-1px); outline: 2px solid var(--gold); outline-offset: 2px; }
+  .chart-action-status { min-height: 1em; color: var(--mist); font-family: var(--font-main); font-size: 0.72rem; }
+  @media (max-width: 700px) {
+    .chart-interaction-guide { grid-template-columns: 1fr; padding: 0.9rem 1rem; }
+    .chart-interaction-actions { justify-content: flex-start; }
+  }
 
   /* 日別ヒートマップは年ごとに縦積みし、日付セルの可読性を維持する。 */
   .heatmap-card { grid-column: 1 / -1; }
@@ -336,7 +388,7 @@
   .filter-bar input, .filter-bar select {
     border: 1px solid var(--border);
     padding: 0.4rem 0.8rem;
-    font-family: 'Noto Serif JP', serif;
+    font-family: var(--font-main);
     font-size: 0.8rem;
     background: var(--paper);
     color: var(--ink);
@@ -398,7 +450,7 @@
   }
 
   .id-cell {
-    font-family: 'Crimson Pro', serif;
+    font-family: var(--font-main);
     color: var(--mist);
     font-size: 0.9rem;
     white-space: nowrap;
@@ -452,7 +504,7 @@
     background: var(--pale-gold);
     color: var(--mist);
     cursor: pointer;
-    font-family: 'Noto Serif JP', serif;
+    font-family: var(--font-main);
     font-size: 0.85rem;
     letter-spacing: 0.1em;
     transition: all 0.2s;
@@ -487,6 +539,17 @@
 </header>
 
 <div class="container">
+
+  <aside class="chart-interaction-guide" aria-label="グラフの操作方法">
+    <div>
+      <h2>グラフ操作</h2>
+      <p>各グラフの右上にあるアイコンから、数値表の確認、画像保存、初期表示への復元ができます。時系列グラフは、スライダー・ホイール・スワイプで表示範囲を拡大できます。</p>
+    </div>
+    <div class="chart-interaction-actions">
+      <button class="chart-reset-button" id="chart-reset-all" type="button">全グラフを初期表示に戻す</button>
+      <span class="chart-action-status" id="chart-action-status" role="status" aria-live="polite"></span>
+    </div>
+  </aside>
 
   <!-- OVERVIEW -->
   <div class="section-title">総覧 — Overview</div>
@@ -919,7 +982,7 @@ const top10News = [...newsData].sort((a,b) => b.chars - a.chars).slice(0,10);
 document.getElementById('top-news-chars').innerHTML = top10News.map((a,i) => `
   <tr>
     <td style="padding:0.4rem 0.8rem;color:#8b7355;text-align:center">${i+1}</td>
-    <td style="padding:0.4rem 0.8rem;font-family:'Crimson Pro',serif;color:#5c3317">#${a.id}</td>
+    <td style="padding:0.4rem 0.8rem;font-family:var(--font-main);color:#5c3317">#${a.id}</td>
     <td style="padding:0.4rem 0.8rem;max-width:220px;line-height:1.4">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
     <td style="padding:0.4rem 0.8rem;color:#c0392b;font-weight:bold;white-space:nowrap">${a.chars.toLocaleString()}</td>
   </tr>
@@ -929,7 +992,7 @@ const top10Col = [...colData].sort((a,b) => b.chars - a.chars).slice(0,10);
 document.getElementById('top-col-chars').innerHTML = top10Col.map((a,i) => `
   <tr>
     <td style="padding:0.4rem 0.8rem;color:#8b7355;text-align:center">${i+1}</td>
-    <td style="padding:0.4rem 0.8rem;font-family:'Crimson Pro',serif;color:#5c3317">#${a.id}</td>
+    <td style="padding:0.4rem 0.8rem;font-family:var(--font-main);color:#5c3317">#${a.id}</td>
     <td style="padding:0.4rem 0.8rem;max-width:220px;line-height:1.4">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
     <td style="padding:0.4rem 0.8rem;color:#b8860b;font-weight:bold;white-space:nowrap">${a.chars.toLocaleString()}</td>
   </tr>
@@ -943,7 +1006,7 @@ function charBar(n, max=2400) {
     <div style="width:60px;height:6px;background:#f5e6c8;border-radius:3px;overflow:hidden">
       <div style="width:${pct}%;height:100%;background:${col};border-radius:3px"></div>
     </div>
-    <span style="font-family:'Crimson Pro',serif;font-size:0.85rem;color:${col}">${n ? n.toLocaleString() : '—'}</span>
+    <span style="font-family:var(--font-main);font-size:0.85rem;color:${col}">${n ? n.toLocaleString() : '—'}</span>
   </div>`;
 }
 
@@ -1273,12 +1336,12 @@ const groupAvgCharsArr = Object.entries(groupCharData)
 
 const chartMonthly = echarts.init(document.getElementById('chart-monthly'));
 chartMonthly.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '15%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: mNewsCnt, itemStyle: { color: '#c0392b' }, barMaxWidth: 40 },
     { name: '神籤草子', type: 'bar', data: mColCnt, itemStyle: { color: '#b8860b' }, barMaxWidth: 40 }
@@ -1288,11 +1351,11 @@ chartMonthly.setOption({
 // 新規：月別ニュース 総文字数（棒）＋平均文字数（折れ線）複合チャート
 const chartMonthlyAvg = echarts.init(document.getElementById('chart-monthly-avg'));
 chartMonthlyAvg.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: params => {
       let s = `<strong>${params[0].axisValueLabel}</strong><br>`;
       params.forEach(p => {
@@ -1304,16 +1367,16 @@ chartMonthlyAvg.setOption({
       return s;
     }
   },
-  legend: { data: ['月別ニュース総文字数', 'ニュース1記事平均文字数'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  legend: { data: ['月別ニュース総文字数', 'ニュース1記事平均文字数'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '5%', right: '8%', bottom: '18%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
   yAxis: [
-    { type: 'value', name: '総文字数', nameTextStyle: { color: '#c0392b', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
-    { type: 'value', name: '平均文字数', nameTextStyle: { color: '#b8860b', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { show: false }, min: 0 }
+    { type: 'value', name: '総文字数', nameTextStyle: { color: '#c0392b', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+    { type: 'value', name: '平均文字数', nameTextStyle: { color: '#b8860b', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { show: false }, min: 0 }
   ],
   series: [
     { name: '月別ニュース総文字数', type: 'bar', data: mNewsChars, yAxisIndex: 0, itemStyle: { color: '#c0392b' }, barMaxWidth: 50 },
-    { name: 'ニュース1記事平均文字数', type: 'line', data: mNewsAvg, yAxisIndex: 1, connectNulls: false, itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2.5 }, symbol: 'circle', symbolSize: 8, label: { show: true, position: 'top', color: '#b8860b', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: p => p.value == null ? '' : p.value+'字' } }
+    { name: 'ニュース1記事平均文字数', type: 'line', data: mNewsAvg, yAxisIndex: 1, connectNulls: false, itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2.5 }, symbol: 'circle', symbolSize: 8, label: { show: true, position: 'top', color: '#b8860b', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => p.value == null ? '' : p.value+'字' } }
   ]
 });
 
@@ -1342,9 +1405,9 @@ const heatmapCalendars = heatmapYears.map((year, index) => ({
   right: 28,
   top: heatmapTopPadding + (index * heatmapPanelHeight),
   itemStyle: { borderColor: '#d4c4a0', borderWidth: 0.7 },
-  dayLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", nameMap: ['日','月','火','水','木','金','土'] },
-  monthLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif", nameMap: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
-  yearLabel: { show: true, position: 'left', margin: 22, color: '#5c3317', fontSize: 13, fontWeight: 700, fontFamily: "'Noto Serif JP', serif" }
+  dayLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", nameMap: ['日','月','火','水','木','金','土'] },
+  monthLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", nameMap: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
+  yearLabel: { show: true, position: 'left', margin: 22, color: '#5c3317', fontSize: 13, fontWeight: 700, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
 }));
 
 const heatmapSeries = heatmapYears.map((year, calendarIndex) => ({
@@ -1358,23 +1421,23 @@ const heatmapSeries = heatmapYears.map((year, calendarIndex) => ({
 
 const chartHeatmap = echarts.init(heatmapChartElement);
 chartHeatmap.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 7, left: 'center', inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] }, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 7, left: 'center', inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] }, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   calendar: heatmapCalendars,
   series: heatmapSeries
 });
 
 const chartWeekly = echarts.init(document.getElementById('chart-weekly'));
 chartWeekly.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
   xAxis: { type: 'category', data: wLabels,
-    axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 10, rotate: 30 },
+    axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10, rotate: 30 },
     axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: wNews, itemStyle: { color: '#c0392b' }, barMaxWidth: 22, stack: 'w' },
     { name: '神籤草子',     type: 'bar', data: wCol,  itemStyle: { color: '#b8860b' }, barMaxWidth: 22, stack: 'w',
@@ -1384,13 +1447,13 @@ chartWeekly.setOption({
 
 const chartWeeklyChars = echarts.init(document.getElementById('chart-weekly-chars'));
 chartWeeklyChars.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" }, formatter: p => `${p[0].name}<br>総文字数: <strong>${p[0].value.toLocaleString()}字</strong>` },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, formatter: p => `${p[0].name}<br>総文字数: <strong>${p[0].value.toLocaleString()}字</strong>` },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
   xAxis: { type: 'category', data: wLabels,
-    axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 10, rotate: 30 },
+    axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10, rotate: 30 },
     axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [{
     type: 'bar', data: wChars,
     itemStyle: {
@@ -1403,40 +1466,40 @@ chartWeeklyChars.setOption({
       }
     },
     barMaxWidth: 30,
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => p.value > 0 ? (p.value/1000).toFixed(1)+'k' : '0' }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => p.value > 0 ? (p.value/1000).toFixed(1)+'k' : '0' }
   }]
 });
 
 // 新規：タグ・カテゴリ バブルチャート
 const chartTagBubble = echarts.init(document.getElementById('chart-tag-bubble'));
 chartTagBubble.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
     formatter: p => `${p.data.name}<br>記事数: ${p.data.value[0]}本<br>平均文字数: ${p.data.value[1]}字<br>総文字数: ${p.data.value[2].toLocaleString()}字`,
-    backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 }
+    backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 }
   },
   grid: { left: '10%', right: '10%', bottom: '15%', top: '15%', containLabel: true },
-  xAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
-  yAxis: { type: 'value', name: '平均文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  xAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  yAxis: { type: 'value', name: '平均文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
   series: [{
     type: 'scatter',
     data: bubbleData,
     symbolSize: p => Math.sqrt(p[2]) * 0.4,
-    label: { show: true, formatter: '{b}', position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }
+    label: { show: true, formatter: '{b}', position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
   }]
 });
 
 // 新規：記事長クラス分布
 const chartLengthPie = echarts.init(document.getElementById('chart-length-pie'));
 chartLengthPie.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  legend: { bottom: 0, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  legend: { bottom: 0, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   series: [{
     type: 'pie', radius: ['40%', '70%'], center: ['50%', '45%'],
     data: lengthPieData,
     itemStyle: { borderColor: '#faf6ef', borderWidth: 2 },
-    label: { color: '#5c3317', fontSize: 11, fontFamily: "'Noto Serif JP', serif" },
+    label: { color: '#5c3317', fontSize: 11, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
     color: ['#95a5a6', '#f39c12', '#c0392b']
   }]
 });
@@ -1452,12 +1515,12 @@ const tagPieData = Object.entries(mainTags).map(([k, v]) => ({ name: k, value: v
 
 const chartNewsTags = echarts.init(document.getElementById('chart-news-tags'));
 chartNewsTags.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   series: [{
     type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
     data: tagPieData,
-    label: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
+    label: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10 },
     itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
   }],
   color: ['#c0392b','#27ae60','#e67e22','#2980b9','#8e44ad','#f39c12','#7f8c8d','#1abc9c','#2c3e50','#95a5a6','#d4c4a0']
@@ -1469,12 +1532,12 @@ const catPieData = Object.entries(catCount).map(([k,v]) => ({ name: k, value: v 
 
 const chartColCats = echarts.init(document.getElementById('chart-col-cats'));
 chartColCats.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   series: [{
     type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
     data: catPieData,
-    label: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
+    label: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10 },
     itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
   }],
   color: ['#c0392b','#27ae60','#2980b9','#e67e22','#8e44ad','#7f8c8d','#f39c12','#16a085','#2c3e50','#e74c3c','#1abc9c','#d35400','#95a5a6','#9b59b6']
@@ -1494,14 +1557,14 @@ const groupsFinal = { '機能改善': improvementCount, ...groups };
 
 const chartGrouped = echarts.init(document.getElementById('chart-news-grouped'));
 chartGrouped.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   grid: { left: 5, right: 40, top: 10, bottom: 5, containLabel: true },
-  xAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   yAxis: {
     type: 'category',
     data: Object.keys(groupsFinal),
-    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1514,31 +1577,31 @@ chartGrouped.setOption({
         return colors[params.dataIndex % colors.length];
       }
     },
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
   }]
 });
 
 // 新規：ニュース属性別・平均文字数チャート
 const chartGroupAvgChars = echarts.init(document.getElementById('chart-group-avg-chars'));
 chartGroupAvgChars.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
   },
   grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
-    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" },
+    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
     max: 1200
   },
   yAxis: {
     type: 'category',
     data: groupAvgCharsArr.map(g => g.name),
-    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1557,18 +1620,18 @@ chartGroupAvgChars.setOption({
       }
     })),
     barMaxWidth: 18,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
   }]
 });
 
 const chartTimeline = echarts.init(document.getElementById('chart-timeline'));
 chartTimeline.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '3%', right: '3%', bottom: '15%', top: '5%', containLabel: true },
-  xAxis: { type: 'category', data: tlDates, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } }, min: 0, max: Math.max(...tlNewsData.map((count, index) => count + tlColData[index]), 1) },
+  xAxis: { type: 'category', data: tlDates, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } }, min: 0, max: Math.max(...tlNewsData.map((count, index) => count + tlColData[index]), 1) },
   series: [
     { name: '社務所だより', type: 'bar', data: tlNewsData, itemStyle: { color: '#c0392b' }, barMaxWidth: 12, stack: 'total' },
     { name: '神籤草子', type: 'bar', data: tlColData, itemStyle: { color: '#b8860b' }, barMaxWidth: 12, stack: 'total' }
@@ -1577,17 +1640,17 @@ chartTimeline.setOption({
 
 const chartCumulative = echarts.init(document.getElementById('chart-cumulative'));
 chartCumulative.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  legend: { data: ['累積ニュース','累積コラム','累積合計'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  legend: { data: ['累積ニュース','累積コラム','累積合計'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '8%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: cumDataDynamic.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: cumDataDynamic.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '累積ニュース', type: 'line', data: cumDataDynamic.map(d=>d.news), itemStyle: { color: '#c0392b' }, lineStyle: { color: '#c0392b', width: 2 }, areaStyle: { color: 'rgba(192,57,43,0.08)' }, showSymbol: false, smooth: false },
     { name: '累積コラム',   type: 'line', data: cumDataDynamic.map(d=>d.col),  itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2 }, areaStyle: { color: 'rgba(184,134,11,0.08)' }, showSymbol: false, smooth: false },
     { name: '累積合計',     type: 'line', data: cumDataDynamic.map(d=>d.total), itemStyle: { color: '#2c3e50' }, lineStyle: { color: '#2c3e50', width: 2.5, type: 'dashed' }, showSymbol: false, smooth: false,
-      markPoint: { data: [{ name: '100記事', coord: ['2026-02-18', 100], value: '100!' }], label: { color: '#f5e6c8', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, itemStyle: { color: '#c0392b' } }
+      markPoint: { data: [{ name: '100記事', coord: ['2026-02-18', 100], value: '100!' }], label: { color: '#f5e6c8', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, itemStyle: { color: '#c0392b' } }
     }
   ]
 });
@@ -1595,12 +1658,12 @@ chartCumulative.setOption({
 // 新規：累積文字数チャート
 const chartCumChars = echarts.init(document.getElementById('chart-cumulative-chars'));
 chartCumChars.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   legend: { data: ['ニュース累積文字数','コラム累積文字数','合計文字数'], bottom: 0, textStyle: { color: '#8b7355', fontSize: 11 } },
   grid: { left: '8%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
-  xAxis: { type: 'category', data: cumCharsData.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", formatter: v => (v/1000).toFixed(0)+'k' }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
+  xAxis: { type: 'category', data: cumCharsData.map(d=>d.date), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: v => (v/1000).toFixed(0)+'k' }, splitLine: { lineStyle: { type: 'dashed', color: '#f5e6c8' } } },
   series: [
     { name: 'ニュース累積文字数', type: 'line', data: cumCharsData.map(d=>d.news), color: '#c0392b', smooth: false, showSymbol: false, areaStyle: { opacity: 0.05 } },
     { name: 'コラム累積文字数', type: 'line', data: cumCharsData.map(d=>d.col), color: '#b8860b', smooth: false, showSymbol: false, areaStyle: { opacity: 0.05 } },
@@ -1610,12 +1673,12 @@ chartCumChars.setOption({
 
 const chartHours = echarts.init(document.getElementById('chart-hours'));
 chartHours.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" }, formatter: p => `${p[0].name}台: <strong>${p[0].value}本</strong>` },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, formatter: p => `${p[0].name}台: <strong>${p[0].value}本</strong>` },
   grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
   xAxis: { type: 'category', data: Array.from({length:24}, (_,i) => i+'時'),
-    axisLabel: { color: '#8b7355', fontSize: 9, interval: 1, fontFamily: "'Noto Serif JP', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+    axisLabel: { color: '#8b7355', fontSize: 9, interval: 1, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   visualMap: { show: false, min: 0, max: Math.max(...hourCounts), inRange: { color: ['#f5e6c8', '#e8a87c', '#c0392b'] } },
   series: [{ type: 'bar', data: hourCounts, barMaxWidth: 16,
     markArea: { data: [[{ xAxis: '16時' }, { xAxis: '19時' }]], itemStyle: { color: 'rgba(192,57,43,0.08)' } }
@@ -1624,26 +1687,26 @@ chartHours.setOption({
 
 const chartDow = echarts.init(document.getElementById('chart-dow'));
 chartDow.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [{
     type: 'bar', data: dowCounts, barMaxWidth: 30,
     itemStyle: { color: (p) => ['#8e44ad','#2980b9','#27ae60','#7f8c8d','#e67e22','#c0392b','#b8860b'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
   }]
 });
 
 // 新規：曜日×時間帯 ヒートマップ
 const chartDowHour = echarts.init(document.getElementById('chart-dow-hour-heatmap'));
 chartDowHour.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { position: 'top', formatter: p => `${dowLabels[p.data[1]]}曜日 ${p.data[0]}時台: <strong>${p.data[2]}本</strong>`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { position: 'top', formatter: p => `${dowLabels[p.data[1]]}曜日 ${p.data[0]}時台: <strong>${p.data[2]}本</strong>`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '10%', right: '5%', bottom: '15%', top: '5%', containLabel: true },
-  xAxis: { type: 'category', data: Array.from({length:24}, (_,i)=>i+'時'), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" } },
-  yAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
+  xAxis: { type: 'category', data: Array.from({length:24}, (_,i)=>i+'時'), axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  yAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   visualMap: { show: false, min: 0, max: Math.max(...dowHourData.map(d=>d[2]), 1), inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] } },
   series: [{ type: 'heatmap', data: dowHourData, label: { show: true, color: '#1a1008', fontSize: 8, formatter: p => p.data[2] > 0 ? p.data[2] : '' }, itemStyle: { borderColor: '#f5e6c8', borderWidth: 1 } }]
 });
@@ -1651,27 +1714,27 @@ chartDowHour.setOption({
 // 神籤草子 曜日別
 const chartColDow = echarts.init(document.getElementById('chart-col-dow'));
 chartColDow.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
   grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [{
     type: 'bar', data: colDowCounts, barMaxWidth: 30,
     itemStyle: { color: (p) => ['#b8860b','#c5a028','#d4b845','#a0782a','#e8c45a','#b8860b','#8b6914'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
   }]
 });
 
 // ニュース vs コラム 曜日比較
 const chartDowCompare = echarts.init(document.getElementById('chart-dow-compare'));
 chartDowCompare.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: dowCounts,    itemStyle: { color: '#c0392b' }, barMaxWidth: 22 },
     { name: '神籤草子',     type: 'bar', data: colDowCounts, itemStyle: { color: '#b8860b' }, barMaxWidth: 22 }
@@ -1680,16 +1743,16 @@ chartDowCompare.setOption({
 
 const chartHist = echarts.init(document.getElementById('chart-hist'));
 chartHist.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
   xAxis: {
     type: 'category', data: histBins,
-    axisLabel: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 10, rotate: 10 },
+    axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10, rotate: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
-  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: hNews, itemStyle: { color: '#c0392b' }, barMaxWidth: 30 },
     { name: '神籤草子',     type: 'bar', data: hCol,  itemStyle: { color: '#b8860b' }, barMaxWidth: 30 }
@@ -1698,17 +1761,17 @@ chartHist.setOption({
 
 const chartScatter = echarts.init(document.getElementById('chart-scatter'));
 chartScatter.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
     trigger: 'item',
     backgroundColor: '#1a1008ee',
-    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `#${p.data[0]} [${p.data[3]}]<br>${p.data[2].slice(0,28)}…<br><strong>${p.data[1].toLocaleString()}字</strong>`
   },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Noto Serif JP', serif", fontSize: 11 } },
+  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '15%', top: '5%', containLabel: true },
-  xAxis: { type: 'value', name: 'ID', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
-  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  xAxis: { type: 'value', name: 'ID', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'scatter', data: scatterNews, symbolSize: 7, itemStyle: { color: '#c0392b', opacity: 0.75 } },
     { name: '神籤草子',     type: 'scatter', data: scatterCol,  symbolSize: 7, itemStyle: { color: '#b8860b', opacity: 0.75 } }
@@ -1717,24 +1780,24 @@ chartScatter.setOption({
 
 const chartTagLen = echarts.init(document.getElementById('chart-tag-len'));
 chartTagLen.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
   },
   grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
-    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" },
+    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
     max: 1900
   },
   yAxis: {
     type: 'category',
     data: tagAvg.map(t => t.tag),
-    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 9 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 9 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1744,30 +1807,30 @@ chartTagLen.setOption({
       itemStyle: { color: tagColors[t.tag] || '#7f8c8d' }
     })),
     barMaxWidth: 14,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
   }]
 });
 
 const chartCatLen = echarts.init(document.getElementById('chart-cat-len'));
 chartCatLen.setOption({
-  textStyle: { fontFamily: "'Noto Serif JP', serif" },
+  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
   tooltip: {
     trigger: 'axis',
     backgroundColor: '#1a1008dd',
-    textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif", fontSize: 11 },
+    textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong> (${catGroups[p[0].name].length}件)`
   },
   grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
-    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif" },
+    axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
     max: 2500
   },
   yAxis: {
     type: 'category',
     data: catAvg.map(t => t.cat),
-    axisLabel: { color: '#5c3317', fontFamily: "'Noto Serif JP', serif", fontSize: 10 },
+    axisLabel: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
   series: [{
@@ -1777,8 +1840,166 @@ chartCatLen.setOption({
       itemStyle: { color: catColors[t.cat] || '#7f8c8d' }
     })),
     barMaxWidth: 18,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
   }]
+});
+
+// ═══════════════════════════════════════════
+//  CHART INTERACTION & ACCESSIBILITY
+// ═══════════════════════════════════════════
+
+// 全グラフで共通に使う公式ECharts機能。数値確認・復元・PNG保存を一貫して提供する。
+const dashboardChartFont = "'Zen Old Mincho', 'Shippori Mincho', serif";
+function createChartToolbox(label, options = {}) {
+  const { brush = false, zoom = false, magic = false } = options;
+  const feature = {
+    dataView: {
+      show: true,
+      readOnly: true,
+      title: '数値表を表示',
+      lang: ['数値表', '閉じる', '更新']
+    },
+    restore: { show: true, title: '初期表示に戻す' },
+    saveAsImage: {
+      show: true,
+      title: 'PNG画像として保存',
+      type: 'png',
+      name: `天命乃杜_記事分析_${label}`,
+      backgroundColor: '#faf6ef',
+      pixelRatio: 2
+    }
+  };
+  if (zoom) {
+    feature.dataZoom = {
+      show: true,
+      title: { zoom: '範囲を拡大', back: '拡大を戻す' },
+      yAxisIndex: 'none'
+    };
+  }
+  if (magic) {
+    feature.magicType = {
+      show: true,
+      type: ['line', 'bar', 'stack', 'tiled'],
+      title: { line: '折れ線表示', bar: '棒表示', stack: '積み上げ', tiled: '並列表示' }
+    };
+  }
+  if (brush) {
+    feature.brush = {
+      type: ['rect', 'keep', 'clear'],
+      title: { rect: '範囲選択', keep: '選択を保持', clear: '選択を解除' }
+    };
+  }
+  return {
+    show: true,
+    right: 7,
+    top: 5,
+    itemSize: 14,
+    itemGap: 8,
+    iconStyle: { borderColor: '#5c3317' },
+    emphasis: { iconStyle: { borderColor: '#c0392b' } },
+    feature
+  };
+}
+
+function createChartAria(label) {
+  return {
+    show: true,
+    description: `${label}。右上の操作アイコンから数値表の確認、PNG画像の保存、初期表示への復元ができます。`
+  };
+}
+
+function addChartCapabilities(chart, label, options = {}) {
+  const { zoom = false, zoomGridBottom = '25%', brush = false, magic = false } = options;
+  chart.setOption({
+    toolbox: createChartToolbox(label, { brush, zoom, magic }),
+    aria: createChartAria(label),
+    textStyle: { fontFamily: dashboardChartFont }
+  });
+
+  if (brush) {
+    chart.setOption({
+      brush: {
+        toolbox: ['rect', 'keep', 'clear'],
+        xAxisIndex: 'all',
+        brushLink: 'none',
+        outOfBrush: { colorAlpha: 0.25 }
+      }
+    });
+  }
+
+  if (zoom) {
+    chart.getDom().classList.add('zoomable-chart');
+    chart.setOption({
+      axisPointer: {
+        type: 'line',
+        label: { show: true, backgroundColor: '#5c3317', fontFamily: dashboardChartFont }
+      },
+      tooltip: { axisPointer: { type: 'cross' } },
+      grid: { bottom: zoomGridBottom },
+      dataZoom: [
+        {
+          type: 'inside',
+          xAxisIndex: 0,
+          filterMode: 'none',
+          zoomOnMouseWheel: 'shift',
+          moveOnMouseMove: true,
+          moveOnMouseWheel: false
+        },
+        {
+          type: 'slider',
+          xAxisIndex: 0,
+          filterMode: 'none',
+          height: 15,
+          bottom: 4,
+          borderColor: '#d4c4a0',
+          backgroundColor: '#faf6ef',
+          fillerColor: 'rgba(184,134,11,0.16)',
+          handleStyle: { color: '#b8860b', borderColor: '#5c3317' },
+          textStyle: { color: '#8b7355', fontFamily: dashboardChartFont, fontSize: 9 }
+        }
+      ]
+    });
+    chart.resize();
+  }
+}
+
+const dashboardCharts = [
+  { chart: chartMonthly, label: '月別投稿数', options: { magic: true } },
+  { chart: chartMonthlyAvg, label: '月別ニュース文字数と平均文字数', options: { magic: true } },
+  { chart: chartHeatmap, label: '日別投稿ヒートマップ' },
+  { chart: chartWeekly, label: '週別投稿数', options: { zoom: true, magic: true, zoomGridBottom: '28%' } },
+  { chart: chartWeeklyChars, label: '週別ニュース総文字数', options: { zoom: true, magic: true, zoomGridBottom: '24%' } },
+  { chart: chartTagBubble, label: 'カテゴリ別記事数と平均文字数', options: { brush: true } },
+  { chart: chartLengthPie, label: '記事長クラス分布' },
+  { chart: chartNewsTags, label: 'ニュースタグ分布' },
+  { chart: chartColCats, label: 'コラムカテゴリ分布' },
+  { chart: chartGrouped, label: 'ニュース属性分類の記事数' },
+  { chart: chartGroupAvgChars, label: 'ニュース属性分類の平均文字数' },
+  { chart: chartTimeline, label: '日別投稿タイムライン', options: { zoom: true, magic: true, zoomGridBottom: '26%' } },
+  { chart: chartCumulative, label: '累積記事数', options: { zoom: true, zoomGridBottom: '28%' } },
+  { chart: chartCumChars, label: '累積総文字数', options: { zoom: true, zoomGridBottom: '28%' } },
+  { chart: chartHours, label: 'ニュース投稿時刻の分布' },
+  { chart: chartDow, label: 'ニュース曜日別投稿数' },
+  { chart: chartDowHour, label: '曜日と時間帯の投稿分布' },
+  { chart: chartColDow, label: 'コラム曜日別投稿数' },
+  { chart: chartDowCompare, label: 'ニュースとコラムの曜日別比較' },
+  { chart: chartHist, label: '記事長ヒストグラム' },
+  { chart: chartScatter, label: '記事IDと文字数の関係', options: { brush: true } },
+  { chart: chartTagLen, label: 'ニュースタグ別平均文字数' },
+  { chart: chartCatLen, label: 'コラムカテゴリ別平均文字数' }
+];
+
+dashboardCharts.forEach(({ chart, label, options }) => {
+  addChartCapabilities(chart, label, options);
+  // ECharts標準の復元後も、後から付加した探索機能を失わないようにする。
+  chart.on('restore', () => {
+    window.requestAnimationFrame(() => addChartCapabilities(chart, label, options));
+  });
+});
+
+document.getElementById('chart-reset-all').addEventListener('click', () => {
+  dashboardCharts.forEach(({ chart }) => chart.dispatchAction({ type: 'restore' }));
+  document.getElementById('chart-action-status').textContent = 'すべてのグラフを初期表示へ戻しました。';
 });
 
 // ═══════════════════════════════════════════
@@ -1893,10 +2114,7 @@ function switchTab(t) {
 
 // RESIZE
 window.addEventListener('resize', () => {
-  [chartMonthly, chartMonthlyAvg, chartHeatmap, chartNewsTags, chartColCats, chartGrouped, chartGroupAvgChars, chartTimeline,
-   chartHist, chartScatter, chartTagLen, chartCatLen, chartTagBubble, chartLengthPie,
-   chartWeekly, chartWeeklyChars, chartCumulative, chartCumChars,
-   chartHours, chartDow, chartDowHour].forEach(c => c && c.resize());
+  dashboardCharts.forEach(({ chart }) => chart && chart.resize());
 });
 
 </script>
