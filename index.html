@@ -97,7 +97,15 @@
     position: relative;
     animation: shimmer 4s ease-in-out infinite;
   }
-  .header-kamon .bi { font-size: 1.6rem; line-height: 1; }
+  /* 本サイトのサイドバーと同じ、ブランド固有の「天」文字紋章。 */
+  .header-kamon .brand-kanji {
+    font-family: 'Zen Old Mincho', 'Shippori Mincho', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0;
+    transform: translateY(-0.04em);
+  }
   @keyframes shimmer {
     0%, 100% { box-shadow: 0 0 0 0 rgba(184,134,11,0); }
     50% { box-shadow: 0 0 20px 4px rgba(184,134,11,0.3); }
@@ -562,7 +570,7 @@
 <body>
 
 <header>
-  <div class="header-kamon" aria-label="天命乃杜"><i class="bi bi-house-door-fill" aria-hidden="true"></i></div>
+  <div class="header-kamon" role="img" aria-label="天命乃杜の紋章"><span class="brand-kanji" aria-hidden="true">天</span></div>
   <h1 class="site-title">運勢・天命乃杜 — 記事分析ダッシュボード</h1>
   <p class="subtitle">Article Analytics Report &nbsp;·&nbsp; Data Intelligence</p>
   <p class="header-meta">分析対象期間: <span id="meta-period">--</span> &ensp;|&ensp; 社務所だより: <span id="meta-news-count">--</span>記事 &ensp;|&ensp; 神籤草子: <span id="meta-col-count">--</span>記事</p>
