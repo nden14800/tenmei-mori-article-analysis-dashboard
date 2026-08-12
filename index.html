@@ -268,6 +268,11 @@
     line-height: 1.8;
   }
   .chart-interaction-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.7rem; flex-wrap: wrap; }
+  .line-style-selector { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--border); background: #fff; }
+  .line-style-label { margin-right: 0.2rem; color: var(--mist); font-family: var(--font-main); font-size: 0.72rem; white-space: nowrap; }
+  .line-style-button { appearance: none; border: 0; background: transparent; color: var(--cedar); cursor: pointer; padding: 0.35rem 0.5rem; font-family: var(--font-main); font-size: 0.72rem; white-space: nowrap; transition: background 0.2s, color 0.2s; }
+  .line-style-button:hover, .line-style-button:focus-visible { background: var(--pale-gold); outline: 2px solid var(--gold); outline-offset: -2px; }
+  .line-style-button.active { background: var(--deep-red); color: #fff; }
   .chart-reset-button {
     appearance: none;
     border: 1px solid var(--cedar);
@@ -543,9 +548,15 @@
   <aside class="chart-interaction-guide" aria-label="グラフの操作方法">
     <div>
       <h2>グラフ操作</h2>
-      <p>各グラフの右上にあるアイコンから、数値表の確認、画像保存、初期表示への復元ができます。時系列グラフは、スライダー・ホイール・スワイプで表示範囲を拡大できます。</p>
+      <p>各グラフの右上にあるアイコンから、数値表の確認、画像保存、初期表示への復元ができます。時系列グラフは、スライダー・ホイール・スワイプで表示範囲を拡大でき、折れ線は直線・滑らか・階段状から選択できます。</p>
     </div>
     <div class="chart-interaction-actions">
+      <div class="line-style-selector" role="group" aria-label="折れ線の形状">
+        <span class="line-style-label">折れ線:</span>
+        <button class="line-style-button active" type="button" data-line-style="straight" aria-pressed="true">直線</button>
+        <button class="line-style-button" type="button" data-line-style="smooth" aria-pressed="false">滑らか</button>
+        <button class="line-style-button" type="button" data-line-style="step" aria-pressed="false">階段状</button>
+      </div>
       <button class="chart-reset-button" id="chart-reset-all" type="button">全グラフを初期表示に戻す</button>
       <span class="chart-action-status" id="chart-action-status" role="status" aria-live="polite"></span>
     </div>
@@ -1908,8 +1919,32 @@ function createChartAria(label) {
   };
 }
 
+// ズーム後の表示データ範囲に応じて、Y軸へ読み取りやすい余白を加える。
+function axisNiceStep(span) {
+  const base = 10 ** Math.floor(Math.log10(Math.max(Math.abs(span), 1)));
+  const normalized = Math.max(Math.abs(span), 1) / base;
+  return (normalized <= 2 ? 0.2 : normalized <= 5 ? 0.5 : 1) * base;
+}
+function adaptiveAxisMin(value) {
+  const min = Number.isFinite(value.min) ? value.min : 0;
+  const max = Number.isFinite(value.max) ? value.max : min + 1;
+  const padding = Math.max((max - min) * 0.12, 1);
+  const raw = min - padding;
+  // 表示範囲にゼロが含まれる場合は、負の余白を作らずゼロから開始する。
+  if (min >= 0 && raw <= 0) return 0;
+  const step = axisNiceStep(max - min);
+  return Math.floor(raw / step) * step;
+}
+function adaptiveAxisMax(value) {
+  const min = Number.isFinite(value.min) ? value.min : 0;
+  const max = Number.isFinite(value.max) ? value.max : min + 1;
+  const padding = Math.max((max - min) * 0.12, 1);
+  const step = axisNiceStep(max - min);
+  return Math.ceil((max + padding) / step) * step;
+}
+
 function addChartCapabilities(chart, label, options = {}) {
-  const { zoom = false, zoomGridBottom = '25%', brush = false, magic = false } = options;
+  const { zoom = false, zoomGridBottom = 68, zoomLegendBottom = 30, brush = false, magic = false } = options;
   chart.setOption({
     toolbox: createChartToolbox(label, { brush, zoom, magic }),
     aria: createChartAria(label),
@@ -1929,18 +1964,25 @@ function addChartCapabilities(chart, label, options = {}) {
 
   if (zoom) {
     chart.getDom().classList.add('zoomable-chart');
-    chart.setOption({
+    const currentLegend = chart.getOption().legend?.[0];
+    const zoomOption = {
       axisPointer: {
         type: 'line',
         label: { show: true, backgroundColor: '#5c3317', fontFamily: dashboardChartFont }
       },
       tooltip: { axisPointer: { type: 'cross' } },
+      // スライダー、凡例、プロット領域を互いに干渉しない位置へ分離する。
       grid: { bottom: zoomGridBottom },
+      yAxis: {
+        scale: true,
+        min: adaptiveAxisMin,
+        max: adaptiveAxisMax
+      },
       dataZoom: [
         {
           type: 'inside',
           xAxisIndex: 0,
-          filterMode: 'none',
+          filterMode: 'filter',
           zoomOnMouseWheel: 'shift',
           moveOnMouseMove: true,
           moveOnMouseWheel: false
@@ -1948,17 +1990,27 @@ function addChartCapabilities(chart, label, options = {}) {
         {
           type: 'slider',
           xAxisIndex: 0,
-          filterMode: 'none',
-          height: 15,
-          bottom: 4,
+          filterMode: 'filter',
+          left: 18,
+          right: 18,
+          height: 8,
+          bottom: 7,
+          showDetail: false,
+          showDataShadow: false,
           borderColor: '#d4c4a0',
-          backgroundColor: '#faf6ef',
-          fillerColor: 'rgba(184,134,11,0.16)',
-          handleStyle: { color: '#b8860b', borderColor: '#5c3317' },
+          borderRadius: 4,
+          backgroundColor: '#fffdfa',
+          fillerColor: 'rgba(197,160,89,0.28)',
+          handleSize: '130%',
+          handleStyle: { color: '#c5a059', borderColor: '#8b6914', borderWidth: 1 },
+          moveHandleSize: 0,
+          moveHandleStyle: { opacity: 0 },
           textStyle: { color: '#8b7355', fontFamily: dashboardChartFont, fontSize: 9 }
         }
       ]
-    });
+    };
+    if (currentLegend?.data?.length) zoomOption.legend = { bottom: zoomLegendBottom };
+    chart.setOption(zoomOption);
     chart.resize();
   }
 }
@@ -1967,17 +2019,17 @@ const dashboardCharts = [
   { chart: chartMonthly, label: '月別投稿数', options: { magic: true } },
   { chart: chartMonthlyAvg, label: '月別ニュース文字数と平均文字数', options: { magic: true } },
   { chart: chartHeatmap, label: '日別投稿ヒートマップ' },
-  { chart: chartWeekly, label: '週別投稿数', options: { zoom: true, magic: true, zoomGridBottom: '28%' } },
-  { chart: chartWeeklyChars, label: '週別ニュース総文字数', options: { zoom: true, magic: true, zoomGridBottom: '24%' } },
+  { chart: chartWeekly, label: '週別投稿数', options: { zoom: true, magic: true } },
+  { chart: chartWeeklyChars, label: '週別ニュース総文字数', options: { zoom: true, magic: true } },
   { chart: chartTagBubble, label: 'カテゴリ別記事数と平均文字数', options: { brush: true } },
   { chart: chartLengthPie, label: '記事長クラス分布' },
   { chart: chartNewsTags, label: 'ニュースタグ分布' },
   { chart: chartColCats, label: 'コラムカテゴリ分布' },
   { chart: chartGrouped, label: 'ニュース属性分類の記事数' },
   { chart: chartGroupAvgChars, label: 'ニュース属性分類の平均文字数' },
-  { chart: chartTimeline, label: '日別投稿タイムライン', options: { zoom: true, magic: true, zoomGridBottom: '26%' } },
-  { chart: chartCumulative, label: '累積記事数', options: { zoom: true, zoomGridBottom: '28%' } },
-  { chart: chartCumChars, label: '累積総文字数', options: { zoom: true, zoomGridBottom: '28%' } },
+  { chart: chartTimeline, label: '日別投稿タイムライン', options: { zoom: true, magic: true } },
+  { chart: chartCumulative, label: '累積記事数', options: { zoom: true } },
+  { chart: chartCumChars, label: '累積総文字数', options: { zoom: true } },
   { chart: chartHours, label: 'ニュース投稿時刻の分布' },
   { chart: chartDow, label: 'ニュース曜日別投稿数' },
   { chart: chartDowHour, label: '曜日と時間帯の投稿分布' },
@@ -1989,11 +2041,53 @@ const dashboardCharts = [
   { chart: chartCatLen, label: 'コラムカテゴリ別平均文字数' }
 ];
 
+const selectableLineCharts = dashboardCharts.filter(({ chart }) =>
+  chart.getOption().series.some(series => series.type === 'line')
+);
+const lineStyleNames = { straight: '直線', smooth: '滑らか', step: '階段状' };
+let selectedLineStyle = (() => {
+  try {
+    const saved = localStorage.getItem('tenmei-dashboard-line-style');
+    return lineStyleNames[saved] ? saved : 'straight';
+  } catch (_) {
+    return 'straight';
+  }
+})();
+
+function applySelectedLineStyle(style, announce = true) {
+  const smooth = style === 'smooth';
+  const step = style === 'step' ? 'middle' : false;
+  selectableLineCharts.forEach(({ chart }) => {
+    const seriesStyle = chart.getOption().series.map(series =>
+      series.type === 'line' ? { smooth, step } : {}
+    );
+    chart.setOption({ series: seriesStyle });
+  });
+  document.querySelectorAll('.line-style-button').forEach(button => {
+    const active = button.dataset.lineStyle === style;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  selectedLineStyle = style;
+  try { localStorage.setItem('tenmei-dashboard-line-style', style); } catch (_) {}
+  if (announce) {
+    document.getElementById('chart-action-status').textContent = `全ての折れ線を「${lineStyleNames[style]}」表示に変更しました。`;
+  }
+}
+
+document.querySelectorAll('.line-style-button').forEach(button => {
+  button.addEventListener('click', () => applySelectedLineStyle(button.dataset.lineStyle));
+});
+applySelectedLineStyle(selectedLineStyle, false);
+
 dashboardCharts.forEach(({ chart, label, options }) => {
   addChartCapabilities(chart, label, options);
-  // ECharts標準の復元後も、後から付加した探索機能を失わないようにする。
+  // ECharts標準の復元後も、後から付加した探索機能と選択済みの線形状を失わないようにする。
   chart.on('restore', () => {
-    window.requestAnimationFrame(() => addChartCapabilities(chart, label, options));
+    window.requestAnimationFrame(() => {
+      addChartCapabilities(chart, label, options);
+      applySelectedLineStyle(selectedLineStyle, false);
+    });
   });
 });
 
