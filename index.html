@@ -309,9 +309,103 @@
   }
   .chart-reset-button:hover, .chart-reset-button:focus-visible { background: var(--deep-red); transform: translateY(-1px); outline: 2px solid var(--gold); outline-offset: 2px; }
   .chart-action-status { min-height: 1em; color: var(--mist); font-family: var(--font-main); font-size: 0.72rem; }
+
+  /* PDFとCSVは、共有用レポートと再分析用データを明確に分けて提供する。 */
+  .export-panel {
+    display: grid;
+    grid-template-columns: minmax(230px, 1fr) auto;
+    gap: 1rem 1.5rem;
+    align-items: center;
+    margin: 0 0 2rem;
+    padding: 1.15rem 1.2rem;
+    background: linear-gradient(135deg, rgba(250,246,239,0.96), #fff 60%, rgba(245,230,200,0.7));
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--vermillion);
+  }
+  .export-panel h2 {
+    margin: 0 0 0.35rem;
+    color: var(--deep-red);
+    font-family: var(--font-main);
+    font-size: 0.98rem;
+    letter-spacing: 0.08em;
+  }
+  .export-panel p {
+    margin: 0;
+    color: var(--mist);
+    font-family: var(--font-main);
+    font-size: 0.76rem;
+    line-height: 1.75;
+  }
+  .export-actions {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  .export-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 2.65rem;
+    border: 1px solid var(--cedar);
+    background: var(--cedar);
+    color: #fff;
+    padding: 0.55rem 0.8rem;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-size: 0.76rem;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .export-button:hover, .export-button:focus-visible {
+    background: var(--deep-red);
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    transform: translateY(-1px);
+  }
+  .export-button.csv-export-button {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+  .export-button.csv-export-button:hover, .export-button.csv-export-button:focus-visible { background: #8b6914; }
+  .csv-export-control { display: grid; gap: 0.3rem; }
+  .csv-export-control label {
+    color: var(--mist);
+    font-family: var(--font-main);
+    font-size: 0.69rem;
+    letter-spacing: 0.08em;
+  }
+  .csv-export-row { display: flex; gap: 0.45rem; }
+  .csv-export-select {
+    min-width: 176px;
+    min-height: 2.65rem;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--ink);
+    padding: 0.45rem 0.55rem;
+    font-family: var(--font-main);
+    font-size: 0.74rem;
+  }
+  .csv-export-select:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .export-status {
+    grid-column: 1 / -1;
+    min-height: 1.2em;
+    color: var(--mist);
+    font-family: var(--font-main);
+    font-size: 0.72rem;
+  }
+  .print-report-meta, .print-overview-note { display: none; }
+
   @media (max-width: 700px) {
     .chart-interaction-guide { grid-template-columns: 1fr; padding: 0.9rem 1rem; }
     .chart-interaction-actions { justify-content: flex-start; }
+    .export-panel { grid-template-columns: 1fr; padding: 0.9rem 1rem; }
+    .export-actions { justify-content: flex-start; align-items: stretch; }
+    .csv-export-control { width: 100%; }
+    .csv-export-row { flex-wrap: wrap; }
+    .csv-export-select { flex: 1 1 180px; min-width: 0; }
   }
 
   /* 投稿分布の主要グラフは全幅にし、年別ヒートマップの前に空白列を作らない。 */
@@ -596,6 +690,63 @@
     letter-spacing: 0.5em;
     font-size: 0.9rem;
   }
+
+  /* PDF保存時は操作要素を除き、A4横向きでグラフと考察を連続した報告書として整える。 */
+  @page { size: A4 landscape; margin: 10mm; }
+  @media print {
+    :root { color-scheme: light; }
+    body { background: #fff; color: #1a1008; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    body::before, body::after { display: none !important; }
+    header { margin: 0 0 0.3rem; padding: 0 0 0.45rem; border-bottom-width: 1px; }
+    header::before, header::after { display: none; }
+    .header-kamon { width: 28px; height: 28px; margin-bottom: 0.18rem; animation: none; }
+    .header-kamon .brand-kanji { font-size: 0.95rem; }
+    h1.site-title { font-size: 1.18rem; }
+    .subtitle { font-size: 0.63rem; }
+    .header-meta { margin-top: 0.25rem; font-size: 0.58rem; }
+    .container { max-width: none; padding: 0; }
+    .chart-interaction-guide, .export-panel, .article-index-section, .ornamental-divider { display: none !important; }
+    .print-report-meta { display: block; margin: 0 0 0.45rem; color: #5c3317; font-family: var(--font-main); font-size: 0.58rem; text-align: right; }
+    .section-title { margin: 0.7rem 0 0.4rem; font-size: 0.82rem; break-after: avoid-page; }
+    .stat-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.4rem; margin-bottom: 0.35rem; }
+    .stat-card { padding: 0.45rem 0.3rem; animation: none; break-inside: avoid-page; }
+    .stat-number { font-size: 1.45rem; }
+    .stat-label, .stat-sub { font-size: 0.58rem; }
+    .print-overview-note {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+      gap: 0.75rem 1.2rem;
+      align-items: start;
+      margin: 1rem 0 0;
+      padding: 0.9rem 1rem;
+      background: #fffdfa;
+      border: 1px solid #eadfc9;
+      border-left: 3px solid #b8860b;
+      break-inside: avoid-page;
+    }
+    .print-overview-note h2 { margin: 0 0 0.35rem; color: #5c3317; font-family: var(--font-main); font-size: 0.78rem; letter-spacing: 0.08em; }
+    .print-overview-note p { margin: 0; color: #4b3a2b; font-family: var(--font-main); font-size: 0.64rem; line-height: 1.8; }
+    .print-overview-list { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.65rem; margin: 0; font-family: var(--font-main); font-size: 0.61rem; line-height: 1.7; }
+    .print-overview-list dt { color: #8b6914; font-weight: 700; }
+    .print-overview-list dd { margin: 0; color: #4b3a2b; }
+    /* CSS Grid全体を一塊として次頁へ送らないよう、印刷時はカードを縦に展開する。 */
+    .charts-grid, .charts-grid-3 { display: block; margin-bottom: 0; }
+    .chart-card { margin: 0 0 0.7rem; padding: 0.65rem; animation: none; break-inside: avoid-page; page-break-inside: avoid; }
+    .chart-title { min-height: 0; margin-bottom: 0.45rem; font-size: 0.65rem; }
+    /* SVGの初期レイアウトを保ち、グラフと説明文の重なりを防ぐ。 */
+    .chart-box { height: 280px; }
+    .chart-box-tall { height: 380px; }
+    .chart-box.zoomable-chart { height: 348px; }
+    .chart-box-tall.zoomable-chart { height: 428px; }
+    .heatmap-chart { min-width: 0; height: 390px; }
+    .heatmap-scroll { overflow: visible; border: 0; background: transparent; }
+    .heatmap-navigation-note { font-size: 0.58rem; }
+    .chart-desc { margin-top: 0.55rem; padding: 0.6rem 0.75rem; font-size: 0.6rem; line-height: 1.65; }
+    .chart-desc-title { margin-bottom: 0.3rem; font-size: 0.6rem; }
+    .insight-box { padding: 0.65rem 0.8rem; animation: none; break-inside: avoid-page; }
+    .insight-title { font-size: 0.62rem; }
+    .insight-body { font-size: 0.64rem; line-height: 1.65; }
+  }
 </style>
 </head>
 <body>
@@ -625,6 +776,33 @@
       <span class="chart-action-status" id="chart-action-status" role="status" aria-live="polite"></span>
     </div>
   </aside>
+
+  <section class="export-panel" aria-labelledby="export-panel-title">
+    <div>
+      <h2 id="export-panel-title">レポート・データ出力</h2>
+      <p>PDFはグラフと考察を共有・印刷するレポート用です。CSVは記事・集計値を表計算や再分析に利用できます。</p>
+    </div>
+    <div class="export-actions">
+      <button class="export-button" id="export-pdf-report" type="button" aria-describedby="export-pdf-help"><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>PDFレポートを保存</button>
+      <div class="csv-export-control">
+        <label for="csv-export-type">CSVデータ</label>
+        <div class="csv-export-row">
+          <select class="csv-export-select" id="csv-export-type">
+            <option value="articles">全記事データ（147件）</option>
+            <option value="monthly">月別集計</option>
+            <option value="weekly">週別集計</option>
+            <option value="daily">日別・累計</option>
+            <option value="classifications">分類別集計</option>
+          </select>
+          <button class="export-button csv-export-button" id="export-csv-data" type="button"><i class="bi bi-filetype-csv" aria-hidden="true"></i>CSVを保存</button>
+        </div>
+      </div>
+    </div>
+    <p id="export-pdf-help" class="export-status">PDFボタンでは端末の印刷画面を開きます。「PDFに保存」を選んで保存してください。</p>
+    <p class="export-status" id="export-status" role="status" aria-live="polite"></p>
+  </section>
+
+  <p class="print-report-meta" id="print-report-meta">天命乃杜 記事分析レポート　|　対象期間: <span id="print-period">--</span>　|　出力日時: <span id="print-generated-at">--</span></p>
 
   <!-- OVERVIEW -->
   <div class="section-title">総覧 — Overview</div>
@@ -660,6 +838,19 @@
       <div class="stat-sub" id="overview-avg-sub">--</div>
     </div>
   </div>
+
+  <aside class="print-overview-note" aria-label="PDFレポートの概要">
+    <div>
+      <h2>本レポートの見方</h2>
+      <p>天命乃杜の社務所だよりと神籤草子を、公開日・本数・文字数・分類・投稿傾向から俯瞰するための固定レポートです。グラフでは変化の位置を、洞察・考察では各数値の背景を確認できます。記事ごとの明細や集計値の再利用には、画面上のCSV出力をご利用ください。</p>
+    </div>
+    <dl class="print-overview-list">
+      <dt>対象媒体</dt><dd>社務所だより／神籤草子</dd>
+      <dt>収録件数</dt><dd>147記事・125,267字</dd>
+      <dt>対象期間</dt><dd>2025年12月10日〜2026年8月12日</dd>
+      <dt>出力形式</dt><dd>共有・印刷用のPDFレポート</dd>
+    </dl>
+  </aside>
 
   <!-- CHARTS ROW 1 -->
   <div class="section-title">投稿分布 — Distribution</div>
@@ -926,7 +1117,8 @@
   </div>
 
   <!-- ARTICLE TABLES -->
-  <div class="section-title">記事一覧 — Article Index</div>
+  <section class="article-index-section" aria-labelledby="article-index-title">
+  <div class="section-title" id="article-index-title">記事一覧 — Article Index</div>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('news')">社務所だより（ニュース）</button>
@@ -987,6 +1179,7 @@
       </table>
     </div>
   </div>
+  </section>
 
   <div class="ornamental-divider">⊰ &ensp; 天命乃杜 &ensp; ⊱</div>
 
@@ -2273,6 +2466,157 @@ document.getElementById('chart-reset-all').addEventListener('click', () => {
   dashboardCharts.forEach(({ chart }) => chart.dispatchAction({ type: 'restore' }));
   document.getElementById('chart-action-status').textContent = 'すべてのグラフを初期表示へ戻しました。';
 });
+
+// ═══════════════════════════════════════════
+//  REPORT & DATA EXPORT
+// ═══════════════════════════════════════════
+
+function exportTimestamp() {
+  return new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false
+  }).format(new Date()).replace(/[/:\s]/g, '').replace(/年|月|日/g, '');
+}
+
+function formatExportDateTime() {
+  return new Intl.DateTimeFormat('ja-JP', {
+    dateStyle: 'long', timeStyle: 'short', hour12: false
+  }).format(new Date());
+}
+
+// CSVのセルを常に引用符で囲み、数式として扱われ得る先頭文字には表計算ソフト向けのタブを付ける。
+function safeCsvValue(value) {
+  const text = String(value ?? '').replace(/[\r\n]+/g, ' ');
+  return /^[=+\-@\t\r\n＝＋－＠]/.test(text) ? `\t${text}` : text;
+}
+
+function csvCell(value) {
+  return `"${safeCsvValue(value).replace(/"/g, '""')}"`;
+}
+
+function downloadCsvFile(filename, rows) {
+  const csv = '\uFEFF' + rows.map(row => row.map(csvCell).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function articleExportRows() {
+  const rows = [
+    ...newsData.map(a => [a.id, '社務所だより', a.date, a.time || '', 'ニュースタグ', a.tag, a.title, a.chars, a.desc]),
+    ...colData.map(a => [a.id, '神籤草子', a.date, '', 'コラムカテゴリ', a.category, a.title, a.chars, ''])
+  ].sort((a, b) => articleDate(b[2]) - articleDate(a[2]) || b[0] - a[0]);
+  return [['ID', '媒体', '公開日', '公開時刻', '分類種別', '分類', 'タイトル', '文字数', '内容・説明'], ...rows];
+}
+
+function monthlyExportRows() {
+  return [
+    ['月', 'ニュース記事数', 'コラム記事数', '合計記事数', 'ニュース文字数', 'コラム文字数', '合計文字数', 'ニュース平均文字数'],
+    ...sortedMonths.map(month => {
+      const stat = monthlyStats[month];
+      return [month, stat.newsCnt, stat.colCnt, stat.newsCnt + stat.colCnt, stat.newsChars, stat.colChars, stat.newsChars + stat.colChars, stat.newsCnt ? Math.round(stat.newsChars / stat.newsCnt) : ''];
+    })
+  ];
+}
+
+function weeklyExportRows() {
+  return [
+    ['週開始日（日曜）', 'ニュース記事数', 'コラム記事数', '合計記事数', 'ニュース文字数'],
+    ...sortedWeeks.map(week => {
+      const stat = weeklyStats[week];
+      return [week, stat.newsCnt, stat.colCnt, stat.newsCnt + stat.colCnt, stat.newsChars];
+    })
+  ];
+}
+
+function dailyExportRows() {
+  return [
+    ['日付', 'ニュース記事数', 'コラム記事数', '合計記事数', 'ニュース文字数', 'コラム文字数', '合計文字数', '累積ニュース記事数', '累積コラム記事数', '累積記事数', '累積ニュース文字数', '累積コラム文字数', '累積文字数'],
+    ...cumDataDynamic.map((day, index) => {
+      const previous = cumDataDynamic[index - 1] || { newsChars: 0, colChars: 0 };
+      const newsChars = day.newsChars - previous.newsChars;
+      const colChars = day.colChars - previous.colChars;
+      return [day.date, day.newsCount, day.colCount, day.newsCount + day.colCount, newsChars, colChars, newsChars + colChars, day.news, day.col, day.total, day.newsChars, day.colChars, day.totalChars];
+    })
+  ];
+}
+
+function articleLengthClass(chars) {
+  if (chars < 500) return 'ショート (〜500字)';
+  if (chars < 1000) return 'ミドル (500〜1000字)';
+  return 'ロング (1000字〜)';
+}
+
+function classificationExportRows() {
+  const tagRows = tagAvg.map(item => {
+    const chars = tagGroups[item.tag];
+    return ['ニュースタグ', item.tag, item.count, item.avg, chars.reduce((sum, value) => sum + value, 0)];
+  });
+  const categoryRows = catAvg.map(item => {
+    const chars = catGroups[item.cat];
+    return ['コラムカテゴリ', item.cat, item.count, item.avg, chars.reduce((sum, value) => sum + value, 0)];
+  });
+  const lengthRows = Object.keys(lengthClasses).map(name => {
+    const articles = allArticles.filter(article => articleLengthClass(article.chars) === name);
+    const total = articles.reduce((sum, article) => sum + article.chars, 0);
+    return ['記事長クラス', name, articles.length, articles.length ? Math.round(total / articles.length) : '', total];
+  });
+  const groupRows = Object.entries(groupCharData).map(([name, articles]) => {
+    const total = articles.reduce((sum, article) => sum + article.chars, 0);
+    return ['ニュース属性分類', name, articles.length, articles.length ? Math.round(total / articles.length) : '', total];
+  });
+  return [['分類種別', '分類名', '記事数', '平均文字数', '総文字数'], ...tagRows, ...categoryRows, ...lengthRows, ...groupRows];
+}
+
+const csvExports = {
+  articles: { label: '全記事データ', filename: 'tenmei-mori_articles', rows: articleExportRows },
+  monthly: { label: '月別集計', filename: 'tenmei-mori_monthly-summary', rows: monthlyExportRows },
+  weekly: { label: '週別集計', filename: 'tenmei-mori_weekly-summary', rows: weeklyExportRows },
+  daily: { label: '日別・累計', filename: 'tenmei-mori_daily-cumulative', rows: dailyExportRows },
+  classifications: { label: '分類別集計', filename: 'tenmei-mori_classifications', rows: classificationExportRows }
+};
+
+function announceExport(message) {
+  document.getElementById('export-status').textContent = message;
+  document.getElementById('chart-action-status').textContent = message;
+}
+
+function preparePrintReport() {
+  document.getElementById('print-period').textContent = periodLabel;
+  document.getElementById('print-generated-at').textContent = formatExportDateTime();
+  dashboardCharts.forEach(({ chart }) => chart.setOption({ toolbox: { show: false } }));
+  resizeDashboardCharts();
+}
+
+function restoreAfterPrint() {
+  dashboardCharts.forEach(({ chart }) => chart.setOption({ toolbox: { show: true } }));
+  resizeDashboardCharts();
+}
+
+document.getElementById('export-pdf-report').addEventListener('click', () => {
+  preparePrintReport();
+  announceExport('印刷画面を開きます。保存先で「PDFに保存」を選択してください。');
+  window.setTimeout(() => window.print(), 0);
+});
+
+document.getElementById('export-csv-data').addEventListener('click', () => {
+  const selected = document.getElementById('csv-export-type').value;
+  const definition = csvExports[selected];
+  const rows = definition.rows();
+  downloadCsvFile(`${definition.filename}_${exportTimestamp()}.csv`, rows);
+  announceExport(`${definition.label}をCSV形式で出力しました（${rows.length - 1}行）。`);
+});
+
+window.addEventListener('beforeprint', preparePrintReport);
+window.addEventListener('afterprint', restoreAfterPrint);
 
 // ═══════════════════════════════════════════
 //  TABLES
