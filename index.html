@@ -235,6 +235,33 @@
   .chart-box { width: 100%; height: 280px; }
   .chart-box-tall { width: 100%; height: 380px; }
 
+  /* 日別ヒートマップは年ごとに縦積みし、日付セルの可読性を維持する。 */
+  .heatmap-card { grid-column: 1 / -1; }
+  .heatmap-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border: 1px solid var(--pale-gold);
+    background: linear-gradient(90deg, rgba(250,246,239,0.9), #fff 7%, #fff 93%, rgba(250,246,239,0.9));
+    scrollbar-color: var(--gold) var(--pale-gold);
+    scrollbar-width: thin;
+  }
+  .heatmap-scroll::-webkit-scrollbar { height: 8px; }
+  .heatmap-scroll::-webkit-scrollbar-track { background: var(--pale-gold); }
+  .heatmap-scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+  .heatmap-chart { min-width: 820px; height: 390px; }
+  .heatmap-navigation-note {
+    margin: -0.2rem 0 0.7rem;
+    color: var(--mist);
+    font-size: 0.73rem;
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 700px) {
+    .heatmap-card { padding: 1rem; }
+    .heatmap-chart { min-width: 820px; }
+    .heatmap-navigation-note { line-height: 1.6; }
+  }
+
   .chart-desc {
     margin-top: 0.9rem;
     background: white;
@@ -504,10 +531,13 @@
       <div class="chart-box" id="chart-monthly"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>このグラフは、2025年12月から2026年8月にかけての月別投稿本数をニュース（社務所だより）とコラム（神籤草子）に分けて比較したものだ。2025年12月はサービスの正式公開前にあたるプレオープン期であり、双方合わせても6本程度の静かな滑り出しに留まった。しかし2026年1月に入ると状況は一変し、ニュースだけで<strong>53本、コラム27本、合計80本という驚異的な数</strong>が投稿された。これは全記事（147本）の約54%が単月に集中したことを意味する。正式リリース直後に開発者の熱量が爆発的に放出され、機能追加・不具合修正・コンテンツ充実が同時並行で猛烈な勢いで進んだ証だ。2月は26本と落ち着きを見せたのち、<strong>3月は投稿ゼロ、4月も月間4本</strong>という長い沈黙期間に入っている。これは開発者側の環境変化に伴う長期休止期間であり、月別グラフ上でも明確な谷として現れている。5月に入ると14本まで回復し、6月7本・7月8本を経て、8月は12日時点でニュースとコラムが各1本ずつ加わった。本数自体は控えめだが、後述の通りこの時期は「本数より質」を重視した大型記事中心の更新へと性格を変えている。</div>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">日別投稿ヒートマップ（全記事）</div>
-      <div class="chart-box" id="chart-heatmap"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>全期間（2025年12月〜2026年8月）の各日における全記事投稿数を色の濃淡で表現したカレンダーヒートマップだ。色が濃い赤ほど投稿が集中した日を示す。視覚的に最も際立つのは<strong>2026年1月5〜6日の連続ピーク</strong>で、それぞれ7本、13本の記事が投稿され、ヒートマップ全体の中でも最深紅のセルとなっている。この2日間にはシステム機能の実装・修正ラッシュと神籤草子コラムの一斉公開が重なり、開発とコンテンツ制作が奇跡的に同期した瞬間を記録している。1月中旬〜下旬にかけても週に複数回の更新が連続し、高密度なグレーから赤のグラデーションが続く。2月上旬には白色のセルが集中する「沈黙の谷」が見られるが、これはサーバー障害ではなく、1月25日に完了した大規模Bento Grid刷新後の開発者の充電・休息期間に相当する。2月中旬に一度更新が戻るものの、<strong>2月23日から4月21日まで57日間（約8週間）にわたり投稿が完全にゼロ</strong>となっており、これがヒートマップ全体で最も長い空白期間だ。4月21日の運営再開以降はまばらな赤が戻り、5月には比較的まとまった更新日が点在、6月27日から7月12日まで15日間の小休止を挟んで、7月12日に大型更新の濃いセルが刻まれ、続く7月18日にはコラム、7月19日にはAI機能拡充を伝えるニュースが刻まれている。その後も7月25日の機能開放ニュース、7月26日のコラムと更新が続き、7月31日にはセキュリティ総点検ニュースとコラムが同日に並んだ。さらに8月12日には、読みやすさ・PDF出力改善のニュースと、お盆の神社参拝を扱うコラムが追加され、最新の更新点として記録されている。</div>
+    <div class="chart-card heatmap-card">
+      <div class="chart-title">日別投稿ヒートマップ（全記事・年別表示）</div>
+      <p class="heatmap-navigation-note">全期間を保持したまま、年ごとにカレンダーを分けて表示します。横に収まりきらない画面では、横スクロールまたはスワイプで日付を確認できます。</p>
+      <div class="heatmap-scroll" role="region" aria-label="日別投稿ヒートマップ。年ごとのカレンダーを横スクロールして確認できます。">
+        <div class="chart-box heatmap-chart" id="chart-heatmap"></div>
+      </div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>全期間（2025年12月〜2026年8月）の各日における全記事投稿数を色の濃淡で表現したカレンダーヒートマップだ。表示は年ごとのカレンダーに分け、全期間を保ったまま日別セルが過度に狭くならないようにしている。色が濃い赤ほど投稿が集中した日を示す。視覚的に最も際立つのは<strong>2026年1月5〜6日の連続ピーク</strong>で、それぞれ7本、13本の記事が投稿され、ヒートマップ全体の中でも最深紅のセルとなっている。この2日間にはシステム機能の実装・修正ラッシュと神籤草子コラムの一斉公開が重なり、開発とコンテンツ制作が奇跡的に同期した瞬間を記録している。1月中旬〜下旬にかけても週に複数回の更新が連続し、高密度なグレーから赤のグラデーションが続く。2月上旬には白色のセルが集中する「沈黙の谷」が見られるが、これはサーバー障害ではなく、1月25日に完了した大規模Bento Grid刷新後の開発者の充電・休息期間に相当する。2月中旬に一度更新が戻るものの、<strong>2月23日から4月21日まで57日間（約8週間）にわたり投稿が完全にゼロ</strong>となっており、これがヒートマップ全体で最も長い空白期間だ。4月21日の運営再開以降はまばらな赤が戻り、5月には比較的まとまった更新日が点在、6月27日から7月12日まで15日間の小休止を挟んで、7月12日に大型更新の濃いセルが刻まれ、続く7月18日にはコラム、7月19日にはAI機能拡充を伝えるニュースが刻まれている。その後も7月25日の機能開放ニュース、7月26日のコラムと更新が続き、7月31日にはセキュリティ総点検ニュースとコラムが同日に並んだ。さらに8月12日には、読みやすさ・PDF出力改善のニュースと、お盆の神社参拝を扱うコラムが追加され、最新の更新点として記録されている。</div>
     </div>
   </div>
 
@@ -1250,17 +1280,43 @@ allArticles.forEach(a => {
 const heatmapData = Object.entries(dailyCounts).map(([d, v]) => [d, v]);
 const maxDay = Math.max(...Object.values(dailyCounts), 1);
 
-const chartHeatmap = echarts.init(document.getElementById('chart-heatmap'));
+// 長期運用でも日別セルを縮めないよう、年ごとにカレンダーを縦積みする。
+const heatmapYears = Array.from(new Set(heatmapData.map(([date]) => Number(date.slice(0, 4))))).sort((a, b) => a - b);
+const heatmapPanelHeight = 156;
+const heatmapTopPadding = 26;
+const heatmapBottomPadding = 44;
+const heatmapChartElement = document.getElementById('chart-heatmap');
+heatmapChartElement.style.height = `${heatmapTopPadding + (heatmapYears.length * heatmapPanelHeight) + heatmapBottomPadding}px`;
+
+const heatmapCalendars = heatmapYears.map((year, index) => ({
+  range: String(year),
+  orient: 'horizontal',
+  cellSize: [14, 16],
+  left: 74,
+  right: 28,
+  top: heatmapTopPadding + (index * heatmapPanelHeight),
+  itemStyle: { borderColor: '#d4c4a0', borderWidth: 0.7 },
+  dayLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif", nameMap: ['日','月','火','水','木','金','土'] },
+  monthLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif", nameMap: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
+  yearLabel: { show: true, position: 'left', margin: 22, color: '#5c3317', fontSize: 13, fontWeight: 700, fontFamily: "'Noto Serif JP', serif" }
+}));
+
+const heatmapSeries = heatmapYears.map((year, calendarIndex) => ({
+  name: `${year}年`,
+  type: 'heatmap',
+  coordinateSystem: 'calendar',
+  calendarIndex,
+  data: heatmapData.filter(([date]) => date.startsWith(`${year}-`)),
+  emphasis: { itemStyle: { borderColor: '#5c3317', borderWidth: 1.4 } }
+}));
+
+const chartHeatmap = echarts.init(heatmapChartElement);
 chartHeatmap.setOption({
   textStyle: { fontFamily: "'Noto Serif JP', serif" },
   tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Noto Serif JP', serif" } },
-  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 5, left: 'center', inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] }, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
-  calendar: { range: heatmapRange, cellSize: ['auto', 16], left: 40, right: 10, top: 20, bottom: 40,
-    itemStyle: { borderColor: '#d4c4a0', borderWidth: 0.5 },
-    dayLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Noto Serif JP', serif", nameMap: ['日','月','火','水','木','金','土'] },
-    monthLabel: { color: '#5c3317', fontSize: 10, fontFamily: "'Noto Serif JP', serif", nameMap: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'] },
-    yearLabel: { show: false } },
-  series: [{ type: 'heatmap', coordinateSystem: 'calendar', data: heatmapData }]
+  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 7, left: 'center', inRange: { color: ['#faf6ef', '#e8c5b0', '#c0392b'] }, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Noto Serif JP', serif" } },
+  calendar: heatmapCalendars,
+  series: heatmapSeries
 });
 
 const chartWeekly = echarts.init(document.getElementById('chart-weekly'));
