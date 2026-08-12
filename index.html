@@ -220,27 +220,37 @@
   }
 
   .chart-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     background: white;
     border: 1px solid var(--border);
     padding: 1.5rem;
     animation: fadeUp 0.5s ease both;
   }
   .chart-title {
-    font-size: 0.85rem;
-    color: var(--mist);
-    letter-spacing: 0.12em;
-    margin-bottom: 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    min-height: 2.35em;
+    margin: 0 0 1rem;
+    color: var(--mist);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    letter-spacing: 0.12em;
   }
   .chart-title::before {
     content: '▍';
     color: var(--vermillion);
     font-size: 0.9rem;
   }
-  .chart-box { width: 100%; height: 280px; }
-  .chart-box-tall { width: 100%; height: 380px; }
+  .chart-box, .chart-box-tall {
+    width: 100%;
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+  .chart-box { height: 280px; }
+  .chart-box-tall { height: 380px; }
   .chart-box.zoomable-chart { height: 332px; }
   .chart-box-tall.zoomable-chart { height: 412px; }
 
@@ -295,8 +305,11 @@
     .chart-interaction-actions { justify-content: flex-start; }
   }
 
-  /* 日別ヒートマップは年ごとに縦積みし、日付セルの可読性を維持する。 */
+  /* 投稿分布の主要グラフは全幅にし、年別ヒートマップの前に空白列を作らない。 */
+  .chart-card-wide,
   .heatmap-card { grid-column: 1 / -1; }
+
+  /* 日別ヒートマップは年ごとに縦積みし、日付セルの可読性を維持する。 */
   .heatmap-scroll {
     width: 100%;
     overflow-x: auto;
@@ -323,22 +336,31 @@
   }
 
   .chart-desc {
-    margin-top: 0.9rem;
-    background: white;
-    border: 1px solid var(--border);
+    margin-top: 1.35rem;
+    padding: 1.2rem 1.4rem 1.3rem;
+    background: linear-gradient(135deg, rgba(250,246,239,0.92), #fff 68%);
+    border: 1px solid var(--pale-gold);
     border-left: 4px solid var(--gold);
-    padding: 1.2rem 1.4rem;
+    border-top-color: var(--border);
     font-size: 0.8rem;
-    line-height: 1.8;
+    line-height: 1.85;
     color: var(--ink);
   }
   .chart-desc strong { color: var(--deep-red); }
   .chart-desc-title {
-    font-size: 0.78rem;
-    color: var(--mist);
-    letter-spacing: 0.12em;
+    display: flex;
+    align-items: center;
+    min-height: 1.4em;
     margin-bottom: 0.7rem;
+    color: var(--mist);
+    font-size: 0.78rem;
     font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+  @media (max-width: 700px) {
+    .chart-card { padding: 1rem; }
+    .chart-title { min-height: 0; }
+    .chart-desc { margin-top: 1rem; padding: 1rem; }
   }
 
   .insights-grid {
@@ -603,7 +625,7 @@
   <!-- CHARTS ROW 1 -->
   <div class="section-title">投稿分布 — Distribution</div>
   <div class="charts-grid">
-    <div class="chart-card">
+    <div class="chart-card chart-card-wide">
       <div class="chart-title">月別投稿数の推移（ニュース vs コラム）</div>
       <div class="chart-box" id="chart-monthly"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>このグラフは、2025年12月から2026年8月にかけての月別投稿本数をニュース（社務所だより）とコラム（神籤草子）に分けて比較したものだ。2025年12月はサービスの正式公開前にあたるプレオープン期であり、双方合わせても6本程度の静かな滑り出しに留まった。しかし2026年1月に入ると状況は一変し、ニュースだけで<strong>53本、コラム27本、合計80本という驚異的な数</strong>が投稿された。これは全記事（147本）の約54%が単月に集中したことを意味する。正式リリース直後に開発者の熱量が爆発的に放出され、機能追加・不具合修正・コンテンツ充実が同時並行で猛烈な勢いで進んだ証だ。2月は26本と落ち着きを見せたのち、<strong>3月は投稿ゼロ、4月も月間4本</strong>という長い沈黙期間に入っている。これは開発者側の環境変化に伴う長期休止期間であり、月別グラフ上でも明確な谷として現れている。5月に入ると14本まで回復し、6月7本・7月8本を経て、8月は12日時点でニュースとコラムが各1本ずつ加わった。本数自体は控えめだが、後述の通りこの時期は「本数より質」を重視した大型記事中心の更新へと性格を変えている。</div>
@@ -1349,13 +1371,11 @@ const groupAvgCharsArr = Object.entries(groupCharData)
 //  CHARTS INITIALIZATION
 // ═══════════════════════════════════════════
 
-// 高DPI端末・埋め込み環境でも内部Canvasを十分な密度で描画する。
-// 23グラフを同時表示するため、品質とメモリ使用量の均衡点として2倍へ固定する。
-const dashboardCanvasDpr = 2;
+// 147記事・246日間の規模では、拡大しても線・文字がぼやけないSVGレンダラーを使う。
+// SVGはベクター描画のため、固定のdevicePixelRatio指定を必要としない。
 function createDashboardChart(element) {
   return echarts.init(element, null, {
-    renderer: 'canvas',
-    devicePixelRatio: dashboardCanvasDpr,
+    renderer: 'svg',
     useDirtyRect: false
   });
 }
@@ -1402,7 +1422,7 @@ chartMonthlyAvg.setOption({
   ],
   series: [
     { name: '月別ニュース総文字数', type: 'bar', data: mNewsChars, yAxisIndex: 0, itemStyle: { color: '#c0392b' }, barMaxWidth: 50 },
-    { name: 'ニュース1記事平均文字数', type: 'line', data: mNewsAvg, yAxisIndex: 1, connectNulls: false, itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2.5 }, symbol: 'circle', symbolSize: 8, label: { show: true, position: 'top', color: '#b8860b', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => p.value == null ? '' : p.value+'字' } }
+    { name: 'ニュース1記事平均文字数', type: 'line', data: mNewsAvg, yAxisIndex: 1, connectNulls: false, itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2.5 }, symbol: 'circle', symbolSize: 8, label: { show: false }, emphasis: { label: { show: true, position: 'top', color: '#b8860b', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => p.value == null ? '' : p.value+'字' } } }
   ]
 });
 
@@ -1467,7 +1487,7 @@ chartWeekly.setOption({
   series: [
     { name: '社務所だより', type: 'bar', data: wNews, itemStyle: { color: '#c0392b' }, barMaxWidth: 22, stack: 'w' },
     { name: '神籤草子',     type: 'bar', data: wCol,  itemStyle: { color: '#b8860b' }, barMaxWidth: 22, stack: 'w',
-      markPoint: { data: [{ type: 'max', name: '最大' }], itemStyle: { color: '#5c3317' } } }
+      markPoint: { data: [{ type: 'max', name: '最大' }], symbolSize: 26, label: { show: false }, itemStyle: { color: '#5c3317' } } }
   ]
 });
 
@@ -1492,7 +1512,8 @@ chartWeeklyChars.setOption({
       }
     },
     barMaxWidth: 30,
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => p.value > 0 ? (p.value/1000).toFixed(1)+'k' : '0' }
+    label: { show: false },
+    emphasis: { label: { show: true, position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => p.value > 0 ? (p.value/1000).toFixed(1)+'k' : '0' } }
   }]
 });
 
@@ -1511,7 +1532,9 @@ chartTagBubble.setOption({
     type: 'scatter',
     data: bubbleData,
     symbolSize: p => Math.sqrt(p[2]) * 0.4,
-    label: { show: true, formatter: '{b}', position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
+    label: { show: true, formatter: '{b}', position: 'top', color: '#5c3317', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+    labelLayout: { hideOverlap: true, moveOverlap: 'shiftY' },
+    emphasis: { label: { show: true, fontWeight: 700 } }
   }]
 });
 
@@ -1603,7 +1626,8 @@ chartGrouped.setOption({
         return colors[params.dataIndex % colors.length];
       }
     },
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+    labelLayout: { hideOverlap: true }
   }]
 });
 
@@ -1646,7 +1670,8 @@ chartGroupAvgChars.setOption({
       }
     })),
     barMaxWidth: 18,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` },
+    labelLayout: { hideOverlap: true }
   }]
 });
 
@@ -1721,7 +1746,8 @@ chartDow.setOption({
   series: [{
     type: 'bar', data: dowCounts, barMaxWidth: 30,
     itemStyle: { color: (p) => ['#8e44ad','#2980b9','#27ae60','#7f8c8d','#e67e22','#c0392b','#b8860b'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+    labelLayout: { hideOverlap: true }
   }]
 });
 
@@ -1748,7 +1774,8 @@ chartColDow.setOption({
   series: [{
     type: 'bar', data: colDowCounts, barMaxWidth: 30,
     itemStyle: { color: (p) => ['#b8860b','#c5a028','#d4b845','#a0782a','#e8c45a','#b8860b','#8b6914'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }
+    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
+    labelLayout: { hideOverlap: true }
   }]
 });
 
@@ -1804,6 +1831,9 @@ chartScatter.setOption({
   ]
 });
 
+// 51種類のタグを1画面に詰め込まず、上位14件を初期表示にして縦方向のデータズームで全件を探索できるようにする。
+const tagChartVisibleCount = 14;
+const tagChartZoomStart = Math.max(0, 100 - (tagChartVisibleCount / tagAvg.length * 100));
 const chartTagLen = createDashboardChart(document.getElementById('chart-tag-len'));
 chartTagLen.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
@@ -1813,7 +1843,7 @@ chartTagLen.setOption({
     textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
   },
-  // 上部は操作アイコン専用、右側は値ラベル専用として確保する。
+  // 上部は操作アイコン専用、右側は値ラベルと縦方向スライダー専用として確保する。
   grid: { left: 5, right: 96, top: 38, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
@@ -1828,6 +1858,40 @@ chartTagLen.setOption({
     axisLabel: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 9 },
     axisLine: { lineStyle: { color: '#d4c4a0' } }
   },
+  dataZoom: [
+    {
+      type: 'inside',
+      yAxisIndex: 0,
+      filterMode: 'filter',
+      start: tagChartZoomStart,
+      end: 100,
+      zoomOnMouseWheel: 'shift',
+      moveOnMouseMove: true,
+      moveOnMouseWheel: false
+    },
+    {
+      type: 'slider',
+      yAxisIndex: 0,
+      orient: 'vertical',
+      right: 7,
+      top: 44,
+      bottom: 10,
+      width: 8,
+      start: tagChartZoomStart,
+      end: 100,
+      showDetail: false,
+      showDataShadow: false,
+      borderColor: '#d4c4a0',
+      borderRadius: 4,
+      backgroundColor: '#fffdfa',
+      fillerColor: 'rgba(197,160,89,0.28)',
+      handleSize: '130%',
+      handleStyle: { color: '#c5a059', borderColor: '#8b6914', borderWidth: 1 },
+      moveHandleSize: 0,
+      moveHandleStyle: { opacity: 0 },
+      textStyle: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 9 }
+    }
+  ],
   series: [{
     type: 'bar',
     data: tagAvg.map(t => ({
@@ -1835,7 +1899,8 @@ chartTagLen.setOption({
       itemStyle: { color: tagColors[t.tag] || '#7f8c8d' }
     })),
     barMaxWidth: 14,
-    label: { show: true, position: 'right', distance: 7, color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', distance: 7, color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` },
+    labelLayout: { hideOverlap: true }
   }]
 });
 
@@ -1869,7 +1934,8 @@ chartCatLen.setOption({
       itemStyle: { color: catColors[t.cat] || '#7f8c8d' }
     })),
     barMaxWidth: 18,
-    label: { show: true, position: 'right', distance: 7, color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', distance: 7, color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` },
+    labelLayout: { hideOverlap: true }
   }]
 });
 
@@ -1948,7 +2014,14 @@ function reserveChartToolbarSpace(chart) {
   }
 
   if (option.calendar?.length) {
-    safeOption.calendar = option.calendar.map(() => ({ top: 38 }));
+    // 年別ヒートマップはカレンダーごとに異なるtop値を持つため、
+    // 共通の操作レーン確保で全件を同じ位置へ上書きしない。
+    safeOption.calendar = option.calendar.map(calendar => {
+      const originalTop = typeof calendar.top === 'number'
+        ? calendar.top
+        : Number.parseFloat(calendar.top);
+      return { top: Number.isFinite(originalTop) ? Math.max(38, originalTop) : 38 };
+    });
   }
 
   if (option.series?.some(series => series.type === 'pie')) {
@@ -2261,9 +2334,23 @@ function switchTab(t) {
 }
 
 // RESIZE
-window.addEventListener('resize', () => {
-  dashboardCharts.forEach(({ chart }) => chart && chart.resize());
-});
+// ブラウザ拡大・縮小、画面サイズ、CSSレイアウト変更のいずれでもSVGの領域を正しく再計算する。
+let dashboardResizeFrame = null;
+function resizeDashboardCharts() {
+  if (dashboardResizeFrame) window.cancelAnimationFrame(dashboardResizeFrame);
+  dashboardResizeFrame = window.requestAnimationFrame(() => {
+    dashboardCharts.forEach(({ chart }) => chart && chart.resize());
+    dashboardResizeFrame = null;
+  });
+}
+
+window.addEventListener('resize', resizeDashboardCharts, { passive: true });
+window.visualViewport?.addEventListener('resize', resizeDashboardCharts, { passive: true });
+
+if ('ResizeObserver' in window) {
+  const dashboardChartResizeObserver = new ResizeObserver(resizeDashboardCharts);
+  dashboardCharts.forEach(({ chart }) => dashboardChartResizeObserver.observe(chart.getDom()));
+}
 
 </script>
 </body>
