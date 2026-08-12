@@ -1798,12 +1798,14 @@ chartTagLen.setOption({
     textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
   },
-  grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
+  // 上部は操作アイコン専用、右側は値ラベル専用として確保する。
+  grid: { left: 5, right: 96, top: 38, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
     axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
-    max: 1900
+    // タグの平均文字数が将来増えても、棒と値ラベルを描画範囲に収める。
+    max: value => Math.ceil(value.max * 1.18 / 500) * 500
   },
   yAxis: {
     type: 'category',
@@ -1818,7 +1820,7 @@ chartTagLen.setOption({
       itemStyle: { color: tagColors[t.tag] || '#7f8c8d' }
     })),
     barMaxWidth: 14,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', distance: 7, color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
   }]
 });
 
@@ -1831,12 +1833,13 @@ chartCatLen.setOption({
     textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 11 },
     formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong> (${catGroups[p[0].name].length}件)`
   },
-  grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
+  // タグ別グラフと同じ安全領域を確保し、カテゴリが増えても操作部と干渉させない。
+  grid: { left: 5, right: 96, top: 38, bottom: 5, containLabel: true },
   xAxis: {
     type: 'value',
     axisLabel: { color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
     splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } },
-    max: 2500
+    max: value => Math.ceil(value.max * 1.18 / 500) * 500
   },
   yAxis: {
     type: 'category',
@@ -1851,7 +1854,7 @@ chartCatLen.setOption({
       itemStyle: { color: catColors[t.cat] || '#7f8c8d' }
     })),
     barMaxWidth: 18,
-    label: { show: true, position: 'right', color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
+    label: { show: true, position: 'right', distance: 7, color: '#8b7355', fontSize: 9, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", formatter: p => `${p.value}字` }
   }]
 });
 
