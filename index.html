@@ -1129,7 +1129,7 @@
   <div id="tab-news" class="tab-content active">
     <div class="filter-bar">
       <label>検索:</label>
-      <input type="text" id="news-search" placeholder="タイトル・説明で絞り込み..." oninput="filterNews()" style="width:220px">
+      <input type="text" id="news-search" placeholder="キーワードを入力..." oninput="filterNews()" style="width:220px">
       <label>タグ:</label>
       <select id="news-tag-filter" onchange="filterNews()">
         <option value="">すべて</option>
@@ -1157,7 +1157,7 @@
   <div id="tab-col" class="tab-content">
     <div class="filter-bar">
       <label>検索:</label>
-      <input type="text" id="col-search" placeholder="タイトルで絞り込み..." oninput="filterCol()" style="width:220px">
+      <input type="text" id="col-search" placeholder="キーワードを入力..." oninput="filterCol()" style="width:220px">
       <label>カテゴリ:</label>
       <select id="col-cat-filter" onchange="filterCol()">
         <option value="">すべて</option>
@@ -2635,8 +2635,27 @@ const catSel = document.getElementById('col-cat-filter');
 const allCats = [...new Set(colData.map(a => a.category))].sort();
 allCats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; catSel.appendChild(o); });
 
+// 本サイトの handleSearch / getPaginatedData と同じ規則を使う。
+// 空白を除去して小文字化し、タイトル・説明・本文・タグ・カテゴリを連結した検索対象へ部分一致させる。
+function getDashboardSearchQuery(inputId) {
+  return String(document.getElementById(inputId).value || '').trim().toLowerCase();
+}
+
+function matchesDashboardSearch(article, query) {
+  if (!query) return true;
+  const searchText = (
+    (article.title || '') +
+    (article.desc || '') +
+    (article.content || '') +
+    (article.tag || '') +
+    (article.category || '')
+  ).toLowerCase();
+  return searchText.includes(query);
+}
+
 function renderNewsTable(data) {
   const tb = document.getElementById('news-tbody');
+  document.getElementById('news-count').textContent = `${data.length}件表示中`;
   if (!data.length) { tb.innerHTML = `<tr><td colspan="6" class="no-results">該当する記事がありません</td></tr>`; return; }
   tb.innerHTML = data.map(a => `
     <tr>
@@ -2648,11 +2667,11 @@ function renderNewsTable(data) {
       <td class="desc-cell">${a.desc.length > 80 ? a.desc.slice(0,80) + '…' : a.desc}</td>
     </tr>
   `).join('');
-  document.getElementById('news-count').textContent = `${data.length}件表示中`;
 }
 
 function renderColTable(data) {
   const tb = document.getElementById('col-tbody');
+  document.getElementById('col-count').textContent = `${data.length}件表示中`;
   if (!data.length) { tb.innerHTML = `<tr><td colspan="5" class="no-results">該当する記事がありません</td></tr>`; return; }
   tb.innerHTML = data.map(a => `
     <tr>
@@ -2663,24 +2682,23 @@ function renderColTable(data) {
       <td>${charBar(a.chars, 2400)}</td>
     </tr>
   `).join('');
-  document.getElementById('col-count').textContent = `${data.length}件表示中`;
 }
 
 function filterNews() {
-  const q = document.getElementById('news-search').value.toLowerCase();
+  const q = getDashboardSearchQuery('news-search');
   const tag = document.getElementById('news-tag-filter').value;
   newsFiltered = newsData.filter(a =>
-    (!q || a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q)) &&
+    matchesDashboardSearch(a, q) &&
     (!tag || a.tag === tag)
   );
   sortAndRender('news');
 }
 
 function filterCol() {
-  const q = document.getElementById('col-search').value.toLowerCase();
+  const q = getDashboardSearchQuery('col-search');
   const cat = document.getElementById('col-cat-filter').value;
   colFiltered = colData.filter(a =>
-    (!q || a.title.toLowerCase().includes(q)) &&
+    matchesDashboardSearch(a, q) &&
     (!cat || a.category === cat)
   );
   sortAndRender('col');
