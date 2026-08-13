@@ -95,7 +95,6 @@
     color: var(--gold);
     margin-bottom: 1rem;
     position: relative;
-    animation: shimmer 4s ease-in-out infinite;
   }
   /* 本サイトのサイドバーと同じ、ブランド固有の「天」文字紋章。 */
   .header-kamon .brand-kanji {
@@ -105,10 +104,6 @@
     line-height: 1;
     letter-spacing: 0;
     transform: translateY(-0.04em);
-  }
-  @keyframes shimmer {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(184,134,11,0); }
-    50% { box-shadow: 0 0 20px 4px rgba(184,134,11,0.3); }
   }
 
   h1.site-title {
@@ -171,7 +166,6 @@
     text-align: center;
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
-    animation: fadeUp 0.5s ease both;
   }
   .stat-card:hover {
     transform: translateY(-3px);
@@ -183,10 +177,6 @@
   .stat-card:nth-child(5) { border-top-color: #4a7c59; animation-delay: 0.4s; }
   .stat-card:nth-child(6) { border-top-color: #2c5282; animation-delay: 0.5s; }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 
   .stat-number {
     font-family: 'Zen Old Mincho', serif;
@@ -234,7 +224,6 @@
     background: white;
     border: 1px solid var(--border);
     padding: 1.5rem;
-    animation: fadeUp 0.5s ease both;
   }
   .chart-title {
     display: flex;
@@ -479,7 +468,6 @@
     border: 1px solid var(--border);
     border-left: 4px solid var(--vermillion);
     padding: 1.2rem 1.4rem;
-    animation: fadeUp 0.5s ease both;
   }
   .insight-box:nth-child(2) { border-left-color: var(--gold); }
   .insight-box:nth-child(3) { border-left-color: #4a7c59; }
@@ -545,7 +533,6 @@
     background: white;
     border: 1px solid var(--border);
     overflow-x: auto;
-    animation: fadeUp 0.6s ease both;
   }
 
   table {
@@ -699,7 +686,7 @@
     body::before, body::after { display: none !important; }
     header { margin: 0 0 0.3rem; padding: 0 0 0.45rem; border-bottom-width: 1px; }
     header::before, header::after { display: none; }
-    .header-kamon { width: 28px; height: 28px; margin-bottom: 0.18rem; animation: none; }
+    .header-kamon { width: 28px; height: 28px; margin-bottom: 0.18rem; }
     .header-kamon .brand-kanji { font-size: 0.95rem; }
     h1.site-title { font-size: 1.18rem; }
     .subtitle { font-size: 0.63rem; }
@@ -709,7 +696,7 @@
     .print-report-meta { display: block; margin: 0 0 0.45rem; color: #5c3317; font-family: var(--font-main); font-size: 0.58rem; text-align: right; }
     .section-title { margin: 0.7rem 0 0.4rem; font-size: 0.82rem; break-after: avoid-page; }
     .stat-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.4rem; margin-bottom: 0.35rem; }
-    .stat-card { padding: 0.45rem 0.3rem; animation: none; break-inside: avoid-page; }
+    .stat-card { padding: 0.45rem 0.3rem; break-inside: avoid-page; }
     .stat-number { font-size: 1.45rem; }
     .stat-label, .stat-sub { font-size: 0.58rem; }
     .print-overview-note {
@@ -731,7 +718,7 @@
     .print-overview-list dd { margin: 0; color: #4b3a2b; }
     /* CSS Grid全体を一塊として次頁へ送らないよう、印刷時はカードを縦に展開する。 */
     .charts-grid, .charts-grid-3 { display: block; margin-bottom: 0; }
-    .chart-card { margin: 0 0 0.7rem; padding: 0.65rem; animation: none; break-inside: avoid-page; page-break-inside: avoid; }
+    .chart-card { margin: 0 0 0.7rem; padding: 0.65rem; break-inside: avoid-page; page-break-inside: avoid; }
     .chart-title { min-height: 0; margin-bottom: 0.45rem; font-size: 0.65rem; }
     /* SVGの初期レイアウトを保ち、グラフと説明文の重なりを防ぐ。 */
     .chart-box { height: 280px; }
@@ -743,7 +730,7 @@
     .heatmap-navigation-note { font-size: 0.58rem; }
     .chart-desc { margin-top: 0.55rem; padding: 0.6rem 0.75rem; font-size: 0.6rem; line-height: 1.65; }
     .chart-desc-title { margin-bottom: 0.3rem; font-size: 0.6rem; }
-    .insight-box { padding: 0.65rem 0.8rem; animation: none; break-inside: avoid-page; }
+    .insight-box { padding: 0.65rem 0.8rem; break-inside: avoid-page; }
     .insight-title { font-size: 0.62rem; }
     .insight-body { font-size: 0.64rem; line-height: 1.65; }
   }
@@ -934,7 +921,112 @@
     .export-button,
     .line-style-button,
     .tab-btn,
-    .sort-button { transition: none; animation: none; }
+    .sort-button { transition: none; }
+  }
+
+  /* 本サイトと同じ、柔らかな面と角丸の体系。自動的な出現アニメーションは設けない。 */
+  :root {
+    --radius-panel: 24px;
+    --radius-subpanel: 18px;
+    --radius-control: 14px;
+    --radius-pill: 999px;
+  }
+
+  .stat-card,
+  .chart-card,
+  .chart-interaction-guide,
+  .export-panel,
+  .filter-bar,
+  .table-wrap,
+  .article-index-section,
+  .insight-box,
+  .analysis-summary {
+    border-radius: var(--radius-panel);
+  }
+
+  .chart-desc,
+  .heatmap-scroll,
+  .line-style-selector,
+  .csv-export-select,
+  .filter-bar input,
+  .filter-bar select,
+  .print-overview-note {
+    border-radius: var(--radius-subpanel);
+  }
+
+  .chart-interaction-guide,
+  .export-panel,
+  .filter-bar,
+  .insight-box,
+  .analysis-summary {
+    border-color: var(--surface-border);
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .heatmap-scroll {
+    overflow-x: auto;
+    border-color: var(--surface-border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
+  .heatmap-scroll::-webkit-scrollbar-track,
+  .heatmap-scroll::-webkit-scrollbar-thumb {
+    border-radius: var(--radius-pill);
+  }
+
+  .insight-box {
+    overflow: hidden;
+  }
+
+  .insight-tag,
+  .tag-badge {
+    border-radius: var(--radius-pill);
+  }
+
+  .tabs {
+    overflow: hidden;
+    border-radius: var(--radius-subpanel);
+    background: var(--surface);
+  }
+
+  .tabs .tab-btn {
+    border-radius: 0;
+  }
+
+  .tabs .tab-btn:first-child {
+    border-radius: var(--radius-subpanel) 0 0 var(--radius-subpanel);
+  }
+
+  .tabs .tab-btn:last-child {
+    border-radius: 0 var(--radius-subpanel) var(--radius-subpanel) 0;
+  }
+
+  .analysis-summary {
+    position: relative;
+    margin-bottom: 2rem;
+    padding: clamp(1.5rem, 3vw, 2.4rem);
+    color: var(--ink);
+    font-size: 0.88rem;
+    line-height: 2;
+    overflow: hidden;
+  }
+
+  .analysis-summary::before {
+    content: '';
+    display: block;
+    width: 3.2rem;
+    height: 0.28rem;
+    margin: 0 0 1.15rem;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, var(--vermillion), var(--gold));
+  }
+
+  @media (max-width: 700px) {
+    :root {
+      --radius-panel: 20px;
+      --radius-subpanel: 16px;
+    }
   }
 
 </style>
@@ -1141,7 +1233,7 @@
   <div class="chart-card" style="margin-bottom:1.5rem">
     <div class="chart-title">日別投稿タイムライン（全記事）</div>
     <div class="chart-box-tall" id="chart-timeline"></div>
-    <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>ニュースとコラムを日単位で積み上げ、公開が集中した日と空白期間を確認するタイムラインです。2026年1月6日は<strong>13本</strong>で全期間の最多、続いて1月25日が10本、1月16日が9本です。2月24日から4月20日までは<strong>56日間</strong>の投稿空白が続き、4月21日以降は月ごとの更新が再開します。このグラフは、公開日の集中と間隔を確認するための集計であり、更新の理由や体制を推測するものではありません。</div>
+    <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>ニュースとコラムを日単位で積み上げ、公開が集中した日と空白期間を確認するタイムラインです。2026年1月6日は<strong>13本</strong>で全期間の最多、続いて1月25日が10本、1月16日が9本です。2月24日から4月20日までは<strong>56日間</strong>の投稿空白が続き、4月21日以降は月ごとの更新が再開します。このグラフは、公開日の集中と間隔を確認するための集計です。更新の背景と運営体制については、本サイトの「当サイトについて」「プライバシーポリシー」「開発者について」に公開されている情報とあわせて確認できます。</div>
     </div>
   </div>
 
@@ -1165,12 +1257,12 @@
     <div class="chart-card">
       <div class="chart-title">投稿時刻の分布（24時間・ニュース）</div>
       <div class="chart-box" id="chart-hours"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>ニュース86本の公開時刻を0〜23時で集計しています。<strong>16〜19時台に36本（約42%）</strong>が分布し、公開時刻として最も多い時間帯です。22時以降と早朝8時台にも一部の公開があります。時刻の分布は公開日時の記録であり、公開の背景や担当を示すものではありません。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>ニュース86本の公開時刻を0〜23時で集計しています。<strong>16〜19時台に36本（約42%）</strong>が分布し、公開時刻として最も多い時間帯です。22時以降と早朝8時台にも一部の公開があります。時刻の分布は公開日時の記録であり、公開が集中した時間帯を確認するための集計です。</div>
     </div>
     <div class="chart-card">
       <div class="chart-title">曜日別投稿数（ニュース）</div>
       <div class="chart-box" id="chart-dow"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>ニュース86本を公開曜日で集計しています。<strong>土曜日が22本</strong>で最多、日曜日が17本で続き、木曜日は6本で最少です。月曜日10本、火曜日9本、水曜日12本、金曜日10本は中程度の件数です。曜日ごとの違いは公開履歴から確認できる分布であり、制作工程や公開理由を示すものではありません。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>ニュース86本を公開曜日で集計しています。<strong>土曜日が22本</strong>で最多、日曜日が17本で続き、木曜日は6本で最少です。月曜日10本、火曜日9本、水曜日12本、金曜日10本は中程度の件数です。曜日ごとの違いは公開履歴から確認できる分布であり、公開日の偏りを比較するための集計です。</div>
     </div>
     <div class="chart-card">
       <div class="chart-title">曜日×時間帯 投稿頻度ヒートマップ</div>
@@ -1291,11 +1383,11 @@
 
   <!-- MEGA SUMMARY -->
   <div class="section-title">洞察・考察 — Comprehensive Analysis</div>
-  <div style="background:white;border:1px solid var(--border);border-top:4px solid var(--deep-red);padding:2rem 2.4rem;margin-bottom:2rem;animation:fadeUp 0.5s ease both;line-height:2;font-size:0.88rem;color:var(--ink)">
+  <div class="analysis-summary">
 
     <p style="font-family:'Zen Old Mincho',serif;font-size:1.1rem;color:var(--deep-red);margin-bottom:1.2rem;letter-spacing:0.08em">天命乃杜 — 246日間の軌跡が語るもの</p>
 
-    <p style="margin-bottom:1.2rem">2025年12月10日から2026年8月12日までの<strong>246日間</strong>を対象に、社務所だより（ニュース）86本と神籤草子（コラム）61本、合計<strong>147本の記事</strong>を集計しています。本文文字数は両媒体合計で<strong>125,264字</strong>です。本ダッシュボードは、本サイトで公開されている記事の公開日・本数・本文文字数・分類を整理し、更新の推移を確認するための定量的な記録です。作成体制や執筆主体を推測するものではありません。</p>
+    <p style="margin-bottom:1.2rem">2025年12月10日から2026年8月12日までの<strong>246日間</strong>を対象に、社務所だより（ニュース）86本と神籤草子（コラム）61本、合計<strong>147本の記事</strong>を集計しています。本文文字数は両媒体合計で<strong>125,264字</strong>です。本ダッシュボードは、開発者<strong>nden148</strong>が個人で設計・実装・運営する「運勢・天命乃杜」の公式記事を対象に、<strong>AIを活用して</strong>公開日・公開時刻・本数・本文文字数・分類を整理・可視化する外部ダッシュボードです。集計値は社務所だよりと神籤草子に公開された記事本文・公開日時・タグまたはカテゴリに基づきます。天命乃杜の開発・運営と同様に、分析・可視化にもAIを活用しています。本ダッシュボードは、開発者情報画面から「社務所だより記事をAIで分析・可視化する外部ダッシュボード」として案内されています。</p>
 
     <p style="font-family:'Zen Old Mincho',serif;color:var(--cedar);margin:1.6rem 0 0.6rem;font-size:0.95rem">▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）</p>
     <p style="margin-bottom:1.2rem">プロジェクトは2025年12月から静かに準備が始まり、「サーバーメンテナンス完了」「プレオープンのお知らせ」などの数行告知が散発的に投稿された。この時期のニュース記事の平均文字数は約96字程度であり、ほぼ「一文完結の告知」に過ぎなかった。しかし2026年1月2日の正式リリースを境に、状況は劇的に変化する。翌3日には「TENMEI Labs公開」、4日には認証システムの重大障害修正、5日には一日に7本という爆発的な連続投稿が実現し、6日も13本の高密度更新が続いた。<strong>1月5〜6日の2日間だけで全記事の約14%が集中投稿</strong>されており、これは月別ヒートマップおよび日別タイムライングラフの両方で最深紅のセルとして記録されている。この時期は「コンセプトを現実のコードへ落とし込む」初期実装フェーズであり、機能を追加するたびに不具合が発生し、修正するたびに新たな問題が表面化するという、ソフトウェア開発の宿命的なサイクルが猛烈なスピードで回転していた。</p>
@@ -1304,7 +1396,7 @@
     <p style="margin-bottom:1.2rem">1月中旬から下旬にかけて、プロジェクトは最も激しい技術的変動期を迎えた。データベース基盤が<strong>わずか2週間弱の間に4回変更</strong>されたのである。Cloudflare KV（1日1,000回制限）→ Cloudflare D1（100倍の容量）→ Supabase（完全無制限を目指して）→ TiDB（分散SQLの究極形）→ Turso（HTTP APIの軽快さとエッジ高速応答の両立）という遍歴は、「神域の大遷宮（サーバー完全移行）」「聖域拡張」「宇宙最強のデータベース到達」というドラマチックなタイトルを持つニュース記事として記録されており、これらの記事はいずれも1,000字を超える長文である。この移行ラッシュを記録したニュース群が、週別総文字数グラフで第5週（1/18週）に特徴的な高い棒を形成している原因だ。複数回の全データリセットという代償を払いながらも最適なインフラを追求し続けた姿勢は、ニュース属性別・平均文字数グラフにおいて「システム関連」タグが平均900字超でトップを記録している事実に収斂されている。また同時期、掲示板機能・実績バッジ・連続参拝ログインボーナスといった複数のゲーミフィケーション機能が実装された後、「サービスの本質と相反する」という理由で次々と廃棄されていった。「機能撤去廃棄」グループがニュース属性分類グラフに独立したカテゴリとして存在すること自体が、<strong>引き算の判断を辞さなかったプロダクト設計の証</strong>だ。</p>
 
     <p style="font-family:'Zen Old Mincho',serif;color:var(--cedar);margin:1.6rem 0 0.6rem;font-size:0.95rem">▍ フェーズ III — 成熟・洗練期から長期充電へ（2026年2月〜4月）</p>
-    <p style="margin-bottom:1.2rem">1月下旬の大規模UI更新後、投稿数は2月に落ち着き、2月24日から4月20日までの56日間は公開記事がない区間として時系列グラフに現れます。4月21日以降は、社務所だよりの機能・表示改善に関する記事と、神籤草子の季節・作法・読み解きの記事が再び積み上がります。ここでは公開日と記事内容から確認できる変化だけを扱い、更新の背景や作成体制は断定しません。</p>
+    <p style="margin-bottom:1.2rem">1月下旬の大規模UI更新後、投稿数は2月に落ち着き、2月24日から4月20日までの56日間は公開記事がない区間として時系列グラフに現れます。4月21日以降は、社務所だよりの機能・表示改善に関する記事と、神籤草子の季節・作法・読み解きの記事が再び積み上がります。ここでは、公開日と記事内容に加え、「当サイトについて」「プライバシーポリシー」「開発者について」で公開されている運営情報を根拠として扱います。</p>
 
     <p style="font-family:'Zen Old Mincho',serif;color:var(--cedar);margin:1.6rem 0 0.6rem;font-size:0.95rem">▍ フェーズ IV — 「本数より質」への転換期（2026年5月〜8月）</p>
     <p style="margin-bottom:1.2rem">4月の運営再開以降、プロジェクトは明確に性格を変える。5月だけで<strong>ニュース9本・コラム5本の計14本</strong>が投稿されているが、その中身は「Googleアカウントでのログイン連携」「全国・土地の運気予報の地図実装」、そして5月24日の<strong>「Ver. 3.0」——UI全面刷新という大型メジャーアップデート</strong>まで、1本あたりの情報量が突出して重いものばかりだ。ニュースの本数は6月2本・7月4本に留まる一方、平均文字数は6月約3,677字・7月約2,580字という高水準に達し、8月は12日時点で1,962字のニュース記事が追加されている。6月には画像生成ライブラリの刷新やDiscordの各種セキュリティ強化（Wick・Carl-bot・Statbot導入）が、7月にはセキュリティ強化とマジックリンクログイン対応（7月12日）に続き、<strong>Cloudflare Workers AIを用いたAI要約・AI悩み相談・AI夢占いという3つのAI機能とおみくじ結果画面デザインの本格刷新（7月19日）</strong>という、開発初期には想像もつかなかった高度な機能拡張が実現している。さらに8月には、記事詳細の読書設定・表示安定性・PDF出力を見直す改善が加わった。「本数を稼ぐ」フェーズから「一本ごとに背景・技術判断・影響範囲を丁寧に語る」フェーズへの移行は、月別平均文字数グラフの右肩上がりの折れ線に最も端的に表れている。</p>
