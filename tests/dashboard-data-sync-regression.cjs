@@ -86,6 +86,13 @@ assert.strictEqual(newsData[0].date, '2026/08/17', 'Ver.4.0社務所だよりの
 assert.strictEqual(newsChars['87'], 4022, 'Ver.4.0社務所だよりの本文文字数を本サイトと一致させる必要があります');
 assert.strictEqual(colData[0].id, 61, '最新神籤草子を保持する必要があります');
 assert.strictEqual(colChars['61'], 1280, '最新神籤草子の本文文字数を本サイトと一致させる必要があります');
+assert.strictEqual(colData.length, 61, '神籤草子の一覧説明は全61件に保持する必要があります');
+for (const article of colData) {
+  const length = Array.from(article.desc || '').length;
+  assert(article.desc && article.desc.trim(), `神籤草子ID${article.id}の一覧説明が不足しています`);
+  assert(length >= 70 && length <= 105, `神籤草子ID${article.id}の一覧説明は70〜105字である必要があります（${length}字）`);
+}
+assert.strictEqual(colData.find((article) => article.id === 61).desc, 'お盆に神社へ参拝してよいか迷う方向けの記事です。忌中の扱いや普段の作法、先祖を想う心を大切にする具体的な参拝の注意点と、地域差や氏神への相談の勧めも含めて説明します。', '最新神籤草子の一覧説明を本サイトと一致させる必要があります');
 assert.strictEqual(totalNewsChars, 81224, 'ニュース本文総文字数を本サイトと一致させる必要があります');
 assert.strictEqual(totalColChars, 50913, 'コラム本文総文字数を本サイトと一致させる必要があります');
 assert.strictEqual(totalNewsChars + totalColChars, 132137, '総文字数を本サイトと一致させる必要があります');
@@ -93,6 +100,9 @@ assert.strictEqual(totalNewsChars + totalColChars, 132137, '総文字数を本�
 assert(html.includes('<dd id="print-total-summary">148記事・132,137字</dd>'), '印刷概要の収録件数を最新値へ更新する必要があります');
 assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年8月17日（251日間）</dd>'), '印刷概要の期間を最新値へ更新する必要があります');
 assert(html.includes('<option id="csv-article-count" value="articles">全記事データ（148件）</option>'), 'CSVの全記事件数を最新値へ更新する必要があります');
+assert(html.includes('<th>内容（一覧説明）</th>'), '神籤草子一覧に社務所だよりと同様の説明列を設ける必要があります');
+assert(html.includes('<td class="desc-cell">${a.desc}</td>'), '神籤草子の一覧説明を全件表示する必要があります');
+assert(html.includes('colspan="6" class="no-results"'), '神籤草子一覧の説明列追加後も検索結果なしの表示列数を整合させる必要があります');
 assert(html.includes('天命乃杜 — 251日間の軌跡が語るもの'), '過去コミットの包括分析の見出しを保持する必要があります');
 assert(html.includes('▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）'), '過去コミットの包括分析・フェーズIを保持する必要があります');
 assert(html.includes('▍ フェーズ II — インフラ激動期（2026年1月中旬〜下旬）'), '過去コミットの包括分析・フェーズIIを保持する必要があります');
