@@ -20,11 +20,11 @@ for (const file of requiredFiles) {
 }
 
 [
-  '<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />',
-  '<link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />',
-  '<link rel="shortcut icon" href="/favicon/favicon.ico" />',
-  '<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />',
-  '<link rel="manifest" href="/favicon/site.webmanifest" />',
+  '<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png?v=20260818.2" sizes="96x96" />',
+  '<link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg?v=20260818.2" sizes="any" />',
+  '<link rel="shortcut icon" type="image/x-icon" href="/favicon/favicon.ico?v=20260818.2" />',
+  '<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png?v=20260818.2" />',
+  '<link rel="manifest" href="/favicon/site.webmanifest?v=20260818.2" />',
 ].forEach((reference) => {
   assert(html.includes(reference), `検索・ブラウザ向けファビコン宣言が不足しています: ${reference}`);
 });
