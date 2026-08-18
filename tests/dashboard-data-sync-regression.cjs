@@ -100,7 +100,7 @@ assert.strictEqual(totalNewsChars + totalColChars, 132137, '総文字数を本�
 assert(html.includes('<dd id="print-total-summary">148記事・132,137字</dd>'), '印刷概要の収録件数を最新値へ更新する必要があります');
 assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年8月17日（251日間）</dd>'), '印刷概要の期間を最新値へ更新する必要があります');
 assert(html.includes('<option id="csv-article-count" value="articles">全記事データ（148件）</option>'), 'CSVの全記事件数を最新値へ更新する必要があります');
-assert(html.includes('<th>内容（一覧説明）</th>'), '神籤草子一覧に社務所だよりと同様の説明列を設ける必要があります');
+assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '社務所だよりと神籤草子の説明列は同じ「内容（抜粋）」表記へ統一する必要があります');
 assert(html.includes('<td class="desc-cell">${a.desc}</td>'), '神籤草子の一覧説明を全件表示する必要があります');
 assert(html.includes('colspan="6" class="no-results"'), '神籤草子一覧の説明列追加後も検索結果なしの表示列数を整合させる必要があります');
 assert(html.includes('天命乃杜 — 251日間の軌跡が語るもの'), '過去コミットの包括分析の見出しを保持する必要があります');
