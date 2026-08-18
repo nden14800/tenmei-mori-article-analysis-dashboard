@@ -90,19 +90,36 @@ assert.strictEqual(totalNewsChars, 81224, 'ニュース本文総文字数を本�
 assert.strictEqual(totalColChars, 50913, 'コラム本文総文字数を本サイトと一致させる必要があります');
 assert.strictEqual(totalNewsChars + totalColChars, 132137, '総文字数を本サイトと一致させる必要があります');
 
-assert(html.includes('id="print-total-summary"'), '印刷概要の収録件数を動的に表示する必要があります');
-assert(html.includes('id="print-period-summary"'), '印刷概要の期間を動的に表示する必要があります');
-assert(html.includes('id="csv-article-count"'), 'CSVの全記事件数を動的に表示する必要があります');
-assert(html.includes('id="dynamic-summary"'), '包括分析を最新データから生成する必要があります');
-assert(html.includes('DASHBOARD_SYNC_NARRATIVES_START'), 'グラフ説明を同期データから生成する必要があります');
-assert(html.includes("document.querySelectorAll('.chart-card')"), '全グラフの説明を同期対象とする必要があります');
-assert(!html.includes('天命乃杜 — 246日間の軌跡が語るもの'), '旧データに固定された包括分析を残してはいけません');
-assert(!html.includes('147本・128,040字・246日間'), '旧データに固定された結語を残してはいけません');
+assert(html.includes('<dd id="print-total-summary">148記事・132,137字</dd>'), '印刷概要の収録件数を最新値へ更新する必要があります');
+assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年8月17日（251日間）</dd>'), '印刷概要の期間を最新値へ更新する必要があります');
+assert(html.includes('<option id="csv-article-count" value="articles">全記事データ（148件）</option>'), 'CSVの全記事件数を最新値へ更新する必要があります');
+assert(html.includes('天命乃杜 — 251日間の軌跡が語るもの'), '過去コミットの包括分析の見出しを保持する必要があります');
+assert(html.includes('▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）'), '過去コミットの包括分析・フェーズIを保持する必要があります');
+assert(html.includes('▍ フェーズ II — インフラ激動期（2026年1月中旬〜下旬）'), '過去コミットの包括分析・フェーズIIを保持する必要があります');
+assert(html.includes('▍ フェーズ III — 成熟・洗練期から長期充電へ（2026年2月〜4月）'), '過去コミットの包括分析・フェーズIIIを保持する必要があります');
+assert(html.includes('▍ フェーズ IV — 「本数より質」への転換期（2026年5月〜8月）'), '過去コミットの包括分析・フェーズIVを保持する必要があります');
+assert(html.includes('▍ ニュースとコラムの役割分担という戦略的決定'), '過去コミットの媒体分析を保持する必要があります');
+assert(html.includes('▍ 開発者の行動リズムが示す持続可能性'), '過去コミットの行動分析を保持する必要があります');
+assert(html.includes('▍ 文字数に宿るプロダクト哲学'), '過去コミットの文字数分析を保持する必要があります');
+assert(html.includes('▍ 結語 — 数字が証明するもの'), '過去コミットの結語を保持する必要があります');
+assert(html.includes('148本・132,137字・251日間・4回のDBマイグレーション'), '包括分析の結語に最新の数値だけを反映する必要があります');
+assert(html.includes('「新機能・改善」（平均3,029字、7本）'), 'タグ別考察の文章を保持し、最新の数値だけを反映する必要があります');
+assert(html.includes('全148記事（ニュース87本＋コラム61本）を文字数に基づいて'), '記事長クラスの考察本文で最新件数を表示する必要があります');
+assert(html.includes('ミドルクラスが過半数（約55%・81本）を占め、次いでショートが約21%（31本）、ロングが約24%（36本）'), '記事長クラスの考察本文で最新分布を表示する必要があります');
+assert(html.includes('8月17日時点で合計148記事に到達している。'), '累積記事数の考察本文で最新到達点を表示する必要があります');
+assert(html.includes('総文字数は132,137字に達しており'), '累積文字数の考察本文で最新総文字数を表示する必要があります');
+assert(html.includes('ニュース記事87本の投稿時刻'), '投稿時刻の考察本文で最新ニュース件数を表示する必要があります');
+assert(html.includes('ID87（2026年8月）のVer.4.0記事は4,022字を記録しており'), '文字数散布図の考察本文で最新記事を表示する必要があります');
+assert(html.includes('新機能・改善」（平均約3,029字、7本）'), '相関分析の考察本文で最新タグ値を表示する必要があります');
+assert(html.includes('8月17日のVer.4.0大型更新まで記録している。'), '日別投稿考察に最新更新を追加する必要があります');
+assert(!html.includes('DASHBOARD_SYNC_NARRATIVES_START'), '既存の洞察・考察本文を動的な短文で置き換えてはいけません');
+assert(!html.includes('id="dynamic-summary"'), '包括分析の既存本文を削除してはいけません');
+assert((html.match(/class="chart-desc"/g) || []).length >= 20, 'グラフごとの洞察・考察本文を維持する必要があります');
 
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map((match) => match[1]).filter((script) => script.trim());
 for (const script of scripts) new Function(script);
 
-console.log('ダッシュボードの本サイト同期・動的分析文の回帰テストに合格しました。');
+console.log('ダッシュボードの本サイト同期・既存洞察文保持の回帰テストに合格しました。');
 console.log(JSON.stringify({
   news: newsData.length,
   columns: colData.length,
@@ -110,5 +127,5 @@ console.log(JSON.stringify({
   totalChars: totalNewsChars + totalColChars,
   latestNews: newsData[0].id,
   latestColumn: colData[0].id,
-  dynamicNarratives: true,
+  legacyNarrativesPreserved: true,
 }, null, 2));
