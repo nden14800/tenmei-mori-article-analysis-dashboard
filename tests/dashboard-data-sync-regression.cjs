@@ -58,6 +58,13 @@ const newsChars = extractObject('newsChars');
 const colChars = extractObject('colChars');
 const totalNewsChars = Object.values(newsChars).reduce((sum, value) => sum + value, 0);
 const totalColChars = Object.values(colChars).reduce((sum, value) => sum + value, 0);
+const validPublicationTime = /^([01]\d|2[0-3]):[0-5]\d$/;
+const newsHourCounts = Array(24).fill(0);
+for (const article of newsData) {
+  if (validPublicationTime.test(article.time || '')) {
+    newsHourCounts[Number(article.time.slice(0, 2))] += 1;
+  }
+}
 
 assert.strictEqual(newsData.length, 87, '社務所だよりは本サイトの最新87件と一致する必要があります');
 assert.strictEqual(colData.length, 62, '神籤草子は本サイトの最新62件と一致する必要があります');
@@ -66,6 +73,10 @@ assert.strictEqual(newsData[0].date, '2026/08/17', 'Ver.4.0社務所だよりの
 assert.strictEqual(newsChars['87'], 4022, 'Ver.4.0社務所だよりの本文文字数を本サイトと一致させる必要があります');
 assert.strictEqual(newsData[0].title, '【UI/UX大規模刷新】Ver.4.0「静謐な即応」— 天命乃杜の全画面を新たな意匠へ統一しました', 'Ver.4.0社務所だよりの最新タイトルを本サイトと一致させる必要があります');
 assert.strictEqual(newsData[0].tag, '新機能・改善', 'Ver.4.0社務所だよりのタグを本サイトと一致させる必要があります');
+assert.strictEqual(newsData[0].time, '12:37', 'Ver.4.0社務所だよりの公開時刻を本サイトと一致させる必要があります');
+assert(newsData.every((article) => validPublicationTime.test(article.time || '')), '投稿時刻・曜日×時間帯グラフのため、ニュース全87件に有効な公開時刻を保持する必要があります');
+assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 87, '投稿時刻ヒストグラムにニュース全87件を集計する必要があります');
+assert.strictEqual(newsHourCounts.slice(16, 20).reduce((sum, count) => sum + count, 0), 36, '16〜19時台の投稿数を洞察・考察本文と一致させる必要があります');
 
 assert.strictEqual(colData[0].id, 62, '処暑コラムを最新神籤草子として追加する必要があります');
 assert.strictEqual(colData[0].date, '2026/08/20', '処暑コラムの日付を本サイトと一致させる必要があります');
