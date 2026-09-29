@@ -1253,8 +1253,12 @@ const reportEnd = new Date(reportEndDate);
 const reportDayCount = Number.isNaN(reportStart.getTime()) || Number.isNaN(reportEnd.getTime())
   ? 0
   : Math.floor((reportEnd - reportStart) / 86400000) + 1;
+const formatReportDate = (value) => {
+  const [year, month, day] = String(value || '').split('-');
+  return year && month && day ? `${year}年${Number(month)}月${Number(day)}日` : value || '--';
+};
 const reportSummaryText = `${totalArticles}記事・${totalChars.toLocaleString()}字`;
-const reportPeriodText = `${reportStartDate.replace(/-/g, '年').replace(/年(\\d{2})-/, '年$1月').replace(/-(\\d{2})$/, '月$1日')}〜${reportEndDate.replace(/-/g, '年').replace(/年(\\d{2})-/, '年$1月').replace(/-(\\d{2})$/, '月$1日')}（${reportDayCount}日間）`;
+const reportPeriodText = `${formatReportDate(reportStartDate)}〜${formatReportDate(reportEndDate)}（${reportDayCount}日間）`;
 document.getElementById('csv-article-count').textContent = `全記事データ（${totalArticles}件）`;
 document.getElementById('print-total-summary').textContent = reportSummaryText;
 document.getElementById('print-period-summary').textContent = reportPeriodText;
