@@ -1690,7 +1690,7 @@ const formatReportDate = (value) => {
 };
 const reportSummaryText = `${totalArticles}記事・${totalChars.toLocaleString()}字`;
 const reportPeriodText = `${formatReportDate(reportStartDate)}〜${formatReportDate(reportEndDate)}（${reportDayCount}日間）`;
-document.getElementById('csv-article-count').textContent = `全記事データ（${totalArticles}件）`;
+// CSV件数はカスタムセレクター側の表示を初期化時に反映するため、旧要素への直接参照は行わない。
 document.getElementById('print-total-summary').textContent = reportSummaryText;
 document.getElementById('print-period-summary').textContent = reportPeriodText;
 
