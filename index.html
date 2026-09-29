@@ -3002,7 +3002,7 @@ function setupDashboardSelect(selectId, values, options = {}) {
   }).join('');
   const setValue = (value, emit = true) => {
     hidden.value = value;
-    valueNode.textContent = value || 'すべて';
+    valueNode.textContent = options.labels?.[value] || value || 'すべて';
     menu.querySelectorAll('.dashboard-select-option').forEach(option => {
       const active = option.dataset.value === value;
       option.setAttribute('aria-selected', String(active));
@@ -3010,7 +3010,7 @@ function setupDashboardSelect(selectId, values, options = {}) {
     });
     if (emit) {
       if (selectId === 'news-tag-filter') filterNews();
-      else filterCol();
+      else if (selectId === 'col-cat-filter') filterCol();
     }
   };
   root.querySelector('.dashboard-select-trigger').addEventListener('click', () => {
