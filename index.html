@@ -748,6 +748,295 @@
     .insight-title { font-size: 0.62rem; }
     .insight-body { font-size: 0.64rem; line-height: 1.65; }
   }
+
+  /* ============================================================
+     天命乃杜 UI Refresh — 本サイト Ver.4 系のコントロール設計を分析室へ統一
+     ============================================================ */
+  :root {
+    --ver4-control-height: 48px;
+    --ver4-control-radius: 14px;
+    --ver4-card-radius: 18px;
+    --ver4-card-padding: 24px;
+    --ver4-surface: #fffdf9;
+    --ver4-surface-muted: #f6f1e8;
+    --ver4-line: #dfd3bf;
+    --ver4-red: #9f2f24;
+    --ver4-red-dark: #761d1b;
+    --ver4-gold: #b8860b;
+    --ver4-text-muted: #766753;
+    --ver4-focus: rgba(159,47,36,.18);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 8% 0%, rgba(184,134,11,.075), transparent 28rem),
+      radial-gradient(circle at 92% 18%, rgba(159,47,36,.055), transparent 30rem),
+      var(--paper);
+    color: var(--ink);
+  }
+  .container { max-width: 1480px; padding: 0 24px 56px; }
+  header {
+    padding: 30px 24px 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(159,47,36,.28);
+  }
+  .header-kamon {
+    width: 56px; height: 56px;
+    margin-bottom: 12px;
+    border-width: 1.5px;
+    box-shadow: 0 8px 28px rgba(92,51,23,.08);
+  }
+  h1.site-title { font-size: clamp(1.55rem, 2.5vw, 2.15rem); letter-spacing: .06em; }
+  .subtitle { font-style: normal; font-family: var(--font-ui); color: var(--ver4-text-muted); }
+  .header-meta { font-family: var(--font-ui); letter-spacing: .04em; }
+
+  .section-title {
+    min-height: 48px;
+    margin: 28px 0 14px;
+    padding: 0 2px 10px;
+    border-bottom: 1px solid var(--ver4-line);
+    color: var(--ver4-red-dark);
+    font-family: var(--font-ui);
+    font-size: .92rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+  }
+  .section-title::before { color: var(--ver4-red); }
+
+  .stat-grid { gap: 14px; margin-bottom: 24px; }
+  .stat-card {
+    min-height: 148px;
+    padding: 22px;
+    background: rgba(255,253,249,.94);
+    border: 1px solid var(--ver4-line);
+    border-radius: var(--ver4-card-radius);
+    box-shadow: 0 10px 30px rgba(92,51,23,.055);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(92,51,23,.09); border-color: #ccb996; }
+  .stat-number { font-family: var(--font-ui); font-weight: 700; }
+  .stat-label, .stat-sub { font-family: var(--font-ui); }
+
+  .chart-card {
+    background: var(--ver4-surface);
+    border: 1px solid var(--ver4-line);
+    border-radius: var(--ver4-card-radius);
+    padding: var(--ver4-card-padding);
+    box-shadow: 0 10px 30px rgba(92,51,23,.045);
+  }
+  .chart-title, .chart-desc, .chart-desc p { font-family: var(--font-ui); }
+  .chart-title { color: var(--ver4-red-dark); font-size: .92rem; font-weight: 700; letter-spacing: .055em; }
+  .chart-title::before { color: var(--ver4-red); }
+
+  .chart-interaction-guide, .export-panel {
+    border: 1px solid var(--ver4-line);
+    border-left: 3px solid var(--ver4-gold);
+    border-radius: var(--ver4-card-radius);
+    background: rgba(255,253,249,.94);
+    box-shadow: 0 8px 24px rgba(92,51,23,.045);
+  }
+  .export-panel { border-left-color: var(--ver4-red); }
+  .chart-interaction-guide h2, .export-panel h2 { font-family: var(--font-ui); color: var(--ver4-red-dark); }
+
+  .article-index-section {
+    background: transparent;
+  }
+  .tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 14px;
+    background: #efe7da;
+    border: 1px solid var(--ver4-line);
+    border-radius: 14px;
+  }
+  .tab-btn {
+    min-height: 42px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ver4-text-muted);
+    font-family: var(--font-ui);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+  }
+  .tab-btn:hover { color: var(--ver4-red-dark); }
+  .tab-btn.active {
+    background: #fffdf9;
+    color: var(--ver4-red-dark);
+    box-shadow: 0 4px 14px rgba(92,51,23,.08);
+  }
+
+  .modern-filter-bar {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.5fr) minmax(210px, .8fr) auto;
+    gap: 14px;
+    align-items: end;
+    margin: 0 0 14px;
+    padding: 18px;
+    background: rgba(255,253,249,.96);
+    border: 1px solid var(--ver4-line);
+    border-radius: var(--ver4-card-radius);
+    box-shadow: 0 8px 24px rgba(92,51,23,.045);
+  }
+  .dashboard-field { min-width: 0; }
+  .dashboard-field label, .dashboard-field-label {
+    display: block;
+    margin: 0 0 7px;
+    color: var(--ver4-text-muted);
+    font-family: var(--font-ui);
+    font-size: .76rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+  }
+  .dashboard-input-shell, .dashboard-select-trigger {
+    min-height: var(--ver4-control-height);
+    border: 1px solid #d5c7b2;
+    border-radius: var(--ver4-control-radius);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(92,51,23,.035);
+    transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+  .dashboard-input-shell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+  }
+  .dashboard-input-shell:focus-within {
+    border-color: var(--ver4-red);
+    box-shadow: 0 0 0 4px var(--ver4-focus);
+  }
+  .dashboard-input-icon { width: 18px; height: 18px; flex: 0 0 18px; color: #8b7355; }
+  .dashboard-input-shell input {
+    width: 100% !important;
+    min-width: 0;
+    height: 46px;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent;
+    color: var(--ink);
+    font: 500 .9rem/1.2 var(--font-ui);
+  }
+  .dashboard-input-shell input::placeholder { color: #a99a86; }
+  .dashboard-select { position: relative; min-width: 0; }
+  .dashboard-select-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 14px 0 16px;
+    color: var(--ink);
+    font: 600 .88rem var(--font-ui);
+    cursor: pointer;
+    text-align: left;
+  }
+  .dashboard-select-trigger:hover { border-color: #c6b497; background: #fffefa; }
+  .dashboard-select.open .dashboard-select-trigger {
+    border-color: var(--ver4-red);
+    box-shadow: 0 0 0 4px var(--ver4-focus);
+  }
+  .dashboard-select-trigger i { color: var(--ver4-red); font-size: .9rem; transition: transform .16s ease; }
+  .dashboard-select.open .dashboard-select-trigger i { transform: rotate(180deg); }
+  .dashboard-select-menu {
+    position: absolute;
+    z-index: 50;
+    top: calc(100% + 7px);
+    left: 0;
+    right: 0;
+    display: none;
+    max-height: 280px;
+    overflow: auto;
+    padding: 6px;
+    border: 1px solid #d5c7b2;
+    border-radius: 14px;
+    background: #fffdf9;
+    box-shadow: 0 18px 40px rgba(57,35,17,.16);
+  }
+  .dashboard-select.open .dashboard-select-menu { display: grid; gap: 2px; }
+  .dashboard-select-option {
+    min-height: 42px;
+    width: 100%;
+    padding: 9px 11px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #4f402f;
+    font: 500 .84rem var(--font-ui);
+    cursor: pointer;
+    text-align: left;
+  }
+  .dashboard-select-option:hover, .dashboard-select-option:focus-visible { background: #f5e6c8; outline: 0; }
+  .dashboard-select-option.active { background: #f3dfd8; color: var(--ver4-red-dark); font-weight: 700; }
+  .modern-filter-count {
+    align-self: end;
+    min-height: var(--ver4-control-height);
+    display: inline-flex;
+    align-items: center;
+    padding: 0 14px;
+    border-radius: var(--ver4-control-radius);
+    background: #f5efe6;
+    color: var(--ver4-text-muted);
+    font: 600 .76rem var(--font-ui);
+    white-space: nowrap;
+  }
+
+  .table-wrap {
+    overflow: auto;
+    background: var(--ver4-surface);
+    border: 1px solid var(--ver4-line);
+    border-radius: var(--ver4-card-radius);
+    box-shadow: 0 10px 30px rgba(92,51,23,.045);
+  }
+  table { border-collapse: separate; border-spacing: 0; font-family: var(--font-ui); }
+  thead th {
+    background: #f4ede3;
+    color: #695845;
+    font-size: .72rem;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--ver4-line);
+  }
+  tbody td { border-bottom-color: #eee6da; }
+  tbody tr:hover td { background: #fffaf3; }
+  .sort-button { font-family: var(--font-ui); border-radius: 8px; }
+  .sort-button:focus-visible { outline: 3px solid var(--ver4-focus); outline-offset: 1px; }
+
+  .no-results {
+    font-family: var(--font-ui);
+    color: var(--ver4-text-muted);
+    padding: 34px !important;
+  }
+
+  .export-button {
+    min-height: var(--ver4-control-height);
+    border-radius: 12px;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    border: 1px solid var(--ver4-red-dark);
+    background: var(--ver4-red-dark);
+    box-shadow: 0 5px 14px rgba(118,29,27,.14);
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+  .export-button:hover { transform: translateY(-1px); box-shadow: 0 9px 20px rgba(118,29,27,.18); background: #8b2621; }
+  .csv-export-select { border-radius: 12px; min-height: var(--ver4-control-height); font-family: var(--font-ui); }
+
+  @media (max-width: 820px) {
+    .container { padding: 0 14px 40px; }
+    header { padding: 24px 12px 20px; }
+    .modern-filter-bar { grid-template-columns: 1fr; align-items: stretch; }
+    .modern-filter-count { width: 100%; }
+    .tabs { display: grid; width: 100%; }
+    .tab-btn { width: 100%; }
+    .stat-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 520px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .modern-filter-bar { padding: 14px; }
+    .dashboard-input-shell input { font-size: .84rem; }
+  }
 </style>
 </head>
 <body>
@@ -1143,14 +1432,25 @@
 
   <!-- NEWS TAB -->
   <div id="tab-news" class="tab-content active">
-    <div class="filter-bar">
-      <label>検索:</label>
-      <input type="text" id="news-search" placeholder="キーワードを入力..." oninput="filterNews()" style="width:220px">
-      <label>タグ:</label>
-      <select id="news-tag-filter" onchange="filterNews()">
-        <option value="">すべて</option>
-      </select>
-      <span class="filter-count" id="news-count">--件表示中</span>
+    <div class="filter-bar modern-filter-bar" aria-label="社務所だよりの絞り込み">
+      <div class="dashboard-field dashboard-search-field">
+        <label for="news-search">記事を検索</label>
+        <div class="dashboard-input-shell">
+          <svg class="dashboard-input-icon" viewBox="0 0 18 18" aria-hidden="true"><path d="M12.7549 11.255H11.9649L11.6849 10.985C12.6649 9.845 13.2549 8.365 13.2549 6.755C13.2549 3.165 10.3449 0.255005 6.75488 0.255005C3.16488 0.255005 0.254883 3.165 0.254883 6.755C0.254883 10.345 3.16488 13.255 6.75488 13.255C8.36488 13.255 9.84488 12.665 10.9849 11.685L11.2549 11.965V12.755L16.2549 17.745L17.7449 16.255L12.7549 11.255ZM6.75488 11.255C4.26488 11.255 2.25488 9.245 2.25488 6.755C2.25488 4.26501 4.26488 2.255 6.75488 2.255C9.24488 2.255 11.2549 4.26501 11.2549 6.755C11.2549 9.245 9.24488 11.255 6.75488 11.255Z" fill="currentColor"/></svg>
+          <input type="text" id="news-search" placeholder="タイトル・タグ・内容を検索" autocomplete="off" oninput="filterNews()">
+        </div>
+      </div>
+      <div class="dashboard-field dashboard-choice-field">
+        <span class="dashboard-field-label">タグで絞り込む</span>
+        <input type="hidden" id="news-tag-filter" value="">
+        <div class="dashboard-select" data-select-id="news-tag-filter" data-placeholder="すべて">
+          <button type="button" class="dashboard-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="dashboard-select-value">すべて</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          <div class="dashboard-select-menu" role="listbox"></div>
+        </div>
+      </div>
+      <span class="filter-count modern-filter-count" id="news-count" aria-live="polite">--件表示中</span>
     </div>
     <div class="table-wrap">
       <table>
@@ -1171,14 +1471,25 @@
 
   <!-- COLUMN TAB -->
   <div id="tab-col" class="tab-content">
-    <div class="filter-bar">
-      <label>検索:</label>
-      <input type="text" id="col-search" placeholder="キーワードを入力..." oninput="filterCol()" style="width:220px">
-      <label>カテゴリ:</label>
-      <select id="col-cat-filter" onchange="filterCol()">
-        <option value="">すべて</option>
-      </select>
-      <span class="filter-count" id="col-count">--件表示中</span>
+    <div class="filter-bar modern-filter-bar" aria-label="神籤草子の絞り込み">
+      <div class="dashboard-field dashboard-search-field">
+        <label for="col-search">記事を検索</label>
+        <div class="dashboard-input-shell">
+          <svg class="dashboard-input-icon" viewBox="0 0 18 18" aria-hidden="true"><path d="M12.7549 11.255H11.9649L11.6849 10.985C12.6649 9.845 13.2549 8.365 13.2549 6.755C13.2549 3.165 10.3449 0.255005 6.75488 0.255005C3.16488 0.255005 0.254883 3.165 0.254883 6.755C0.254883 10.345 3.16488 13.255 6.75488 13.255C8.36488 13.255 9.84488 12.665 10.9849 11.685L11.2549 11.965V12.755L16.2549 17.745L17.7449 16.255L12.7549 11.255ZM6.75488 11.255C4.26488 11.255 2.25488 9.245 2.25488 6.755C2.25488 4.26501 4.26488 2.255 6.75488 2.255C9.24488 2.255 11.2549 3.165 11.2549 6.755C11.2549 10.345 9.24488 13.255 6.75488 13.255C8.36488 13.255 9.84488 12.665 10.9849 11.685L11.2549 11.965V12.755L16.2549 17.745L17.7449 16.255L12.7549 11.255Z" fill="currentColor"/></svg>
+          <input type="text" id="col-search" placeholder="タイトル・カテゴリ・内容を検索" autocomplete="off" oninput="filterCol()">
+        </div>
+      </div>
+      <div class="dashboard-field dashboard-choice-field">
+        <span class="dashboard-field-label">カテゴリで絞り込む</span>
+        <input type="hidden" id="col-cat-filter" value="">
+        <div class="dashboard-select" data-select-id="col-cat-filter" data-placeholder="すべて">
+          <button type="button" class="dashboard-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="dashboard-select-value">すべて</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          <div class="dashboard-select-menu" role="listbox"></div>
+        </div>
+      </div>
+      <span class="filter-count modern-filter-count" id="col-count" aria-live="polite">--件表示中</span>
     </div>
     <div class="table-wrap">
       <table>
@@ -2677,13 +2988,63 @@ let colSortKey = 'date', colSortDir = -1;
 let newsFiltered = [...newsData].sort((a,b) => pd(b.date).getTime() - pd(a.date).getTime() || b.id - a.id);
 let colFiltered  = [...colData].sort((a,b) => pd(b.date).getTime() - pd(a.date).getTime() || b.id - a.id);
 
-const tagSel = document.getElementById('news-tag-filter');
+function setupDashboardSelect(selectId, values) {
+  const root = document.querySelector(`.dashboard-select[data-select-id="${selectId}"]`);
+  const hidden = document.getElementById(selectId);
+  if (!root || !hidden) return;
+  const menu = root.querySelector('.dashboard-select-menu');
+  const valueNode = root.querySelector('.dashboard-select-value');
+  const options = ['', ...values];
+  menu.innerHTML = options.map(value => {
+    const label = value || 'すべて';
+    return `<button type="button" class="dashboard-select-option" role="option" data-value="${String(value).replace(/"/g, '&quot;')}" aria-selected="${value === '' ? 'true' : 'false'}">${label}</button>`;
+  }).join('');
+  const setValue = (value, emit = true) => {
+    hidden.value = value;
+    valueNode.textContent = value || 'すべて';
+    menu.querySelectorAll('.dashboard-select-option').forEach(option => {
+      const active = option.dataset.value === value;
+      option.setAttribute('aria-selected', String(active));
+      option.classList.toggle('active', active);
+    });
+    if (emit) {
+      if (selectId === 'news-tag-filter') filterNews();
+      else filterCol();
+    }
+  };
+  root.querySelector('.dashboard-select-trigger').addEventListener('click', () => {
+    const open = root.classList.toggle('open');
+    root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', String(open));
+  });
+  menu.addEventListener('click', event => {
+    const option = event.target.closest('.dashboard-select-option');
+    if (!option) return;
+    setValue(option.dataset.value);
+    root.classList.remove('open');
+    root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', 'false');
+  });
+  menu.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      root.classList.remove('open');
+      root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', 'false');
+      root.querySelector('.dashboard-select-trigger').focus();
+    }
+  });
+  setValue('');
+}
 const allTags = [...new Set(newsData.map(a => a.tag))].sort();
-allTags.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; tagSel.appendChild(o); });
-
-const catSel = document.getElementById('col-cat-filter');
 const allCats = [...new Set(colData.map(a => a.category))].sort();
-allCats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; catSel.appendChild(o); });
+setupDashboardSelect('news-tag-filter', allTags);
+setupDashboardSelect('col-cat-filter', allCats);
+
+document.addEventListener('click', event => {
+  document.querySelectorAll('.dashboard-select.open').forEach(root => {
+    if (!root.contains(event.target)) {
+      root.classList.remove('open');
+      root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', 'false');
+    }
+  });
+});
 
 // 本サイトの handleSearch / getPaginatedData と同じ規則を使う。
 // 空白を除去して小文字化し、タイトル・説明・本文・タグ・カテゴリを連結した検索対象へ部分一致させる。
