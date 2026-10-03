@@ -1,0 +1,52 @@
+name: Sync article analysis from tenmei-mori
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: article-analysis-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout analysis dashboard
+        uses: actions/checkout@v4
+
+      - name: Checkout tenmei-mori source
+        uses: actions/checkout@v4
+        with:
+          repository: nden14800/tenmei-mori
+          ref: main
+          path: tenmei-mori
+          fetch-depth: 1
+
+      - name: Sync article data
+        run: node scripts/sync-tenmei-data.mjs
+        env:
+          TENMEI_SOURCE_FILE: tenmei-mori/index.html
+          DASHBOARD_FILE: index.html
+
+      - name: Verify synchronized data
+        run: |
+          node --check scripts/sync-tenmei-data.mjs
+          grep -q '"id": 89' index.html
+          grep -q '"id": 65' index.html
+
+      - name: Commit synchronized data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No article data changes."
+          else
+            git commit -m "chore: auto-sync article analysis data from tenmei-mori"
+            git push
+          fi
