@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 
 const SOURCE_FILE = process.env.TENMEI_SOURCE_FILE || '../tenmei-mori/index.html';
 const DASHBOARD_FILE = process.env.DASHBOARD_FILE || 'index.html';
@@ -74,8 +75,11 @@ const colSource = evalArray(getArray(source, 'const columnData = ['));
 const news = newsSource.map(a => ({id:a.id,title:a.title,date:a.date,time:a.time||'',tag:a.tag||'',tagColor:a.tagColor||'',borderColor:a.borderColor||'',desc:a.desc||'',content:''}));
 const cols = colSource.map(a => ({id:a.id,title:a.title,date:a.date,category:a.category||'',icon:a.icon||'',colorClass:a.colorClass||'',desc:a.desc||'',content:''}));
 if (!news.length || !cols.length) throw new Error('article arrays are empty');
-if (!news.some(a => a.id === 89)) throw new Error('latest news #89 missing');
-if (!cols.some(a => a.id === 65)) throw new Error('latest column #65 missing');
+const latestNews = news.reduce((latest, article) => article.id > latest.id ? article : latest, news[0]);
+const latestColumn = cols.reduce((latest, article) => article.id > latest.id ? article : latest, cols[0]);
+function assertUniqueIds(items, label) { const ids = items.map(a => a.id); const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i); if (duplicates.length) throw new Error(label + ' に重複IDがあります: ' + [...new Set(duplicates)].join(', ')); }
+assertUniqueIds(news, 'ニュース');
+assertUniqueIds(cols, 'コラム');
 
 // 色の正本は本サイト index.html の定義そのものを読む。
 const columnStyles = Function('"use strict"; return (' + getObject(source, 'const COLUMN_TAG_STYLES = Object.freeze(') + ')')();
@@ -115,17 +119,23 @@ for (const a of news) {
 // 新規記事だけは現在の同期処理で算出し、次回以降はその確定値として保持する。
 const historicalNewsChars = {"1":196,"2":277,"3":107,"4":98,"5":84,"6":295,"7":417,"8":386,"9":320,"10":290,"11":835,"12":394,"13":630,"14":1318,"15":1399,"16":352,"17":269,"18":548,"19":537,"20":453,"21":1265,"22":800,"23":702,"24":662,"25":950,"26":767,"27":1184,"28":602,"29":983,"30":863,"31":562,"32":441,"33":830,"34":680,"35":819,"36":550,"37":941,"38":1765,"39":475,"40":485,"41":826,"42":908,"43":432,"44":391,"45":359,"46":332,"47":514,"48":592,"49":398,"50":889,"51":431,"52":581,"53":625,"54":475,"55":353,"56":650,"57":649,"58":579,"59":774,"60":542,"61":636,"62":787,"63":820,"64":725,"65":764,"66":666,"67":691,"68":813,"69":449,"70":699,"71":730,"72":958,"73":1337,"74":1649,"75":2176,"76":1173,"77":1357,"78":2479,"79":1828,"80":4903,"81":2451,"82":3885,"83":2670,"84":2023,"85":1740,"86":1962,"87":4022};
 const historicalColChars = {"1":849,"2":617,"3":484,"4":420,"5":382,"6":789,"7":910,"8":632,"9":651,"10":700,"11":595,"12":568,"13":1357,"14":494,"15":486,"16":734,"17":625,"18":556,"19":544,"20":626,"21":771,"22":615,"23":735,"24":732,"25":539,"26":519,"27":1967,"28":582,"29":543,"30":568,"31":716,"32":514,"33":789,"34":743,"35":973,"36":755,"37":846,"38":649,"39":691,"40":591,"41":811,"42":788,"43":921,"44":787,"45":585,"46":893,"47":1205,"48":1268,"49":1124,"50":1226,"51":1290,"52":1407,"53":1477,"54":1102,"55":1235,"56":1311,"57":1315,"58":1016,"59":1149,"60":888,"61":1280,"62":1241};
+function evalObject(literal) { return Function('"use strict"; return (' + literal + ')')(); }
+function readOptionalDashboardObject(text, declaration) {
+  if (!text.includes(declaration)) return {};
+  return evalObject(getObject(text, declaration));
+}
+function contentHash(html) { return crypto.createHash('sha256').update(String(html || ''), 'utf8').digest('hex'); }
+const previousNewsContentHashes = readOptionalDashboardObject(dashboard, 'const newsContentHashes = {');
+const previousColContentHashes = readOptionalDashboardObject(dashboard, 'const colContentHashes = {');
+const newsContentHashes = Object.fromEntries(newsSource.map(a => [String(a.id), contentHash(a.content)]));
+const colContentHashes = Object.fromEntries(colSource.map(a => [String(a.id), contentHash(a.content)]));
 const newsChars = Object.fromEntries(newsSource.map(a => {
   const key = String(a.id);
-  return [key, Object.prototype.hasOwnProperty.call(historicalNewsChars, key)
-    ? historicalNewsChars[key]
-    : visibleChars(a.content)];
+  return [key, Object.prototype.hasOwnProperty.call(historicalNewsChars, key) && (!previousNewsContentHashes[key] || previousNewsContentHashes[key] === newsContentHashes[key]) ? historicalNewsChars[key] : visibleChars(a.content)];
 }));
 const colChars = Object.fromEntries(colSource.map(a => {
   const key = String(a.id);
-  return [key, Object.prototype.hasOwnProperty.call(historicalColChars, key)
-    ? historicalColChars[key]
-    : visibleChars(a.content)];
+  return [key, Object.prototype.hasOwnProperty.call(historicalColChars, key) && (!previousColContentHashes[key] || previousColContentHashes[key] === colContentHashes[key]) ? historicalColChars[key] : visibleChars(a.content)];
 }));
 
 // 「洞察・考察」は記事データとは別の分析資産。
@@ -186,8 +196,27 @@ dashboard=replaceArray(dashboard,'const newsData = [',JSON.stringify(news,null,2
 dashboard=replaceArray(dashboard,'const colData = [',JSON.stringify(cols,null,2));
 dashboard=replaceObject(dashboard,'const newsChars = {',JSON.stringify(newsChars));
 dashboard=replaceObject(dashboard,'const colChars = {',JSON.stringify(colChars));
+if (!dashboard.includes('const newsContentHashes = {')) dashboard=dashboard.replace('const newsChars = {','const newsContentHashes = '+JSON.stringify(newsContentHashes)+';\nconst newsChars = {'); else dashboard=replaceObject(dashboard,'const newsContentHashes = {',JSON.stringify(newsContentHashes));
+if (!dashboard.includes('const colContentHashes = {')) dashboard=dashboard.replace('const colChars = {','const colContentHashes = '+JSON.stringify(colContentHashes)+';\nconst colChars = {'); else dashboard=replaceObject(dashboard,'const colContentHashes = {',JSON.stringify(colContentHashes));
 dashboard=replaceObject(dashboard,'const catColors = {',JSON.stringify(catColors,null,2));
 dashboard=replaceObject(dashboard,'const tagColors = {',JSON.stringify(tagColors,null,2));
+
+function parseDashboardArray(text, declaration) { return evalArray(getArray(text, declaration)); }
+function assertArticleSync(sourceItems, dashboardItems, label, fields) {
+  if (sourceItems.length !== dashboardItems.length) throw new Error(label + '件数が一致しません: source=' + sourceItems.length + ', dashboard=' + dashboardItems.length);
+  const dashboardById = new Map(dashboardItems.map(a => [a.id, a]));
+  for (const sourceArticle of sourceItems) {
+    const d = dashboardById.get(sourceArticle.id);
+    if (!d) throw new Error(label + ' ID ' + sourceArticle.id + ' がダッシュボードにありません');
+    for (const field of fields) if (String(sourceArticle[field] ?? '') !== String(d[field] ?? '')) throw new Error(label + ' ID ' + sourceArticle.id + ' の ' + field + ' が一致しません');
+  }
+}
+const syncedNews=parseDashboardArray(dashboard,'const newsData = [');
+const syncedCols=parseDashboardArray(dashboard,'const colData = [');
+assertArticleSync(newsSource,syncedNews,'ニュース',['id','title','date','time','tag','tagColor','borderColor','desc']);
+assertArticleSync(colSource,syncedCols,'コラム',['id','title','date','category','icon','colorClass','desc']);
+if (Math.max(...syncedNews.map(a=>a.id)) !== latestNews.id) throw new Error('最新ニュースIDが同期後に一致しません');
+if (Math.max(...syncedCols.map(a=>a.id)) !== latestColumn.id) throw new Error('最新コラムIDが同期後に一致しません');
 
 // 最終防衛線: 同期前後で洞察・考察の件数・本文を完全一致させる。
 // 文字数の減少も許可しない。1文字でも失われたら workflow 自体を失敗させる。
@@ -220,4 +249,4 @@ if (comprehensiveCharsAfter !== comprehensiveCharsBefore) {
 }
 
 fs.writeFileSync(DASHBOARD_FILE,dashboard);
-console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews:news.reduce((a,b)=>a.id>b.id?a:b),latestColumn:cols.reduce((a,b)=>a.id>b.id?a:b)},null,2));
+console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews,latestColumn},null,2));
