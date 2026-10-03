@@ -97,63 +97,16 @@ for (const a of cols) {
 }
 const newsColorMap = Function('"use strict"; return (' + getObject(source, 'const NEWS_TAG_COLOR_CLASS_MAP = Object.freeze(') + ')')();
 const newsClassColors = {};
-const tailwindColors = {
-  red: {500:'#ef4444',600:'#dc2626',700:'#b91c1c',800:'#991b1b'},
-  blue: {500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af'},
-  teal: {500:'#14b8a6',600:'#0d9488',700:'#0f766e',800:'#115e59'},
-  green: {500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534'},
-  emerald: {500:'#10b981',600:'#059669',700:'#047857',800:'#065f46'},
-  amber: {500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e'},
-  orange: {500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412'},
-  purple: {500:'#a855f7',600:'#9333ea',700:'#7e22ce',800:'#6b21a8'},
-  pink: {500:'#ec4899',600:'#db2777',700:'#be185d',800:'#9d174d'},
-  gray: {500:'#6b7280',600:'#4b5563',700:'#374151',800:'#1f2937'},
-  slate: {500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b'}
-};
-function resolveNewsClassColor(colorClass) {
-  const raw = String(colorClass || '').trim();
-  const classMatch = raw.match(/^text-([a-z]+)-(500|600|700|800)$/);
-  if (classMatch) return tailwindColors[classMatch[1]]?.[classMatch[2]] || '';
-  const selector = '.' + raw.replace(/[.*+?^$()|[\]\\]/g, '\\$&');
-  const match = source.match(new RegExp(selector + '\\s*\\{([^}]*)\\}', 'm'));
-  if (!match) return '';
-  const colorMatch = match[1].match(/(?:^|;)\\s*color\\s*:\\s*(#[0-9a-fA-F]{3,8}|var\\(--[a-z0-9-]+\\))/);
-  return colorMatch ? resolveCssColor(colorMatch[1]) : '';
-}
 for (const [tagColor, colorClass] of Object.entries(newsColorMap)) {
-  const color = resolveNewsClassColor(colorClass);
-  if (color) newsClassColors[tagColor] = color;
+  const match = source.match(new RegExp('\\.' + colorClass + '\\s*\\{[^}]*?color\\s*:\\s*(#[0-9a-fA-F]{3,8})', 'm'));
+  if (match) newsClassColors[tagColor] = match[1];
 }
 const tagColors = {};
 for (const a of news) {
   if (!a.tag) continue;
-  const normalizedTagColor = String(a.tagColor || '').trim();
-  const colorClass = newsColorMap[normalizedTagColor] || normalizedTagColor;
-  const directColor = {
-    'text-red-700':'#b91c1c','text-red-600':'#dc2626','text-red-500':'#ef4444',
-    'text-blue-700':'#1d4ed8','text-blue-600':'#2563eb','text-blue-500':'#3b82f6',
-    'text-indigo-700':'#4338ca','text-indigo-600':'#4f46e5','text-indigo-500':'#6366f1',
-    'text-violet-700':'#6d28d9','text-violet-600':'#7c3aed','text-violet-500':'#8b5cf6',
-    'text-yellow-700':'#a16207','text-yellow-600':'#ca8a04','text-yellow-500':'#eab308',
-    'text-cyan-700':'#0e7490','text-cyan-600':'#0891b2','text-cyan-500':'#06b6d4',
-    'text-sky-700':'#0369a1','text-sky-600':'#0284c7','text-sky-500':'#0ea5e9',
-    'text-stone-700':'#44403c','text-stone-600':'#57534e','text-stone-500':'#78716c',
-    'text-zinc-700':'#3f3f46','text-zinc-600':'#52525b','text-zinc-500':'#71717a',
-    'text-neutral-700':'#404040','text-neutral-600':'#525252','text-neutral-500':'#737373',
-    'text-teal-700':'#0f766e','text-teal-600':'#0d9488','text-teal-500':'#14b8a6',
-    'text-green-700':'#15803d','text-green-600':'#16a34a','text-green-500':'#22c55e',
-    'text-emerald-700':'#047857','text-emerald-600':'#059669','text-emerald-500':'#10b981',
-    'text-amber-700':'#b45309','text-amber-600':'#d97706','text-amber-500':'#f59e0b',
-    'text-orange-700':'#c2410c','text-orange-600':'#ea580c','text-orange-500':'#f97316',
-    'text-purple-700':'#7e22ce','text-purple-600':'#9333ea','text-purple-500':'#a855f7',
-    'text-pink-700':'#be185d','text-pink-600':'#db2777','text-pink-500':'#ec4899',
-    'text-rose-700':'#be123c','text-rose-600':'#e11d48','text-rose-500':'#f43f5e',
-    'text-fuchsia-700':'#a21caf','text-fuchsia-600':'#c026d3','text-fuchsia-500':'#d946ef',
-    'text-lime-700':'#4d7c0f','text-lime-600':'#65a30d','text-lime-500':'#84cc16',
-    'text-gray-700':'#374151','text-gray-600':'#4b5563','text-gray-500':'#6b7280'
-  }[normalizedTagColor];
-  const color = newsClassColors[normalizedTagColor] || directColor || resolveNewsClassColor(colorClass);
-  if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + normalizedTagColor);
+  const colorClass = newsColorMap[a.tagColor];
+  const color = newsClassColors[a.tagColor];
+  if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + a.tagColor);
   if (tagColors[a.tag] && tagColors[a.tag] !== color) throw new Error('site tag uses multiple colors: ' + a.tag);
   tagColors[a.tag] = color;
 }
@@ -182,8 +135,10 @@ function extractInsights(text) {
   const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div>([\s\S]*?)<\/div>\s*<\/div>/g;
   return [...text.matchAll(re)].map(m => m[1]);
 }
-const insightPlaceholders = [...dashboard.matchAll(/<div class="chart-desc-auto"[^>]*data-insight-index="\d+"[^>]*><\/div>/g)];
-if (insightPlaceholders.length !== 23) throw new Error('洞察・考察の自動分析プレースホルダー数が想定外です: ' + insightPlaceholders.length);
+const insightsBefore = extractInsights(dashboard);
+if (!insightsBefore.length) throw new Error('洞察・考察が見つかりません');
+if (insightsBefore.length !== 23) throw new Error(`洞察・考察の件数が想定外です: ${insightsBefore.length}`);
+const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleChars(text), 0);\n\n// Comprehensive Analysis も分析資産として完全保護する。\nfunction extractComprehensive(text) {\n  const start = text.indexOf('  <!-- MEGA SUMMARY -->');\n  if (start < 0) throw new Error('Comprehensive Analysis が見つかりません');\n  const end = text.indexOf('  <!-- FOOTER -->', start);\n  if (end < 0) throw new Error('Comprehensive Analysis の終端が見つかりません');\n  return text.slice(start, end);\n}\nconst comprehensiveBefore = extractComprehensive(dashboard);\nconst comprehensiveCharsBefore = visibleChars(comprehensiveBefore);\nif (comprehensiveCharsBefore < 10000) throw new Error('Comprehensive Analysis の本文が想定より短すぎます: ' + comprehensiveCharsBefore);
 
 function replaceArray(text, declaration, value) {
   const start = text.indexOf(declaration);
@@ -222,5 +177,24 @@ dashboard=replaceObject(dashboard,'const colChars = {',JSON.stringify(colChars))
 dashboard=replaceObject(dashboard,'const catColors = {',JSON.stringify(catColors,null,2));
 dashboard=replaceObject(dashboard,'const tagColors = {',JSON.stringify(tagColors,null,2));
 
-fs.writeFileSync(DASHBOARD_FILE,dashboard);
+// 最終防衛線: 同期前後で洞察・考察の件数・本文を完全一致させる。
+// 文字数の減少も許可しない。1文字でも失われたら workflow 自体を失敗させる。
+const insightsAfter = extractInsights(dashboard);
+if (insightsAfter.length !== insightsBefore.length) {
+  throw new Error(`洞察・考察の件数が同期前後で変化しました: ${insightsBefore.length} -> ${insightsAfter.length}`);
+}
+for (let i = 0; i < insightsBefore.length; i++) {
+  if (insightsAfter[i] !== insightsBefore[i]) {
+    throw new Error(`洞察・考察 #${i + 1} の本文が同期中に変更・欠落しました`);
+  }
+}
+const insightCharsAfter = insightsAfter.reduce((sum, text) => sum + visibleChars(text), 0);
+if (insightCharsAfter < insightCharsBefore) {
+  throw new Error(`洞察・考察の文字数が減少しました: ${insightCharsBefore} -> ${insightCharsAfter}`);
+}
+if (insightCharsAfter !== insightCharsBefore) {
+  throw new Error(`洞察・考察の文字数が変化しました: ${insightCharsBefore} -> ${insightCharsAfter}`);
+}
+
+\n\nconst comprehensiveAfter = extractComprehensive(dashboard);\nconst comprehensiveCharsAfter = visibleChars(comprehensiveAfter);\nif (comprehensiveAfter !== comprehensiveBefore) {\n  throw new Error('Comprehensive Analysis の本文が同期中に変更・欠落しました');\n}\nif (comprehensiveCharsAfter !== comprehensiveCharsBefore) {\n  throw new Error(`Comprehensive Analysis の文字数が変化しました: ${comprehensiveCharsBefore} -> ${comprehensiveCharsAfter}`);\n}\n\nfs.writeFileSync(DASHBOARD_FILE,dashboard);
 console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews:news.reduce((a,b)=>a.id>b.id?a:b),latestColumn:cols.reduce((a,b)=>a.id>b.id?a:b)},null,2));
