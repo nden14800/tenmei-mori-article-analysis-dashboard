@@ -127,8 +127,8 @@ for (const [tagColor, colorClass] of Object.entries(newsColorMap)) {
 const tagColors = {};
 for (const a of news) {
   if (!a.tag) continue;
-  const colorClass = newsColorMap[a.tagColor];
-  const color = newsClassColors[a.tagColor];
+  const colorClass = newsColorMap[a.tagColor] || a.tagColor;
+  const color = newsClassColors[a.tagColor] || resolveNewsClassColor(colorClass);
   if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + a.tagColor);
   if (tagColors[a.tag] && tagColors[a.tag] !== color) throw new Error('site tag uses multiple colors: ' + a.tag);
   tagColors[a.tag] = color;
