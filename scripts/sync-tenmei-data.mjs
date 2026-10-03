@@ -158,7 +158,7 @@ function extractInsights(text) {
   const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div>([\s\S]*?)<\/div>\s*<\/div>/g;
   return [...text.matchAll(re)].map(m => m[1]);
 }
-const insightPlaceholders = [...dashboard.matchAll(/<div class="chart-desc-auto"[^>]*data-insight-index="\\d+"[^>]*><\\/div>/g)];
+const insightPlaceholders = [...dashboard.matchAll(/<div class="chart-desc-auto"[^>]*data-insight-index="\d+"[^>]*><\/div>/g)];
 if (insightPlaceholders.length !== 23) throw new Error('洞察・考察の自動分析プレースホルダー数が想定外です: ' + insightPlaceholders.length);
 
 function replaceArray(text, declaration, value) {
