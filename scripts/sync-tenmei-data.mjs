@@ -55,6 +55,17 @@ if (!news.length || !cols.length) throw new Error('article arrays are empty');
 if (!news.some(a => a.id === 89)) throw new Error('latest news #89 missing');
 if (!cols.some(a => a.id === 65)) throw new Error('latest column #65 missing');
 
+const colorMap = {
+  yellow:'#eab308', indigo:'#6366f1', blue:'#3b82f6', purple:'#a855f7',
+  orange:'#f97316', red:'#ef4444', green:'#22c55e', pink:'#ec4899', gray:'#6b7280'
+};
+const catColors = {};
+for (const a of cols) {
+  if (!a.category) continue;
+  if (!colorMap[a.colorClass]) throw new Error('unknown site colorClass: ' + a.colorClass);
+  catColors[a.category] = colorMap[a.colorClass];
+}
+
 const newsChars = Object.fromEntries(newsSource.map(a => [String(a.id), visibleChars(a.content)]));
 const colChars = Object.fromEntries(colSource.map(a => [String(a.id), visibleChars(a.content)]));
 
@@ -92,5 +103,6 @@ dashboard=replaceArray(dashboard,'const newsData = [',JSON.stringify(news,null,2
 dashboard=replaceArray(dashboard,'const colData = [',JSON.stringify(cols,null,2));
 dashboard=replaceObject(dashboard,'const newsChars = {',JSON.stringify(newsChars));
 dashboard=replaceObject(dashboard,'const colChars = {',JSON.stringify(colChars));
+dashboard=replaceObject(dashboard,'const catColors = {',JSON.stringify(catColors,null,2));
 fs.writeFileSync(DASHBOARD_FILE,dashboard);
 console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews:news.reduce((a,b)=>a.id>b.id?a:b),latestColumn:cols.reduce((a,b)=>a.id>b.id?a:b)},null,2));
