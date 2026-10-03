@@ -2,8 +2,16 @@ name: Sync article analysis from tenmei-mori
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    # 毎時00分を避け、GitHub Actions の混雑による遅延を減らす。
+    - cron: "7,22,37,52 * * * *"
+      timezone: "Asia/Tokyo"
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sync-tenmei-data.yml"
+      - "scripts/sync-tenmei-data.mjs"
 
 permissions:
   contents: write
@@ -38,6 +46,12 @@ jobs:
           node --check scripts/sync-tenmei-data.mjs
           grep -q '"id": 89' index.html
           grep -q '"id": 65' index.html
+          grep -q 'data-insight-index="22"' index.html
+
+      - name: Verify source revision
+        run: |
+          echo "tenmei-mori source: $(git -C tenmei-mori rev-parse HEAD)"
+          echo "dashboard source: $(git rev-parse HEAD)"
 
       - name: Commit synchronized data
         run: |
