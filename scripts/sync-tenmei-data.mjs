@@ -127,9 +127,22 @@ for (const [tagColor, colorClass] of Object.entries(newsColorMap)) {
 const tagColors = {};
 for (const a of news) {
   if (!a.tag) continue;
-  const colorClass = newsColorMap[a.tagColor] || a.tagColor;
-  const color = newsClassColors[a.tagColor] || resolveNewsClassColor(colorClass);
-  if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + a.tagColor);
+  const normalizedTagColor = String(a.tagColor || '').trim();
+  const colorClass = newsColorMap[normalizedTagColor] || normalizedTagColor;
+  const directColor = {
+    'text-red-700':'#b91c1c','text-red-600':'#dc2626','text-red-500':'#ef4444',
+    'text-blue-700':'#1d4ed8','text-blue-600':'#2563eb','text-blue-500':'#3b82f6',
+    'text-teal-700':'#0f766e','text-teal-600':'#0d9488','text-teal-500':'#14b8a6',
+    'text-green-700':'#15803d','text-green-600':'#16a34a','text-green-500':'#22c55e',
+    'text-emerald-700':'#047857','text-emerald-600':'#059669','text-emerald-500':'#10b981',
+    'text-amber-700':'#b45309','text-amber-600':'#d97706','text-amber-500':'#f59e0b',
+    'text-orange-700':'#c2410c','text-orange-600':'#ea580c','text-orange-500':'#f97316',
+    'text-purple-700':'#7e22ce','text-purple-600':'#9333ea','text-purple-500':'#a855f7',
+    'text-pink-700':'#be185d','text-pink-600':'#db2777','text-pink-500':'#ec4899',
+    'text-gray-700':'#374151','text-gray-600':'#4b5563','text-gray-500':'#6b7280'
+  }[normalizedTagColor];
+  const color = newsClassColors[normalizedTagColor] || directColor || resolveNewsClassColor(colorClass);
+  if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + normalizedTagColor);
   if (tagColors[a.tag] && tagColors[a.tag] !== color) throw new Error('site tag uses multiple colors: ' + a.tag);
   tagColors[a.tag] = color;
 }
