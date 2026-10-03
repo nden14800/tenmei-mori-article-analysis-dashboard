@@ -82,7 +82,7 @@ const columnStyles = Function('"use strict"; return (' + getObject(source, 'cons
 const cssVars = Object.fromEntries([...source.matchAll(/--([a-z0-9-]+):\s*(#[0-9a-fA-F]{3,8})/g)].map(m => [m[1], m[2]]));
 function resolveCssColor(value) {
   const raw = String(value || '').trim();
-  const m = raw.match(/^var\\(--([a-z0-9-]+)\\)$/);
+  const m = raw.match(/^var\(--([a-z0-9-]+)\)$/);
   return m ? (cssVars[m[1]] || raw) : raw;
 }
 const catColors = {};
