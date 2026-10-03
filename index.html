@@ -1956,7 +1956,7 @@ function renderDataDrivenInsights() {
     '文字数分布ではニュースの最多帯が「' + maxNewsBin.n + '」' + maxNewsBin.c + '本、コラムの最多帯が「' + maxColBin.n + '」' + maxColBin.c + '本です。',
     '記事IDと文字数の散布図では本サイトの記事IDをそのまま使用しています。最大はニュース#' + longestNews.id + 'が' + fmt(longestNews.chars) + '字、コラム#' + longestCol.id + 'が' + fmt(longestCol.chars) + '字です。',
     'ニュースタグ別平均文字数は各tagの記事を単純平均した値です。最新データから再計算されるため、記事追加時も固定値を残しません。',
-    'コラムカテゴリ別平均文字数も各categoryの記事本文文字数を単純平均しています。ID65の' + fmt(2387) + '字も含めて再集計します。'
+    'コラムカテゴリ別平均文字数も各categoryの記事本文文字数を単純平均しています。ID65の' + fmt((colData.find(a => a.id === 65) || { chars: 0 }).chars) + '字も含めて再集計します。'
   ];
   paragraphs.forEach((p,i)=>{const el=$(i);if(el)el.textContent=p;});
 }
