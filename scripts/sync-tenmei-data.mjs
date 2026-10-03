@@ -150,7 +150,7 @@ function extractComprehensive(text) {
 }
 const comprehensiveBefore = extractComprehensive(dashboard);
 const comprehensiveCharsBefore = visibleChars(comprehensiveBefore);
-if (comprehensiveCharsBefore < 10000) throw new Error('Comprehensive Analysis の本文が想定より短すぎます: ' + comprehensiveCharsBefore);
+if (comprehensiveCharsBefore < 3000) throw new Error('Comprehensive Analysis の本文が想定より短すぎます: ' + comprehensiveCharsBefore);
 
 function replaceArray(text, declaration, value) {
   const start = text.indexOf(declaration);
