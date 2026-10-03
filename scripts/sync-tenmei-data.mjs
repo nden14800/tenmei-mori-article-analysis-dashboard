@@ -143,6 +143,9 @@ for (const a of news) {
     'text-orange-700':'#c2410c','text-orange-600':'#ea580c','text-orange-500':'#f97316',
     'text-purple-700':'#7e22ce','text-purple-600':'#9333ea','text-purple-500':'#a855f7',
     'text-pink-700':'#be185d','text-pink-600':'#db2777','text-pink-500':'#ec4899',
+    'text-rose-700':'#be123c','text-rose-600':'#e11d48','text-rose-500':'#f43f5e',
+    'text-fuchsia-700':'#a21caf','text-fuchsia-600':'#c026d3','text-fuchsia-500':'#d946ef',
+    'text-lime-700':'#4d7c0f','text-lime-600':'#65a30d','text-lime-500':'#84cc16',
     'text-gray-700':'#374151','text-gray-600':'#4b5563','text-gray-500':'#6b7280'
   }[normalizedTagColor];
   const color = newsClassColors[normalizedTagColor] || directColor || resolveNewsClassColor(colorClass);
