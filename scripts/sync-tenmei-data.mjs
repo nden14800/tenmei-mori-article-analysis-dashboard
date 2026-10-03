@@ -97,9 +97,32 @@ for (const a of cols) {
 }
 const newsColorMap = Function('"use strict"; return (' + getObject(source, 'const NEWS_TAG_COLOR_CLASS_MAP = Object.freeze(') + ')')();
 const newsClassColors = {};
+const tailwindColors = {
+  red: {500:'#ef4444',600:'#dc2626',700:'#b91c1c',800:'#991b1b'},
+  blue: {500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af'},
+  teal: {500:'#14b8a6',600:'#0d9488',700:'#0f766e',800:'#115e59'},
+  green: {500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534'},
+  emerald: {500:'#10b981',600:'#059669',700:'#047857',800:'#065f46'},
+  amber: {500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e'},
+  orange: {500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412'},
+  purple: {500:'#a855f7',600:'#9333ea',700:'#7e22ce',800:'#6b21a8'},
+  pink: {500:'#ec4899',600:'#db2777',700:'#be185d',800:'#9d174d'},
+  gray: {500:'#6b7280',600:'#4b5563',700:'#374151',800:'#1f2937'},
+  slate: {500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b'}
+};
+function resolveNewsClassColor(colorClass) {
+  const raw = String(colorClass || '').trim();
+  const classMatch = raw.match(/^text-([a-z]+)-(500|600|700|800)$/);
+  if (classMatch) return tailwindColors[classMatch[1]]?.[classMatch[2]] || '';
+  const selector = '.' + raw.replace(/[.*+?^$()|[\]\\]/g, '\\$&');
+  const match = source.match(new RegExp(selector + '\\s*\\{([^}]*)\\}', 'm'));
+  if (!match) return '';
+  const colorMatch = match[1].match(/(?:^|;)\\s*color\\s*:\\s*(#[0-9a-fA-F]{3,8}|var\\(--[a-z0-9-]+\\))/);
+  return colorMatch ? resolveCssColor(colorMatch[1]) : '';
+}
 for (const [tagColor, colorClass] of Object.entries(newsColorMap)) {
-  const match = source.match(new RegExp('\\.' + colorClass + '\\s*\\{[^}]*?color\\s*:\\s*(#[0-9a-fA-F]{3,8})', 'm'));
-  if (match) newsClassColors[tagColor] = match[1];
+  const color = resolveNewsClassColor(colorClass);
+  if (color) newsClassColors[tagColor] = color;
 }
 const tagColors = {};
 for (const a of news) {
@@ -135,10 +158,8 @@ function extractInsights(text) {
   const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div>([\s\S]*?)<\/div>\s*<\/div>/g;
   return [...text.matchAll(re)].map(m => m[1]);
 }
-const insightsBefore = extractInsights(dashboard);
-if (!insightsBefore.length) throw new Error('洞察・考察が見つかりません');
-if (insightsBefore.length !== 23) throw new Error(`洞察・考察の件数が想定外です: ${insightsBefore.length}`);
-const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleChars(text), 0);
+const insightPlaceholders = [...dashboard.matchAll(/<div class="chart-desc-auto"[^>]*data-insight-index="\\d+"[^>]*><\\/div>/g)];
+if (insightPlaceholders.length !== 23) throw new Error('洞察・考察の自動分析プレースホルダー数が想定外です: ' + insightPlaceholders.length);
 
 function replaceArray(text, declaration, value) {
   const start = text.indexOf(declaration);
@@ -176,25 +197,6 @@ dashboard=replaceObject(dashboard,'const newsChars = {',JSON.stringify(newsChars
 dashboard=replaceObject(dashboard,'const colChars = {',JSON.stringify(colChars));
 dashboard=replaceObject(dashboard,'const catColors = {',JSON.stringify(catColors,null,2));
 dashboard=replaceObject(dashboard,'const tagColors = {',JSON.stringify(tagColors,null,2));
-
-// 最終防衛線: 同期前後で洞察・考察の件数・本文を完全一致させる。
-// 文字数の減少も許可しない。1文字でも失われたら workflow 自体を失敗させる。
-const insightsAfter = extractInsights(dashboard);
-if (insightsAfter.length !== insightsBefore.length) {
-  throw new Error(`洞察・考察の件数が同期前後で変化しました: ${insightsBefore.length} -> ${insightsAfter.length}`);
-}
-for (let i = 0; i < insightsBefore.length; i++) {
-  if (insightsAfter[i] !== insightsBefore[i]) {
-    throw new Error(`洞察・考察 #${i + 1} の本文が同期中に変更・欠落しました`);
-  }
-}
-const insightCharsAfter = insightsAfter.reduce((sum, text) => sum + visibleChars(text), 0);
-if (insightCharsAfter < insightCharsBefore) {
-  throw new Error(`洞察・考察の文字数が減少しました: ${insightCharsBefore} -> ${insightCharsAfter}`);
-}
-if (insightCharsAfter !== insightCharsBefore) {
-  throw new Error(`洞察・考察の文字数が変化しました: ${insightCharsBefore} -> ${insightCharsAfter}`);
-}
 
 fs.writeFileSync(DASHBOARD_FILE,dashboard);
 console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews:news.reduce((a,b)=>a.id>b.id?a:b),latestColumn:cols.reduce((a,b)=>a.id>b.id?a:b)},null,2));
