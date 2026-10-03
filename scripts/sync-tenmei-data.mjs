@@ -144,7 +144,7 @@ const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleCha
 function extractComprehensive(text) {
   const start = text.indexOf('  <!-- MEGA SUMMARY -->');
   if (start < 0) throw new Error('Comprehensive Analysis が見つかりません');
-  const end = text.indexOf('</body>', start);
+  const end = text.indexOf('<script', start);
   if (end < 0) throw new Error('Comprehensive Analysis の終端が見つかりません');
   return text.slice(start, end);
 }
