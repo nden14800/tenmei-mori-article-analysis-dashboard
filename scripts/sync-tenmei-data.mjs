@@ -138,7 +138,19 @@ function extractInsights(text) {
 const insightsBefore = extractInsights(dashboard);
 if (!insightsBefore.length) throw new Error('洞察・考察が見つかりません');
 if (insightsBefore.length !== 23) throw new Error(`洞察・考察の件数が想定外です: ${insightsBefore.length}`);
-const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleChars(text), 0);\n\n// Comprehensive Analysis も分析資産として完全保護する。\nfunction extractComprehensive(text) {\n  const start = text.indexOf('  <!-- MEGA SUMMARY -->');\n  if (start < 0) throw new Error('Comprehensive Analysis が見つかりません');\n  const end = text.indexOf('  <!-- FOOTER -->', start);\n  if (end < 0) throw new Error('Comprehensive Analysis の終端が見つかりません');\n  return text.slice(start, end);\n}\nconst comprehensiveBefore = extractComprehensive(dashboard);\nconst comprehensiveCharsBefore = visibleChars(comprehensiveBefore);\nif (comprehensiveCharsBefore < 10000) throw new Error('Comprehensive Analysis の本文が想定より短すぎます: ' + comprehensiveCharsBefore);
+const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleChars(text), 0);
+
+// Comprehensive Analysis も分析資産として完全保護する。
+function extractComprehensive(text) {
+  const start = text.indexOf('  <!-- MEGA SUMMARY -->');
+  if (start < 0) throw new Error('Comprehensive Analysis が見つかりません');
+  const end = text.indexOf('  <!-- FOOTER -->', start);
+  if (end < 0) throw new Error('Comprehensive Analysis の終端が見つかりません');
+  return text.slice(start, end);
+}
+const comprehensiveBefore = extractComprehensive(dashboard);
+const comprehensiveCharsBefore = visibleChars(comprehensiveBefore);
+if (comprehensiveCharsBefore < 10000) throw new Error('Comprehensive Analysis の本文が想定より短すぎます: ' + comprehensiveCharsBefore);
 
 function replaceArray(text, declaration, value) {
   const start = text.indexOf(declaration);
@@ -196,5 +208,16 @@ if (insightCharsAfter !== insightCharsBefore) {
   throw new Error(`洞察・考察の文字数が変化しました: ${insightCharsBefore} -> ${insightCharsAfter}`);
 }
 
-\n\nconst comprehensiveAfter = extractComprehensive(dashboard);\nconst comprehensiveCharsAfter = visibleChars(comprehensiveAfter);\nif (comprehensiveAfter !== comprehensiveBefore) {\n  throw new Error('Comprehensive Analysis の本文が同期中に変更・欠落しました');\n}\nif (comprehensiveCharsAfter !== comprehensiveCharsBefore) {\n  throw new Error(`Comprehensive Analysis の文字数が変化しました: ${comprehensiveCharsBefore} -> ${comprehensiveCharsAfter}`);\n}\n\nfs.writeFileSync(DASHBOARD_FILE,dashboard);
+
+
+const comprehensiveAfter = extractComprehensive(dashboard);
+const comprehensiveCharsAfter = visibleChars(comprehensiveAfter);
+if (comprehensiveAfter !== comprehensiveBefore) {
+  throw new Error('Comprehensive Analysis の本文が同期中に変更・欠落しました');
+}
+if (comprehensiveCharsAfter !== comprehensiveCharsBefore) {
+  throw new Error(`Comprehensive Analysis の文字数が変化しました: ${comprehensiveCharsBefore} -> ${comprehensiveCharsAfter}`);
+}
+
+fs.writeFileSync(DASHBOARD_FILE,dashboard);
 console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews:news.reduce((a,b)=>a.id>b.id?a:b),latestColumn:cols.reduce((a,b)=>a.id>b.id?a:b)},null,2));
