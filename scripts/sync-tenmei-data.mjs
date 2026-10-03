@@ -132,6 +132,10 @@ for (const a of news) {
   const directColor = {
     'text-red-700':'#b91c1c','text-red-600':'#dc2626','text-red-500':'#ef4444',
     'text-blue-700':'#1d4ed8','text-blue-600':'#2563eb','text-blue-500':'#3b82f6',
+    'text-indigo-700':'#4338ca','text-indigo-600':'#4f46e5','text-indigo-500':'#6366f1',
+    'text-violet-700':'#6d28d9','text-violet-600':'#7c3aed','text-violet-500':'#8b5cf6',
+    'text-yellow-700':'#a16207','text-yellow-600':'#ca8a04','text-yellow-500':'#eab308',
+    'text-cyan-700':'#0e7490','text-cyan-600':'#0891b2','text-cyan-500':'#06b6d4',
     'text-teal-700':'#0f766e','text-teal-600':'#0d9488','text-teal-500':'#14b8a6',
     'text-green-700':'#15803d','text-green-600':'#16a34a','text-green-500':'#22c55e',
     'text-emerald-700':'#047857','text-emerald-600':'#059669','text-emerald-500':'#10b981',
