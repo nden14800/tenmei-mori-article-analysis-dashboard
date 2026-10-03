@@ -79,7 +79,7 @@ if (!cols.some(a => a.id === 65)) throw new Error('latest column #65 missing');
 
 // 色の正本は本サイト index.html の定義そのものを読む。
 const columnStyles = Function('"use strict"; return (' + getObject(source, 'const COLUMN_TAG_STYLES = Object.freeze(') + ')')();
-const cssVars = Object.fromEntries([...source.matchAll(/--([a-z0-9-]+):\\s*(#[0-9a-fA-F]{3,8})/g)].map(m => [m[1], m[2]]));
+const cssVars = Object.fromEntries([...source.matchAll(/--([a-z0-9-]+):\s*(#[0-9a-fA-F]{3,8})/g)].map(m => [m[1], m[2]]));
 function resolveCssColor(value) {
   const raw = String(value || '').trim();
   const m = raw.match(/^var\\(--([a-z0-9-]+)\\)$/);
@@ -98,7 +98,7 @@ for (const a of cols) {
 const newsColorMap = Function('"use strict"; return (' + getObject(source, 'const NEWS_TAG_COLOR_CLASS_MAP = Object.freeze(') + ')')();
 const newsClassColors = {};
 for (const [tagColor, colorClass] of Object.entries(newsColorMap)) {
-  const match = source.match(new RegExp('\\\\.' + colorClass + '\\\\s*\\\\{[^}]*?color\\\\s*:\\\\s*(#[0-9a-fA-F]{3,8})', 'm'));
+  const match = source.match(new RegExp('\\.' + colorClass + '\\s*\\{[^}]*?color\\s*:\\s*(#[0-9a-fA-F]{3,8})', 'm'));
   if (match) newsClassColors[tagColor] = match[1];
 }
 const tagColors = {};
