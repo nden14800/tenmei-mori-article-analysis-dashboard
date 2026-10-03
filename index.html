@@ -3562,7 +3562,7 @@ function renderDataDrivenInsights() {
     'コラムでは<strong>'+['日','月','火','水','木','金','土'][colWd.indexOf(Math.max(...colWd))]+'曜日が'+Math.max(...colWd)+'本</strong>で最多。ニュースとは別の曜日分布を持つが、曜日だけから執筆意図を断定することはできない。',
     'ニュースとコラムを曜日別に比較すると、両者の投稿本数には違いがある。ニュース最多曜日は<strong>'+['日','月','火','水','木','金','土'][newsWd.indexOf(Math.max(...newsWd))]+'</strong>、コラム最多曜日は<strong>'+['日','月','火','水','木','金','土'][colWd.indexOf(Math.max(...colWd))]+'</strong>。',
     '文字数ヒストグラムではニュースの<strong>'+newsBins.slice().sort((a,b)=>b[1]-a[1])[0][0]+'が'+newsBins.slice().sort((a,b)=>b[1]-a[1])[0][1]+'本</strong>、コラムの<strong>'+colBins.slice().sort((a,b)=>b[1]-a[1])[0][0]+'が'+colBins.slice().sort((a,b)=>b[1]-a[1])[0][1]+'本</strong>で最多。ニュースには1,200字以上も'+newsBins.find(x=>x[0]==='1,200字以上')[1]+'本ある。',
-    'ID順散布図では、ニュース最長は<strong>ID'+longestNews.id・'・'+fmt(longestNews.chars)+'字</strong>、コラム最長は<strong>ID'+longestCol.id+'・'+fmt(longestCol.chars)+'字</strong>。IDは時系列の目安として使えるが、IDそのものが文字数を決めるわけではない。',
+    'ID順散布図では、ニュース最長は<strong>ID'+longestNews.id+'・'+fmt(longestNews.chars)+'字</strong>、コラム最長は<strong>ID'+longestCol.id+'・'+fmt(longestCol.chars)+'字</strong>。IDは時系列の目安として使えるが、IDそのものが文字数を決めるわけではない。',
     'ニュースのタグ別平均文字数では、最多件数タグと最高平均文字数タグが一致するとは限らない。現在のタグ別集計は<strong>'+tagStats[0][0]+'が'+fmt(tagStats[0][2])+'字平均</strong>で、少数タグには平均値が大きく動くものもある。',
     'コラムのカテゴリ別平均文字数では、最多カテゴリと最長平均カテゴリが別になる。現在は<strong>'+catStats.slice().sort((a,b)=>b[2]-a[2])[0][0]+'が約'+fmt(catStats.slice().sort((a,b)=>b[2]-a[2])[0][2])+'字平均</strong>。少数カテゴリの平均値は記事数が少ない分、個別記事の影響を受けやすい。'
   ];
