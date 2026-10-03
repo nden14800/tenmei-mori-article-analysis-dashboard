@@ -66,8 +66,22 @@ for (const a of cols) {
   catColors[a.category] = colorMap[a.colorClass];
 }
 
-const newsChars = Object.fromEntries(newsSource.map(a => [String(a.id), visibleChars(a.content)]));
-const colChars = Object.fromEntries(colSource.map(a => [String(a.id), visibleChars(a.content)]));
+// 既存記事の文字数は、過去に本サイトの countArticleCharacters() と照合して確定した値を維持する。
+// 正規表現だけで再計算するとブラウザの DOM textContent と微妙にずれるため、既存値を再計算して上書きしない。
+// 新規記事だけは現在の同期処理で算出し、次回以降はその確定値として保持する。
+const historicalCharCounts = {"1":850,"2":608,"3":482,"4":408,"5":376,"6":787,"7":912,"8":628,"9":650,"10":703,"11":593,"12":569,"13":1352,"14":488,"15":480,"16":737,"17":622,"18":550,"19":541,"20":626,"21":777,"22":611,"23":731,"24":736,"25":533,"26":521,"27":1971,"28":583,"29":542,"30":565,"31":713,"32":508,"33":786,"34":738,"35":972,"36":748,"37":843,"38":642,"39":691,"40":588,"41":807,"42":787,"43":923,"44":786,"45":585,"46":893,"47":1205,"48":1268,"49":1124,"50":1226,"51":1290,"52":1407,"53":1477,"54":1102,"55":1235,"56":1311,"57":1315,"58":1016,"59":1149,"60":888,"61":1280,"62":787,"63":820,"64":725,"65":764,"66":666,"67":691,"68":813,"69":449,"70":699,"71":730,"72":958,"73":1337,"74":1649,"75":2176,"76":1173,"77":1357,"78":2479,"79":1828,"80":4906,"81":2451,"82":3885,"83":2670,"84":2023,"85":1740,"86":1962};
+const newsChars = Object.fromEntries(newsSource.map(a => {
+  const key = String(a.id);
+  return [key, Object.prototype.hasOwnProperty.call(historicalCharCounts, key)
+    ? historicalCharCounts[key]
+    : visibleChars(a.content)];
+}));
+const colChars = Object.fromEntries(colSource.map(a => {
+  const key = String(a.id);
+  return [key, Object.prototype.hasOwnProperty.call(historicalCharCounts, key)
+    ? historicalCharCounts[key]
+    : visibleChars(a.content)];
+}));
 
 // 「洞察・考察」は記事データとは別の分析資産。
 // 自動同期で index.html の配列を書き換えても、既存23件の文章を一文字も失わない。
