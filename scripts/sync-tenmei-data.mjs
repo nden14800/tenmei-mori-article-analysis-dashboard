@@ -32,6 +32,28 @@ function evalArray(literal) {
   return Function('"use strict"; return (' + literal + ')')();
 }
 
+function getObject(text, marker) {
+  const start = text.indexOf(marker);
+  if (start < 0) throw new Error('source marker not found: ' + marker);
+  const open = text.indexOf('{', start);
+  let depth = 0, quote = null, escaped = false, template = false;
+  for (let i = open; i < text.length; i++) {
+    const ch = text[i];
+    if (quote) {
+      if (escaped) { escaped = false; continue; }
+      if (ch === '\\') { escaped = true; continue; }
+      if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === BT) { template = !template; continue; }
+    if (template) { if (ch === '\\') i++; continue; }
+    if (ch === '"' || ch === "'") { quote = ch; continue; }
+    if (ch === '{') depth++;
+    else if (ch === '}') { depth--; if (!depth) return text.slice(open, i + 1); }
+  }
+  throw new Error('unterminated object: ' + marker);
+}
+
 function visibleChars(html) {
   return String(html || '')
     .replace(/<script[\s\S]*?<\/script>/gi, '')
@@ -55,17 +77,39 @@ if (!news.length || !cols.length) throw new Error('article arrays are empty');
 if (!news.some(a => a.id === 89)) throw new Error('latest news #89 missing');
 if (!cols.some(a => a.id === 65)) throw new Error('latest column #65 missing');
 
-const colorMap = {
-  yellow:'#eab308', indigo:'#6366f1', blue:'#3b82f6', purple:'#a855f7',
-  orange:'#f97316', red:'#ef4444', green:'#22c55e', pink:'#ec4899', gray:'#6b7280'
-};
+// 色の正本は本サイト index.html の定義そのものを読む。
+const columnStyles = Function('"use strict"; return (' + getObject(source, 'const COLUMN_TAG_STYLES = Object.freeze(') + ')')();
+const cssVars = Object.fromEntries([...source.matchAll(/--([a-z0-9-]+):\\s*(#[0-9a-fA-F]{3,8})/g)].map(m => [m[1], m[2]]));
+function resolveCssColor(value) {
+  const raw = String(value || '').trim();
+  const m = raw.match(/^var\\(--([a-z0-9-]+)\\)$/);
+  return m ? (cssVars[m[1]] || raw) : raw;
+}
 const catColors = {};
 for (const a of cols) {
   if (!a.category) continue;
-  if (!colorMap[a.colorClass]) throw new Error('unknown site colorClass: ' + a.colorClass);
-  catColors[a.category] = colorMap[a.colorClass];
+  const style = columnStyles[a.colorClass];
+  if (!style || !style.text) throw new Error('unknown site column style: ' + a.colorClass);
+  const color = resolveCssColor(style.text);
+  if (!/^#[0-9a-fA-F]{3,8}$/.test(color)) throw new Error('unresolved site column color: ' + a.colorClass + ' -> ' + color);
+  if (catColors[a.category] && catColors[a.category] !== color) throw new Error('site category uses multiple colors: ' + a.category);
+  catColors[a.category] = color;
 }
-
+const newsColorMap = Function('"use strict"; return (' + getObject(source, 'const NEWS_TAG_COLOR_CLASS_MAP = Object.freeze(') + ')')();
+const newsClassColors = {};
+for (const [tagColor, colorClass] of Object.entries(newsColorMap)) {
+  const match = source.match(new RegExp('\\\\.' + colorClass + '\\\\s*\\\\{[^}]*?color\\\\s*:\\\\s*(#[0-9a-fA-F]{3,8})', 'm'));
+  if (match) newsClassColors[tagColor] = match[1];
+}
+const tagColors = {};
+for (const a of news) {
+  if (!a.tag) continue;
+  const colorClass = newsColorMap[a.tagColor];
+  const color = newsClassColors[a.tagColor];
+  if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + a.tagColor);
+  if (tagColors[a.tag] && tagColors[a.tag] !== color) throw new Error('site tag uses multiple colors: ' + a.tag);
+  tagColors[a.tag] = color;
+}
 // 既存記事の文字数は、過去に本サイトの countArticleCharacters() と照合して確定した値を維持する。
 // 正規表現だけで再計算するとブラウザの DOM textContent と微妙にずれるため、既存値を再計算して上書きしない。
 // 新規記事だけは現在の同期処理で算出し、次回以降はその確定値として保持する。
@@ -131,6 +175,7 @@ dashboard=replaceArray(dashboard,'const colData = [',JSON.stringify(cols,null,2)
 dashboard=replaceObject(dashboard,'const newsChars = {',JSON.stringify(newsChars));
 dashboard=replaceObject(dashboard,'const colChars = {',JSON.stringify(colChars));
 dashboard=replaceObject(dashboard,'const catColors = {',JSON.stringify(catColors,null,2));
+dashboard=replaceObject(dashboard,'const tagColors = {',JSON.stringify(tagColors,null,2));
 
 // 最終防衛線: 同期前後で洞察・考察の件数・本文を完全一致させる。
 // 文字数の減少も許可しない。1文字でも失われたら workflow 自体を失敗させる。
