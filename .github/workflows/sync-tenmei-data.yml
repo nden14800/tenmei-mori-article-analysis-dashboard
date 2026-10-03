@@ -3,9 +3,11 @@ name: Sync article analysis from tenmei-mori
 on:
   schedule:
     # 毎時00分を避け、GitHub Actions の混雑による遅延を減らす。
-    - cron: "7,22,37,52 * * * *"
+    - cron: "7/5 * * * *"
       timezone: "Asia/Tokyo"
   workflow_dispatch:
+  repository_dispatch:
+    types: [tenmei-mori-updated]
   push:
     branches:
       - main
@@ -18,7 +20,7 @@ permissions:
 
 concurrency:
   group: article-analysis-sync
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   sync:
@@ -44,9 +46,10 @@ jobs:
       - name: Verify synchronized data
         run: |
           node --check scripts/sync-tenmei-data.mjs
-          grep -q '"id": 89' index.html
-          grep -q '"id": 65' index.html
+          grep -q 'const newsContentHashes = {' index.html
+          grep -q 'const colContentHashes = {' index.html
           grep -q 'data-insight-index="22"' index.html
+          test "$(grep -o 'data-insight-index="[0-9]*"' index.html | wc -l)" -eq 23
 
       - name: Verify source revision
         run: |
