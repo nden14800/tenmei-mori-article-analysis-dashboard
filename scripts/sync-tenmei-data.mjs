@@ -69,6 +69,18 @@ for (const a of cols) {
 const newsChars = Object.fromEntries(newsSource.map(a => [String(a.id), visibleChars(a.content)]));
 const colChars = Object.fromEntries(colSource.map(a => [String(a.id), visibleChars(a.content)]));
 
+// 「洞察・考察」は記事データとは別の分析資産。
+// 自動同期で index.html の配列を書き換えても、既存23件の文章を一文字も失わない。
+// 元サイトにこの分析文章の正本が存在しないため、現在のダッシュボード文を保護対象として扱う。
+function extractInsights(text) {
+  const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div>([\s\S]*?)<\/div>\s*<\/div>/g;
+  return [...text.matchAll(re)].map(m => m[1]);
+}
+const insightsBefore = extractInsights(dashboard);
+if (!insightsBefore.length) throw new Error('洞察・考察が見つかりません');
+if (insightsBefore.length !== 23) throw new Error(`洞察・考察の件数が想定外です: ${insightsBefore.length}`);
+const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleChars(text), 0);
+
 function replaceArray(text, declaration, value) {
   const start = text.indexOf(declaration);
   if (start < 0) throw new Error('dashboard declaration not found: ' + declaration);
@@ -104,5 +116,25 @@ dashboard=replaceArray(dashboard,'const colData = [',JSON.stringify(cols,null,2)
 dashboard=replaceObject(dashboard,'const newsChars = {',JSON.stringify(newsChars));
 dashboard=replaceObject(dashboard,'const colChars = {',JSON.stringify(colChars));
 dashboard=replaceObject(dashboard,'const catColors = {',JSON.stringify(catColors,null,2));
+
+// 最終防衛線: 同期前後で洞察・考察の件数・本文を完全一致させる。
+// 文字数の減少も許可しない。1文字でも失われたら workflow 自体を失敗させる。
+const insightsAfter = extractInsights(dashboard);
+if (insightsAfter.length !== insightsBefore.length) {
+  throw new Error(`洞察・考察の件数が同期前後で変化しました: ${insightsBefore.length} -> ${insightsAfter.length}`);
+}
+for (let i = 0; i < insightsBefore.length; i++) {
+  if (insightsAfter[i] !== insightsBefore[i]) {
+    throw new Error(`洞察・考察 #${i + 1} の本文が同期中に変更・欠落しました`);
+  }
+}
+const insightCharsAfter = insightsAfter.reduce((sum, text) => sum + visibleChars(text), 0);
+if (insightCharsAfter < insightCharsBefore) {
+  throw new Error(`洞察・考察の文字数が減少しました: ${insightCharsBefore} -> ${insightCharsAfter}`);
+}
+if (insightCharsAfter !== insightCharsBefore) {
+  throw new Error(`洞察・考察の文字数が変化しました: ${insightCharsBefore} -> ${insightCharsAfter}`);
+}
+
 fs.writeFileSync(DASHBOARD_FILE,dashboard);
 console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews:news.reduce((a,b)=>a.id>b.id?a:b),latestColumn:cols.reduce((a,b)=>a.id>b.id?a:b)},null,2));
