@@ -4720,11 +4720,11 @@ function refreshInsightFacts() {
   const latestNews=newsData.reduce((a,b)=>a.id>b.id?a:b);
   const all=[...newsData.map(a=>({...a,t:'n'})),...colData.map(a=>({...a,t:'c'}))];
   const total=all.length;
-  const sum=n=>n.reduce((z,a)=>z+(a.t==='n'?newsChars[a.id]:colChars[a.id]||0),0);
+  const sum=n=>n.reduce((z,a)=>z+((a.t==='n'?newsChars[a.id]:colChars[a.id])||0),0);
   const totalChars=sum(all);
   const ym=a=>String(a.date).slice(0,7);
   const months={};
-  all.forEach(a=>{const k=ym(a);months[k]??={n:0,c:0,nc:0,cc:0};months[k][a.t==='n'?'n':'c']++;months[k][a.t==='n'?'nc':'cc']+=(a.t==='n'?newsChars[a.id]:colChars[a.id])||0;});
+  all.forEach(a=>{const k=ym(a);if(!months[k]) months[k]={n:0,c:0,nc:0,cc:0};months[k][a.t==='n'?'n':'c']++;months[k][a.t==='n'?'nc':'cc']+=(a.t==='n'?newsChars[a.id]:colChars[a.id])||0;});
   const keys=Object.keys(months).sort(), latest3=keys.slice(-3);
   const md=k=>k.split('/')[1].replace(/^0/,'')+'月';
   const monthText=latest3.map(k=>md(k)+'はニュース'+months[k].n+'本・コラム'+months[k].c+'本').join('、');
@@ -4736,7 +4736,7 @@ function refreshInsightFacts() {
   const nb=bins(newsData,newsChars),cb=bins(colData,colChars);
   const tags={};newsData.forEach(a=>tags[a.tag]=(tags[a.tag]||0)+1);
   const cats={};colData.forEach(a=>cats[a.category]=(cats[a.category]||0)+1);
-  const set=(i,fn)=>{const m=document.querySelector('.chart-desc-auto[data-insight-index="'+i+'"]');if(m?.parentElement)m.parentElement.innerHTML=fn(m.parentElement.innerHTML);};
+  const set=(i,fn)=>{const m=document.querySelector('.chart-desc-auto[data-insight-index="'+i+'"]');if(m && m.parentElement)m.parentElement.innerHTML=fn(m.parentElement.innerHTML);};
   set(0,h=>h.replace(/2025年12月から2026年\d+月にかけて/,'2025年12月から'+latestNews.date.slice(0,7).replace('/','年')+'月にかけて').replace(/全記事（\d+本）の約\d+%/,'全記事（'+total+'本）の約'+Math.round((months['2026/01'].n/total)*100)+'%').replace(/8月はニュース\d+本・コラム\d+本、9月はニュース\d+本・コラム\d+本、10月はニュース\d+本・コラム\d+本が追加されている/,monthText+'が追加されている'));
   set(1,h=>h.replace(/全期間（2025年12月〜2026年\d+月）/,'全期間（2025年12月〜'+latestNews.date.slice(0,7).replace('/','年')+'月）'));
   set(2,h=>h.replace(/8月は2本平均2,992字、9月は1本4,248字、10月は1本3,952字となり、[^。]+。/,latest3.filter(k=>months[k].n).map(k=>md(k)+'は'+months[k].n+'本平均'+Math.round(months[k].nc/months[k].n).toLocaleString()+'字').join('、')+'となり、最新月まで大型更新が続いている。'));
