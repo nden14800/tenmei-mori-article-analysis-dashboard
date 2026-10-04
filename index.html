@@ -3447,6 +3447,11 @@ function tagBadge(tag, map) {
   return `<span class="tag-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${tag}</span>`;
 }
 
+const allArticles = [
+  ...newsData.map(a => ({ date: a.date, type: 'news', title: a.title, chars: a.chars, id: a.id, tag: a.tag, time: a.time })),
+  ...colData.map(a => ({ date: a.date, type: 'col', title: a.title, chars: a.chars, id: a.id, cat: a.category }))
+];
+
 function articleDate(dateString) {
   const [year, month, day] = String(dateString).split(/[/-]/).map(Number);
   return new Date(year, month - 1, day);
