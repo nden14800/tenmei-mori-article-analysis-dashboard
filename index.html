@@ -3447,6 +3447,282 @@ function tagBadge(tag, map) {
   return `<span class="tag-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${tag}</span>`;
 }
 
+function articleDate(dateString) {
+  const [year, month, day] = String(dateString).split(/[/-]/).map(Number);
+  return new Date(year, month - 1, day);
+}
+function calendarDateKey(date) {
+  return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+}
+function dateRange(start, end) {
+  const dates = [];
+  const cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  while (cursor <= last) {
+    dates.push(calendarDateKey(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return dates;
+}
+function monthKey(date) {
+  return date.getFullYear() + '年' + (date.getMonth() + 1) + '月';
+}
+function monthRange(start, end) {
+  const months = [];
+  const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+  const last = new Date(end.getFullYear(), end.getMonth(), 1);
+  while (cursor <= last) {
+    months.push(monthKey(cursor));
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+  return months;
+}
+
+// 表示対象期間と活動日数はデータ本体から自動算出する。
+const articleDates = allArticles.map(a => articleDate(a.date)).sort((a,b) => a - b);
+const firstArticleDate = articleDates[0];
+const lastArticleDate = articleDates[articleDates.length - 1];
+const allTimelineDates = dateRange(firstArticleDate, lastArticleDate);
+const activeDayCount = allTimelineDates.length;
+const periodLabel = firstArticleDate.getFullYear() + '年' + (firstArticleDate.getMonth()+1) + '月〜' + lastArticleDate.getFullYear() + '年' + (lastArticleDate.getMonth()+1) + '月';
+const dateLabel = date => (date.getMonth()+1) + '/' + date.getDate();
+const heatmapRange = [calendarDateKey(firstArticleDate), calendarDateKey(lastArticleDate)];
+
+// 月別データ：投稿のない月にもゼロ値を与え、実際の暦上の位置を維持する。
+const monthlyStats = {};
+allArticles.forEach(a => {
+  const key = monthKey(articleDate(a.date));
+  if (!monthlyStats[key]) monthlyStats[key] = { newsCnt:0, colCnt:0, newsChars:0, colChars:0 };
+  if (a.type === 'news') {
+    monthlyStats[key].newsCnt++;
+    monthlyStats[key].newsChars += a.chars;
+  } else {
+    monthlyStats[key].colCnt++;
+    monthlyStats[key].colChars += a.chars;
+  }
+});
+const sortedMonths = monthRange(firstArticleDate, lastArticleDate);
+sortedMonths.forEach(key => {
+  if (!monthlyStats[key]) monthlyStats[key] = { newsCnt:0, colCnt:0, newsChars:0, colChars:0 };
+});
+const mNewsCnt = sortedMonths.map(m => monthlyStats[m].newsCnt);
+const mColCnt = sortedMonths.map(m => monthlyStats[m].colCnt);
+const mNewsChars = sortedMonths.map(m => monthlyStats[m].newsChars);
+// 投稿がない月の平均文字数は「0字」ではなく、算出対象なしとしてnullにする。
+const mNewsAvg = sortedMonths.map(m => monthlyStats[m].newsCnt > 0 ? Math.round(monthlyStats[m].newsChars / monthlyStats[m].newsCnt) : null);
+document.getElementById('meta-period').innerText = periodLabel;
+document.getElementById('overview-activity-days').innerText = activeDayCount;
+document.getElementById('overview-activity-range').innerText = dateLabel(firstArticleDate) + ' → ' + dateLabel(lastArticleDate);
+
+// 週別データ：日曜始まりの全週を連続生成し、投稿ゼロ週を残す。
+function startOfSunday(date) {
+  const weekStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  return weekStart;
+}
+function formatWeekLabel(key) {
+  const date = articleDate(key);
+  return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + '週';
+}
+const weeklyStats = {};
+allArticles.forEach(a => {
+  const key = calendarDateKey(startOfSunday(articleDate(a.date)));
+  if (!weeklyStats[key]) weeklyStats[key] = { newsCnt:0, colCnt:0, newsChars:0 };
+  if (a.type === 'news') {
+    weeklyStats[key].newsCnt++;
+    weeklyStats[key].newsChars += a.chars;
+  } else {
+    weeklyStats[key].colCnt++;
+  }
+});
+const sortedWeeks = [];
+for (let cursor = startOfSunday(firstArticleDate), last = startOfSunday(lastArticleDate); cursor <= last; cursor.setDate(cursor.getDate() + 7)) {
+  const key = calendarDateKey(cursor);
+  sortedWeeks.push(key);
+  if (!weeklyStats[key]) weeklyStats[key] = { newsCnt:0, colCnt:0, newsChars:0 };
+}
+const wLabels = sortedWeeks.map(formatWeekLabel);
+const wNews = sortedWeeks.map(w => weeklyStats[w].newsCnt);
+const wCol = sortedWeeks.map(w => weeklyStats[w].colCnt);
+const wChars = sortedWeeks.map(w => weeklyStats[w].newsChars);
+
+// 日別タイムライン・累積データ：全日付を残すことで、休止期間をゼロと水平線で表現する。
+const dailyStats = {};
+allArticles.forEach(a => {
+  const key = calendarDateKey(articleDate(a.date));
+  if (!dailyStats[key]) dailyStats[key] = { newsCnt:0, colCnt:0, newsChars:0, colChars:0 };
+  if (a.type === 'news') {
+    dailyStats[key].newsCnt++;
+    dailyStats[key].newsChars += a.chars;
+  } else {
+    dailyStats[key].colCnt++;
+    dailyStats[key].colChars += a.chars;
+  }
+});
+let cn = 0, cc = 0, cumNewsChars = 0, cumColChars = 0;
+const cumDataDynamic = allTimelineDates.map(date => {
+  const day = dailyStats[date] || { newsCnt:0, colCnt:0, newsChars:0, colChars:0 };
+  cn += day.newsCnt;
+  cc += day.colCnt;
+  cumNewsChars += day.newsChars;
+  cumColChars += day.colChars;
+  return {
+    date,
+    newsCount: day.newsCnt,
+    colCount: day.colCnt,
+    news: cn,
+    col: cc,
+    total: cn + cc,
+    newsChars: cumNewsChars,
+    colChars: cumColChars,
+    totalChars: cumNewsChars + cumColChars
+  };
+});
+const tlDates = allTimelineDates;
+const tlNewsData = cumDataDynamic.map(d => d.newsCount);
+const tlColData = cumDataDynamic.map(d => d.colCount);
+
+// 曜日・時間データ
+const hourCounts = Array(24).fill(0);
+const dowCounts = Array(7).fill(0);
+newsData.forEach(a => {
+  if(a.time) {
+    const h = parseInt(a.time.split(':')[0], 10);
+    if(!isNaN(h)) hourCounts[h]++;
+  }
+  const dObj = new Date(a.date);
+  let dow = dObj.getDay() - 1;
+  if(dow === -1) dow = 6;
+  dowCounts[dow]++;
+});
+const dowLabels = ['月','火','水','木','金','土','日'];
+
+// 新規：曜日×時間帯 ヒートマップデータ
+const dowHourData = []; // [dow, hour, count]
+for (let d=0; d<7; d++) {
+  for (let h=0; h<24; h++) {
+    dowHourData.push([h, d, 0]);
+  }
+}
+newsData.forEach(a => {
+  if (a.time) {
+    const dObj = new Date(a.date);
+    let dow = dObj.getDay() - 1;
+    if(dow === -1) dow = 6;
+    const h = parseInt(a.time.split(':')[0], 10);
+    if (!isNaN(h)) {
+      const idx = dow * 24 + h;
+      dowHourData[idx][2]++;
+    }
+  }
+});
+
+// コラム 曜日データ（timeフィールドなし → 曜日のみ集計）
+const colDowCounts = Array(7).fill(0);
+colData.forEach(a => {
+  const dObj = new Date(a.date);
+  let dow = dObj.getDay() - 1;
+  if(dow === -1) dow = 6;
+  colDowCounts[dow]++;
+});
+
+// ヒストグラムデータ
+const histBins = ['〜300', '300〜500', '500〜700', '700〜900', '900〜1,200', '1,200以上'];
+const hNews = [0,0,0,0,0,0];
+const hCol = [0,0,0,0,0,0];
+const categorize = (c, arr) => {
+  if (c <= 300) arr[0]++;
+  else if (c <= 500) arr[1]++;
+  else if (c <= 700) arr[2]++;
+  else if (c <= 900) arr[3]++;
+  else if (c <= 1200) arr[4]++;
+  else arr[5]++;
+};
+newsData.forEach(a => categorize(a.chars, hNews));
+colData.forEach(a => categorize(a.chars, hCol));
+
+// 散布図データ
+const scatterNews = newsData.map(a => [a.id, a.chars, a.title, a.tag]);
+const scatterCol  = colData.map(a =>  [a.id, a.chars, a.title, a.category]);
+
+// タグ別平均文字数（ニュース）
+const tagGroups = {};
+newsData.forEach(a => {
+  if (!tagGroups[a.tag]) tagGroups[a.tag] = [];
+  tagGroups[a.tag].push(a.chars);
+});
+const tagAvg = Object.entries(tagGroups)
+  .map(([tag, chars]) => ({
+    tag,
+    avg: Math.round(chars.reduce((s,v) => s+v, 0) / chars.length),
+    count: chars.length
+  }))
+  .sort((a,b) => a.avg - b.avg);
+
+// カテゴリ別平均文字数（コラム）
+const catGroups = {};
+colData.forEach(a => {
+  if (!catGroups[a.category]) catGroups[a.category] = [];
+  catGroups[a.category].push(a.chars);
+});
+const catAvg = Object.entries(catGroups)
+  .map(([cat, chars]) => ({
+    cat,
+    avg: Math.round(chars.reduce((s,v) => s+v, 0) / chars.length),
+    count: chars.length
+  }))
+  .sort((a,b) => a.avg - b.avg);
+
+// 新規：タグ・カテゴリ バブルチャートデータ
+const bubbleData = [
+  ...tagAvg.map(t => ({
+    name: t.tag,
+    value: [t.count, t.avg, t.count * t.avg, 'news'],
+    itemStyle: { color: tagColors[t.tag] || '#c0392b' }
+  })),
+  ...catAvg.map(c => ({
+    name: c.cat,
+    value: [c.count, c.avg, c.count * c.avg, 'col'],
+    itemStyle: { color: catColors[c.cat] || '#b8860b' }
+  }))
+];
+
+// 新規：記事長クラス分布（パイチャート）データ
+const lengthClasses = { 'ショート (〜500字)': 0, 'ミドル (500〜1000字)': 0, 'ロング (1000字〜)': 0 };
+allArticles.forEach(a => {
+  if (a.chars < 500) lengthClasses['ショート (〜500字)']++;
+  else if (a.chars < 1000) lengthClasses['ミドル (500〜1000字)']++;
+  else lengthClasses['ロング (1000字〜)']++;
+});
+const lengthPieData = Object.entries(lengthClasses).map(([name, value]) => ({ name, value }));
+
+// 累積文字数も全日付を保持し、投稿のない期間は正確な水平線になる。
+const cumCharsData = cumDataDynamic.map(d => ({
+  date: d.date,
+  news: d.newsChars,
+  col: d.colChars,
+  total: d.totalChars
+}));
+
+// タグ区分別平均文字数（chart-grouped-chars 用）
+const groupCharData = {
+  'バグ修正系':   newsData.filter(a => ['不具合修正','不具合解消','障害報告','結界修復'].includes(a.tag)),
+  '新機能追加':   newsData.filter(a => ['新機能','新機能・規約','機能追加','機能追加・修正','機能昇格'].includes(a.tag)),
+  'デザイン改善': newsData.filter(a => a.tag.includes('デザイン') || ['意匠調整','意匠変更','UI刷新 (β)'].includes(a.tag)),
+  'システム関連': newsData.filter(a => a.tag.startsWith('システム') || ['セキュリティ・システム'].includes(a.tag)),
+  'お知らせ系':   newsData.filter(a => ['お知らせ','ご挨拶','メンテナンス'].includes(a.tag)),
+  '機能撤去廃棄': newsData.filter(a => ['機能撤去','機能廃棄','機能変更'].includes(a.tag)),
+  '重要事項':     newsData.filter(a => a.tag.startsWith('重要')),
+  '機能改善':     newsData.filter(a => ['機能改善','制限緩和'].includes(a.tag)),
+};
+const groupAvgCharsArr = Object.entries(groupCharData)
+  .map(([name, articles]) => ({
+    name,
+    avg: articles.length > 0 ? Math.round(articles.reduce((s,a) => s+a.chars, 0) / articles.length) : 0
+  }))
+  .sort((a,b) => a.avg - b.avg);
+
+
 function pd(d) {
   const [y, m, day] = String(d || '').split(/[/-]/).map(Number);
   return new Date(y, (m || 1) - 1, day || 1);
