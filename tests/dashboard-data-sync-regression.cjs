@@ -67,15 +67,15 @@ for (const article of newsData) {
 }
 
 assert.strictEqual(newsData.length, 89, '社務所だよりは本サイトの最新89件と一致する必要があります');
-assert.strictEqual(colData.length, 62, '神籤草子は本サイトの最新62件と一致する必要があります');
+assert.strictEqual(colData.length, 65, '神籤草子は本サイトの最新65件と一致する必要があります');
 assert.strictEqual(newsData[0].id, 89, 'Ver.4.2社務所だよりを最新ニュースとして含める必要があります');
 assert.strictEqual(newsData[0].date, '2026/10/02', 'Ver.4.2社務所だよりの日付を保持する必要があります');
 assert.strictEqual(newsChars['89'], 3952, 'Ver.4.2社務所だよりの本文文字数を本サイトと一致させる必要があります');
-assert.strictEqual(newsData[0].title, '【UI/UX大規模刷新】Ver.4.0「静謐な即応」— 天命乃杜の全画面を新たな意匠へ統一しました', 'Ver.4.2社務所だよりの最新タイトルを本サイトと一致させる必要があります');
+assert.strictEqual(newsData[0].title, '【安定化・セキュリティ強化】Ver.4.2「運用基盤と安全性の強化」— 履歴・監視・ナビゲーション・認証を整えました', 'Ver.4.2社務所だよりの最新タイトルを本サイトと一致させる必要があります');
 assert.strictEqual(newsData[0].tag, '安定化・セキュリティ', 'Ver.4.2社務所だよりのタグを本サイトと一致させる必要があります');
-assert.strictEqual(newsData[0].time, '21:15', 'Ver.4.0社務所だよりの公開時刻を本サイトと一致させる必要があります');
+assert.strictEqual(newsData[0].time, '21:15', 'Ver.4.2社務所だよりの公開時刻を本サイトと一致させる必要があります');
 assert(newsData.every((article) => validPublicationTime.test(article.time || '')), '投稿時刻・曜日×時間帯グラフのため、ニュース全89件に有効な公開時刻を保持する必要があります');
-assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 89, '投稿時刻ヒストグラムにニュース全87件を集計する必要があります');
+assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 89, '投稿時刻ヒストグラムにニュース全89件を集計する必要があります');
 assert.strictEqual(newsHourCounts.slice(16, 20).reduce((sum, count) => sum + count, 0), 36, '16〜19時台の投稿数を洞察・考察本文と一致させる必要があります');
 
 assert.strictEqual(colData[0].id, 65, '神無月コラムを最新神籤草子として追加する必要があります');
@@ -95,7 +95,7 @@ assert.strictEqual(colChars['2'], 617, '神籤草子ID2の本文文字数を本�
 assert.strictEqual(colChars['3'], 484, '神籤草子ID3の本文文字数を本サイトのDOM計算と一致させる必要があります');
 assert.strictEqual(colChars['4'], 420, '神籤草子ID4の本文文字数を本サイトのDOM計算と一致させる必要があります');
 assert.strictEqual(colChars['61'], 1280, 'お盆コラムの本文文字数を本サイトと一致させる必要があります');
-assert.strictEqual(colChars['62'], 1241, '処暑コラムの本文文字数を本サイトのDOM計算と一致させる必要があります');
+assert.strictEqual(colChars['65'], 2110, '神無月コラムの本文文字数を本サイトのDOM計算と一致させる必要があります');
 assert.strictEqual(totalNewsChars, 89424, 'ニュース本文総文字数を本サイトと一致させる必要があります');
 assert.strictEqual(totalColChars, 57671, 'コラム本文総文字数を本サイトと一致させる必要があります');
 assert.strictEqual(totalNewsChars + totalColChars, 147095, '総文字数を本サイトと一致させる必要があります');
@@ -108,7 +108,7 @@ assert(html.includes('<td class="desc-cell">${a.desc}</td>'), '神籤草子の�
 assert(html.includes('colspan="6" class="no-results"'), '神籤草子一覧の説明列追加後も検索結果なしの表示列数を整合させる必要があります');
 
 const requiredNarrativeHeadings = [
-  '天命乃杜 — 254日間の軌跡が語るもの',
+  '天命乃杜 — 296日間の軌跡が語るもの',
   '▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）',
   '▍ フェーズ II — インフラ激動期（2026年1月中旬〜下旬）',
   '▍ フェーズ III — 成熟・洗練期から長期充電へ（2026年2月〜4月）',
@@ -123,15 +123,15 @@ for (const heading of requiredNarrativeHeadings) {
 }
 
 const requiredChartNarratives = [
-  '全149記事（ニュース87本＋コラム62本）を文字数に基づいて',
-  'ミドルクラスが過半数（約54%・81本）を占め、次いでショートが約21%（31本）、ロングが約25%（37本）',
-  '62本のコラム記事（神籤草子）に付与されたカテゴリの分布だ。',
-  '8月20日時点で合計149記事に到達している。',
-  '総文字数は133,400字に達しており',
-  '神籤草子62本の投稿曜日の分布だ。',
-  '8月20日の処暑コラムまで記録している。',
-  '8月20日には二十四節気「処暑」を扱うコラムが加わっている。',
-  '149本・133,400字・254日間・4回のDBマイグレーション',
+  '全154記事（ニュース89本＋コラム65本）を文字数に基づいて',
+  'ミドルクラスが過半数（約54%・81本）を占め、次いでショートが約20%（31本）、ロングが約27%（42本）',
+  '65本のコラム記事（神籤草子）に付与されたカテゴリの分布だ。',
+  '10月2日時点で合計154記事に到達している。',
+  '総文字数は147,095字に達しており',
+  '神籤草子65本の投稿曜日の分布だ。',
+  '10月2日の神無月コラムまで記録している。',
+  '10月2日には「神無月」を扱うコラムが加わっている。',
+  '154本・147,095字・296日間・4回のDBマイグレーション',
 ];
 for (const sentence of requiredChartNarratives) {
   assert(html.includes(sentence), `既存の洞察・考察本文を保ち、最新数値を反映する必要があります: ${sentence}`);
