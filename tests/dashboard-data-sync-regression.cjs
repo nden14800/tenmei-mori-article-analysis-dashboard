@@ -66,23 +66,23 @@ for (const article of newsData) {
   }
 }
 
-assert.strictEqual(newsData.length, 87, '社務所だよりは本サイトの最新87件と一致する必要があります');
+assert.strictEqual(newsData.length, 89, '社務所だよりは本サイトの最新89件と一致する必要があります');
 assert.strictEqual(colData.length, 62, '神籤草子は本サイトの最新62件と一致する必要があります');
-assert.strictEqual(newsData[0].id, 87, 'Ver.4.0社務所だよりを最新ニュースとして含める必要があります');
-assert.strictEqual(newsData[0].date, '2026/08/17', 'Ver.4.0社務所だよりの日付を保持する必要があります');
-assert.strictEqual(newsChars['87'], 4022, 'Ver.4.0社務所だよりの本文文字数を本サイトと一致させる必要があります');
-assert.strictEqual(newsData[0].title, '【UI/UX大規模刷新】Ver.4.0「静謐な即応」— 天命乃杜の全画面を新たな意匠へ統一しました', 'Ver.4.0社務所だよりの最新タイトルを本サイトと一致させる必要があります');
-assert.strictEqual(newsData[0].tag, '新機能・改善', 'Ver.4.0社務所だよりのタグを本サイトと一致させる必要があります');
-assert.strictEqual(newsData[0].time, '12:37', 'Ver.4.0社務所だよりの公開時刻を本サイトと一致させる必要があります');
-assert(newsData.every((article) => validPublicationTime.test(article.time || '')), '投稿時刻・曜日×時間帯グラフのため、ニュース全87件に有効な公開時刻を保持する必要があります');
-assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 87, '投稿時刻ヒストグラムにニュース全87件を集計する必要があります');
+assert.strictEqual(newsData[0].id, 89, 'Ver.4.2社務所だよりを最新ニュースとして含める必要があります');
+assert.strictEqual(newsData[0].date, '2026/10/02', 'Ver.4.2社務所だよりの日付を保持する必要があります');
+assert.strictEqual(newsChars['89'], 3952, 'Ver.4.2社務所だよりの本文文字数を本サイトと一致させる必要があります');
+assert.strictEqual(newsData[0].title, '【UI/UX大規模刷新】Ver.4.0「静謐な即応」— 天命乃杜の全画面を新たな意匠へ統一しました', 'Ver.4.2社務所だよりの最新タイトルを本サイトと一致させる必要があります');
+assert.strictEqual(newsData[0].tag, '安定化・セキュリティ', 'Ver.4.2社務所だよりのタグを本サイトと一致させる必要があります');
+assert.strictEqual(newsData[0].time, '21:15', 'Ver.4.0社務所だよりの公開時刻を本サイトと一致させる必要があります');
+assert(newsData.every((article) => validPublicationTime.test(article.time || '')), '投稿時刻・曜日×時間帯グラフのため、ニュース全89件に有効な公開時刻を保持する必要があります');
+assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 89, '投稿時刻ヒストグラムにニュース全87件を集計する必要があります');
 assert.strictEqual(newsHourCounts.slice(16, 20).reduce((sum, count) => sum + count, 0), 36, '16〜19時台の投稿数を洞察・考察本文と一致させる必要があります');
 
-assert.strictEqual(colData[0].id, 62, '処暑コラムを最新神籤草子として追加する必要があります');
-assert.strictEqual(colData[0].date, '2026/08/20', '処暑コラムの日付を本サイトと一致させる必要があります');
-assert.strictEqual(colData[0].category, '干支・暦', '処暑コラムのカテゴリを本サイトと一致させる必要があります');
-assert.strictEqual(colData[0].title, '【干支・暦】今週日曜は処暑——暑さの向こうに、秋の気配を待つ二十四節気', '処暑コラムのタイトルを本サイトと一致させる必要があります');
-assert.strictEqual(colData[0].desc, '二十四節気「処暑」が示す季節の意味を紹介します。2026年の節入り日時、三つの七十二候、残暑と台風期に心に留めたい神社参拝の考え方を、暮らしの目線で丁寧に解説します。', '処暑コラムの一覧説明を本サイトと一致させる必要があります');
+assert.strictEqual(colData[0].id, 65, '神無月コラムを最新神籤草子として追加する必要があります');
+assert.strictEqual(colData[0].date, '2026/10/02', '神無月コラムの日付を本サイトと一致させる必要があります');
+assert.strictEqual(colData[0].category, '年中行事', '神無月コラムのカテゴリを本サイトと一致させる必要があります');
+assert.strictEqual(colData[0].title, '【年中行事】神無月って、神様がいなくなる月？——出雲の「神在月」と秋の祈り', '神無月コラムのタイトルを本サイトと一致させる必要があります');
+assert.strictEqual(colData[0].desc, '10月の別名「神無月」と、出雲で「神在月」と呼ぶ習わしを紹介。神々が集まるという伝承、神在祭の意味、旧暦と現在の暦の違いを整理し、秋の季節感とともにひもときます。', '神無月コラムの一覧説明を本サイトと一致させる必要があります');
 
 for (const article of colData) {
   const length = Array.from(article.desc || '').length;
@@ -96,13 +96,13 @@ assert.strictEqual(colChars['3'], 484, '神籤草子ID3の本文文字数を本�
 assert.strictEqual(colChars['4'], 420, '神籤草子ID4の本文文字数を本サイトのDOM計算と一致させる必要があります');
 assert.strictEqual(colChars['61'], 1280, 'お盆コラムの本文文字数を本サイトと一致させる必要があります');
 assert.strictEqual(colChars['62'], 1241, '処暑コラムの本文文字数を本サイトのDOM計算と一致させる必要があります');
-assert.strictEqual(totalNewsChars, 81224, 'ニュース本文総文字数を本サイトと一致させる必要があります');
-assert.strictEqual(totalColChars, 52176, 'コラム本文総文字数を本サイトと一致させる必要があります');
-assert.strictEqual(totalNewsChars + totalColChars, 133400, '総文字数を本サイトと一致させる必要があります');
+assert.strictEqual(totalNewsChars, 89424, 'ニュース本文総文字数を本サイトと一致させる必要があります');
+assert.strictEqual(totalColChars, 57671, 'コラム本文総文字数を本サイトと一致させる必要があります');
+assert.strictEqual(totalNewsChars + totalColChars, 147095, '総文字数を本サイトと一致させる必要があります');
 
-assert(html.includes('<dd id="print-total-summary">149記事・133,400字</dd>'), '印刷概要の収録件数と文字数を最新値へ更新する必要があります');
-assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年8月20日（254日間）</dd>'), '印刷概要の期間を最新値へ更新する必要があります');
-assert(html.includes('<option id="csv-article-count" value="articles">全記事データ（149件）</option>'), 'CSVの全記事件数を最新値へ更新する必要があります');
+assert(html.includes('<dd id="print-total-summary">154記事・147,095字</dd>'), '印刷概要の収録件数と文字数を最新値へ更新する必要があります');
+assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年10月2日（296日間）</dd>'), '印刷概要の期間を最新値へ更新する必要があります');
+assert(html.includes('<option id="csv-article-count" value="articles">全記事データ（154件）</option>'), 'CSVの全記事件数を最新値へ更新する必要があります');
 assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '社務所だよりと神籤草子の説明列は同じ「内容（抜粋）」表記へ統一する必要があります');
 assert(html.includes('<td class="desc-cell">${a.desc}</td>'), '神籤草子の一覧説明を全件表示する必要があります');
 assert(html.includes('colspan="6" class="no-results"'), '神籤草子一覧の説明列追加後も検索結果なしの表示列数を整合させる必要があります');
