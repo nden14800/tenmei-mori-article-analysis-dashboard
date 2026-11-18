@@ -1531,6 +1531,13 @@
 
   .charts-grid .chart-box-tall,.charts-grid-3 .chart-box-tall{height:420px}
   @media(max-width:700px){.charts-grid .chart-box-tall,.charts-grid-3 .chart-box-tall{height:400px}}
+
+  /* Advanced charts use a real two-column rhythm; only analytical canvases marked wide span both columns. */
+  .advanced-charts-grid .advanced-chart-card{grid-column:auto}
+  .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1/-1}
+  @media(max-width:900px){
+    .advanced-charts-grid .advanced-chart-card,.advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1}
+  }
 </style>
 <style id="dashboard-chart-finish">
   /* TENMEI CHART SYSTEM — shrine-inspired editorial dashboard, shared by every ECharts view. */
@@ -1788,12 +1795,12 @@
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="8"></div>神籤草子は66本。カテゴリ別では「クイズ」11本が最多、「年中行事」7本、「歳時記」6本、「基礎知識」「豆知識」「読み解き」が各5本。ID66「氏神・産土神・崇敬神社の違い」は「基礎知識」に分類され、同カテゴリは5本となった。「クイズ」が最多である一方、年中行事・歳時記・基礎知識など複数のカテゴリに記事が分散している。これは神籤草子が一つの形式だけに偏らず、参加型の読み物と神社文化・季節知識の解説を併存させていることを示す。ID66の追加によって基礎知識は5本となり、コラム群の中で知識解説の位置づけが明確になった。件数だけでは各記事の深さや読者への有用性までは評価できない。クイズ11本はコラム66本の約16.7%で最多だが、全体の大半ではない。季節行事や基礎知識も並び、参加型企画と知識記事が共存する。ID66は基礎知識の幅を補う記事である。</div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">ニュース属性分類（集約）— 記事数</div>
+      <div class="chart-title">ニュース属性分類別の記事数</div>
       <div class="chart-box" id="chart-news-grouped"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="9"></div>ニュースタグを8つの活動グループに集約すると、新機能追加12本、バグ修正系11本、システム関連11本、デザイン改善9本、機能改善9本、お知らせ系7本、重要事項6本、機能撤去廃棄4本。分類はタグの集約であり、個別コミット数や開発工数を表すものではない。新機能追加とバグ修正系、システム関連がそれぞれ二桁で並び、単一の活動だけが大半を占める構造ではない。デザイン改善・機能改善も同程度の規模で存在し、機能追加後の使いやすさや安定性に関する更新も継続して記録されている。ここでの8分類は元のタグを分析用に束ねたものなので、分類ルールを変えれば件数も変わる。グループ間の差は記事の分類構成として読み、実際の作業時間やコード変更量に読み替えない。新機能追加12本、バグ修正系11本、システム関連11本で上位3分類はニュースの約37.8%。デザイン改善・機能改善も各9本ある。分類は記事主題の集約であり工数比率ではない。</div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">ニュース属性分類（集約）— 平均文字数</div>
+      <div class="chart-title">ニュース属性分類別の平均文字数</div>
       <div class="chart-box" id="chart-group-avg-chars"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="10"></div>グループ別平均文字数は、システム関連が11本・平均896字、新機能追加が12本・平均877字、機能改善が9本・平均770字、重要事項が6本・平均698字。お知らせ系は7本・平均215字で最も短い。平均文字数は説明量の傾向であり、実装の難易度や品質を直接評価しない。平均文字数の差は、更新内容を説明するために必要な背景・手順・影響範囲が分類ごとに異なる可能性を示す。システム関連や新機能追加は比較的長い説明になり、お知らせ系は短い案内が中心という構成が数値に表れている。ただし、平均は各記事の文字数を均した値であり、中央値やばらつきまでは示さない。少数グループでは1本の長短が平均を大きく動かすため、件数と併せて読む必要がある。お知らせ系の平均215字に対し、システム関連や新機能追加は比較的長い。これは説明目的の違いを示唆するが、正確さや重要度の評価ではない。少数記事の平均は長文1本で大きく動く。</div>
     </div>
@@ -5657,7 +5664,7 @@ function polishDashboardChartOptions() {
     axisTick:{...axis.axisTick,lineStyle:{...axis.axisTick?.lineStyle,color:'#d8cbbb'}},
     axisLabel:{...axis.axisLabel,color:'#766957',fontFamily:font,fontSize:axis.axisLabel?.fontSize||11,margin:axis.axisLabel?.margin||10},
     nameTextStyle:{...axis.nameTextStyle,color:'#6b5b49',fontFamily:font,fontSize:11,fontWeight:600},
-    splitLine:{...axis.splitLine,show:axis.splitLine?.show!==false,lineStyle:{...axis.splitLine?.lineStyle,color:'#eee8df',type:'dashed',width:1}}
+    splitLine:{...axis.splitLine,show:axis.splitLine?.show===false?false:(axis.splitLine?.show??['value','time','log'].includes(axis.type)),lineStyle:{...axis.splitLine?.lineStyle,color:'#eee8df',type:'dashed',width:1}}
   });
   const normalizeTree = (nodes, depth=0, parentColor=null) => (nodes||[]).map((node,index)=>{
     const base = node.name==='社務所だより'?palette[0]:node.name==='神籤草子'?palette[1]:parentColor||palette[(index+2)%palette.length];
@@ -5704,6 +5711,10 @@ function polishDashboardChartOptions() {
         axisLine:{...axis.axisLine,lineStyle:{...axis.axisLine?.lineStyle,color:'#d8cbbb'}}
       }));
       if(current.grid?.length)patch.grid=current.grid.map(grid=>({...grid,containLabel:grid.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
+      if(current.visualMap?.length)patch.visualMap=current.visualMap.map(map=>({
+        ...map,inRange:{...map.inRange,color:['#faf6ef','#f0d9b5','#c49a62','#a63d36']},
+        textStyle:{...map.textStyle,fontFamily:font,color:'#665846'}
+      }));
       if(current.dataZoom?.length)patch.dataZoom=current.dataZoom.map(zoom=>({
         ...zoom,borderColor:'#e1d6c6',backgroundColor:'#f7f1e7',fillerColor:'rgba(184,137,60,.22)',
         handleStyle:{...zoom.handleStyle,color:'#fffdf8',borderColor:'#9a7946'},
