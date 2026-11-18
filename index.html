@@ -6324,7 +6324,7 @@ function polishDashboardChartOptions() {
      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color,borderColor:color}),borderWidth:item.itemStyle?.borderWidth??2};
      if(Array.isArray(item.data)){const dataColor=resolveColor;output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j),borderColor:dataColor(datum.name,datum.itemStyle?.borderColor||datum.itemStyle?.color,j)}}));}
     }else if(item.type==='radar'){
-     if(Array.isArray(item.data)&&item.data.length){const dataColor=createColorResolver();output.data=item.data.map((datum,j)=>{const next=dataColor(datum.name,datum.itemStyle?.color||datum.lineStyle?.color||datum.areaStyle?.color,j);return {...datum,itemStyle:{...datum.itemStyle,color:next},lineStyle:{...datum.lineStyle,color:next,width:datum.lineStyle?.width||2.4},areaStyle:{...datum.areaStyle,color:next,opacity:datum.areaStyle?.opacity??.14}};});}
+     if(Array.isArray(item.data)&&item.data.length){const dataColor=resolveColor;output.data=item.data.map((datum,j)=>{const next=dataColor(datum.name,datum.itemStyle?.color||datum.lineStyle?.color||datum.areaStyle?.color,j);return {...datum,itemStyle:{...datum.itemStyle,color:next},lineStyle:{...datum.lineStyle,color:next,width:datum.lineStyle?.width||2.4},areaStyle:{...datum.areaStyle,color:next,opacity:datum.areaStyle?.opacity??.14}};});}
      else{output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),width:item.lineStyle?.width||2.4};output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color})};output.areaStyle={...item.areaStyle,...(typeof color==='function'?{}:{color}),opacity:item.areaStyle?.opacity??.14};}
     }else if(item.type==='parallel'){
      output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),opacity:item.lineStyle?.opacity??.34};
@@ -6341,7 +6341,7 @@ function polishDashboardChartOptions() {
      output.colorBy='data';
      output.label={...item.label,fontFamily:font,color:'#55443a',fontSize:11};
      output.labelLine={...item.labelLine,lineStyle:{...item.labelLine?.lineStyle,color:'#b9a99a'}};
-     if(Array.isArray(item.data)){const dataColor=createColorResolver();output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j)}}));}
+     if(Array.isArray(item.data)){const dataColor=resolveColor;output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j)}}));}
     }else if(item.type==='heatmap'){
      output.itemStyle={...item.itemStyle,borderColor:'#fffdfb',borderWidth:1};
     }else if(item.type==='themeRiver'){
