@@ -168,7 +168,7 @@ for (const [chartStart, paretoNames] of paretoLegendCharts) {
 }
 
 const dayOfMonthChartStart = html.indexOf('chartDayOfMonth.setOption({');
-const dayOfMonthChartEnd = html.indexOf('\\n});', dayOfMonthChartStart);
+const dayOfMonthChartEnd = html.indexOf('\n});', dayOfMonthChartStart);
 assert(dayOfMonthChartStart >= 0 && dayOfMonthChartEnd > dayOfMonthChartStart, '月内の公開日分布の設定が必要です');
 assert(!html.slice(dayOfMonthChartStart, dayOfMonthChartEnd).includes('パレート線'), 'パレート線のないグラフに余分なパレート凡例を追加しません');
 
