@@ -6242,15 +6242,12 @@ function polishDashboardChartOptions() {
  const font=dashboardChartFont;
  const palette=['#8f252b','#9b742e','#246a73','#416a9c','#76539a','#b45232','#4f7542','#a34768','#56616f','#8c6d3f','#2c8791','#7b654f'];
  const paletteSet=new Set(palette);
- const mediumColor=name=>/ニュース|社務所だより/.test(String(name||''))?palette[0]:(/コラム|神籤草子/.test(String(name||''))?palette[1]:null);
  const hashIndex=name=>{const value=String(name||'');let hash=2166136261;for(let i=0;i<value.length;i++)hash=Math.imul(hash^value.charCodeAt(i),16777619);return hash>>>0;};
  const createColorResolver=()=>{
   const used=new Set(),assigned=new Map();
   return (name,existing,index=0)=>{
    const key=String(name||'').trim()||('series-'+index);
    if(assigned.has(key))return assigned.get(key);
-   const semantic=mediumColor(key);
-   if(semantic){assigned.set(key,semantic);used.add(semantic);return semantic;}
    const preferred=typeof existing==='string'&&paletteSet.has(existing.toLowerCase())?existing.toLowerCase():null;
    const seed=preferred?palette.indexOf(preferred):hashIndex(key)%palette.length;
    let color=null;
@@ -6258,13 +6255,13 @@ function polishDashboardChartOptions() {
    if(!color){
     const toHex=value=>Math.round(value*255).toString(16).padStart(2,'0');
     const hslHex=(h,s,l)=>{const a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return toHex(l-a*Math.max(Math.min(k-3,9-k,1),-1));};return '#'+f(0)+f(8)+f(4);};
-    for(let step=0;step<720&&!color;step++){
+    for(let step=0;step<3600&&!color;step++){
      const hue=(seed*31+step*137.508)%360,saturation=.54+(step%3)*.06,lightness=.36+(Math.floor(step/3)%4)*.045;
      const candidate=hslHex(hue,saturation,lightness);
      if(!used.has(candidate))color=candidate;
     }
    }
-   if(!color)color=palette[(seed+index)%palette.length];
+   if(!color){let candidateIndex=0;do{color='#'+(candidateIndex++).toString(16).padStart(6,'0').slice(-6);}while(used.has(color)&&candidateIndex<0x1000000);}
    assigned.set(key,color);used.add(color);return color;
   };
  };
@@ -6302,7 +6299,6 @@ function polishDashboardChartOptions() {
     axisPointer:{...current.axisPointer?.[0],lineStyle:{color:'#9b742e',width:1,type:'dashed'},crossStyle:{color:'#9b742e'}},
     toolbox:{...current.toolbox?.[0],show:true,right:8,top:6,itemSize:14,itemGap:8,backgroundColor:'rgba(247,242,237,.94)',borderColor:'#e7ded7',borderWidth:1,iconStyle:{...current.toolbox?.[0]?.iconStyle,borderColor:'#55443a'},emphasis:{...current.toolbox?.[0]?.emphasis,iconStyle:{borderColor:'#8f252b'}}}
    };
-   if(current.legend?.length)option.legend=current.legend.map(legend=>({...legend,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',textStyle:{...legend.textStyle,fontFamily:font,color:'#55443a',fontSize:11},pageTextStyle:{fontFamily:font,color:'#55443a'}}));
    if(current.xAxis?.length)option.xAxis=current.xAxis.map(axis=>axisStyle(axis,'x'));
    if(current.yAxis?.length)option.yAxis=current.yAxis.map((axis,index)=>axisStyle(axis,'y',integerForAxis(index)));
    if(current.singleAxis?.length)option.singleAxis=current.singleAxis.map(axis=>axisStyle(axis,'single'));
@@ -6312,7 +6308,8 @@ function polishDashboardChartOptions() {
    if(current.dataZoom?.length)option.dataZoom=current.dataZoom.map(zoom=>({...zoom,borderColor:'#e7ded7',backgroundColor:'#f7f2ed',fillerColor:'rgba(155,116,46,.20)',handleStyle:{...zoom.handleStyle,color:'#fffdfb',borderColor:'#9b742e'},moveHandleStyle:{...zoom.moveHandleStyle,color:'#9b742e'},textStyle:{...zoom.textStyle,fontFamily:font,color:'#786e67'}}));
    if(series.length)option.series=series.map((item,index)=>{
     const rawColor=item.itemStyle?.color??item.lineStyle?.color??item.areaStyle?.color;
-    const color=typeof rawColor==='function'?rawColor:resolveColor(item.name,rawColor,index);
+    const dataLegendSeries=['pie','funnel'].includes(item.type)||(item.type==='radar'&&Array.isArray(item.data)&&item.data.length>0);
+    const color=dataLegendSeries?null:(typeof rawColor==='function'&&series.length===1?rawColor:resolveColor(item.name,typeof rawColor==='function'?null:rawColor,index));
     const output={};
     if(item.type==='line'){
      output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),width:item.lineStyle?.width||2.5};
@@ -6325,7 +6322,7 @@ function polishDashboardChartOptions() {
      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),opacity:item.itemStyle?.opacity??.82};
     }else if(item.type==='boxplot'){
      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color,borderColor:color}),borderWidth:item.itemStyle?.borderWidth??2};
-     if(Array.isArray(item.data)){const dataColor=createColorResolver();output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j),borderColor:dataColor(datum.name,datum.itemStyle?.borderColor||datum.itemStyle?.color,j)}}));}
+     if(Array.isArray(item.data)){const dataColor=resolveColor;output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j),borderColor:dataColor(datum.name,datum.itemStyle?.borderColor||datum.itemStyle?.color,j)}}));}
     }else if(item.type==='radar'){
      if(Array.isArray(item.data)&&item.data.length){const dataColor=createColorResolver();output.data=item.data.map((datum,j)=>{const next=dataColor(datum.name,datum.itemStyle?.color||datum.lineStyle?.color||datum.areaStyle?.color,j);return {...datum,itemStyle:{...datum.itemStyle,color:next},lineStyle:{...datum.lineStyle,color:next,width:datum.lineStyle?.width||2.4},areaStyle:{...datum.areaStyle,color:next,opacity:datum.areaStyle?.opacity??.14}};});}
      else{output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),width:item.lineStyle?.width||2.4};output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color})};output.areaStyle={...item.areaStyle,...(typeof color==='function'?{}:{color}),opacity:item.areaStyle?.opacity??.14};}
@@ -6333,10 +6330,10 @@ function polishDashboardChartOptions() {
      output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),opacity:item.lineStyle?.opacity??.34};
     }else if(item.type==='sankey'){
      output.lineStyle={...item.lineStyle,opacity:item.lineStyle?.opacity??.38};
-     if(Array.isArray(item.data)){const nodeColor=createColorResolver();output.data=item.data.map((node,j)=>({...node,itemStyle:{...node.itemStyle,color:nodeColor(node.name,node.itemStyle?.color,j)}}));}
+     if(Array.isArray(item.data)){const nodeColor=resolveColor;output.data=item.data.map((node,j)=>({...node,itemStyle:{...node.itemStyle,color:nodeColor(node.name,node.itemStyle?.color,j)}}));}
      output.label={...item.label,fontFamily:font,color:'#55443a',fontSize:10};
     }else if(item.type==='treemap'){
-     output.data=colorizeTree(item.data,createColorResolver());
+     output.data=colorizeTree(item.data,resolveColor);
      output.label={...item.label,fontFamily:font,color:'#fffdfb',fontSize:11};
      output.upperLabel={...item.upperLabel,fontFamily:font,color:'#fffdfb'};
      output.itemStyle={...item.itemStyle,borderColor:'#fffdfb',borderWidth:2};
@@ -6351,6 +6348,22 @@ function polishDashboardChartOptions() {
      output.itemStyle={...item.itemStyle,opacity:.92};
     }
     return output;
+   });
+   if(current.legend?.length)option.legend=current.legend.map(legend=>{
+    const sourceData=Array.isArray(legend.data)?legend.data:[...new Set(series.flatMap(item=>['pie','funnel'].includes(item.type)?(item.data||[]).map(datum=>datum.name):[item.name]).filter(Boolean))];
+    const data=sourceData.map((entry,index)=>{
+     if(typeof entry==='string'){
+      if(entry===''||entry==='\\n')return entry;
+      const color=resolveColor(entry,null,index);
+      return {name:entry,itemStyle:{color,borderColor:color},lineStyle:{color}};
+     }
+     if(entry&&typeof entry==='object'&&entry.name!=null){
+      const color=resolveColor(entry.name,entry.itemStyle?.color,index);
+      return {...entry,itemStyle:{...entry.itemStyle,color,borderColor:color},lineStyle:{...entry.lineStyle,color}};
+     }
+     return entry;
+    });
+    return {...legend,data,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',textStyle:{...legend.textStyle,fontFamily:font,color:'#55443a',fontSize:11},pageTextStyle:{fontFamily:font,color:'#55443a'}};
    });
    if(current.calendar?.length)option.calendar=current.calendar.map(calendar=>({...calendar,itemStyle:{...calendar.itemStyle,borderColor:'#fffdfb',borderWidth:1},dayLabel:{...calendar.dayLabel,color:'#786e67',fontFamily:font,fontSize:10},monthLabel:{...calendar.monthLabel,color:'#55443a',fontFamily:font,fontSize:11},yearLabel:{...calendar.yearLabel,color:'#55443a',fontFamily:font,fontSize:13}}));
    chart.setOption(option);
