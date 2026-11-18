@@ -89,6 +89,23 @@ function resolveCssColor(value) {
   const m = raw.match(/^var\(--([a-z0-9-]+)\)$/);
   return m ? (cssVars[m[1]] || raw) : raw;
 }
+
+// 記事データの分類色は本体側のTailwind色を尊重しつつ、分析画面では天命乃杜の共通パレットへ正規化する。
+const dashboardColorMap = {
+  '#1d4ed8': '#7188a4', '#2563eb': '#7188a4', '#3b82f6': '#7188a4',
+  '#2c5282': '#7188a4', '#b91c1c': '#8f252b', '#dc2626': '#8f252b',
+  '#ef4444': '#8f252b', '#a63b32': '#8f252b', '#8b2621': '#8f252b',
+  '#0f766e': '#718b7b', '#047857': '#718b7b', '#16a34a': '#718b7b',
+  '#15803d': '#718b7b', '#4a7c59': '#718b7b', '#95a5a6': '#786e67',
+  '#b45309': '#9b793d', '#a16207': '#9b793d', '#d97706': '#c4a059',
+  '#e67e22': '#c4a059', '#7e22ce': '#8b7898', '#9333ea': '#8b7898',
+  '#be185d': '#8b7898', '#db2777': '#8b7898', '#4b3fa4': '#8b7898',
+  '#2c3e50': '#55443a', '#4b5563': '#786e67', '#7f8c8d': '#786e67'
+};
+function normalizeDashboardColor(value) {
+  const color = String(value || '').trim().toLowerCase();
+  return dashboardColorMap[color] || color;
+}
 // 同じカテゴリでも記事ごとに色クラスが変わる場合がある。
 // 記事データ側の colorClass はそのまま保持し、カテゴリ集計図では最新記事の色を代表色にする。
 const catColors = {};
@@ -96,7 +113,7 @@ for (const a of [...cols].sort((left, right) => right.id - left.id)) {
   if (!a.category) continue;
   const style = columnStyles[a.colorClass];
   if (!style || !style.text) throw new Error('unknown site column style: ' + a.colorClass);
-  const color = resolveCssColor(style.text);
+  const color = normalizeDashboardColor(resolveCssColor(style.text));
   if (!/^#[0-9a-fA-F]{3,8}$/.test(color)) throw new Error('unresolved site column color: ' + a.colorClass + ' -> ' + color);
   if (!catColors[a.category]) catColors[a.category] = color;
 }
@@ -111,7 +128,7 @@ const tagColors = {};
 for (const a of [...news].sort((left, right) => right.id - left.id)) {
   if (!a.tag) continue;
   const colorClass = newsColorMap[a.tagColor];
-  const color = newsClassColors[a.tagColor];
+  const color = normalizeDashboardColor(newsClassColors[a.tagColor]);
   if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + a.tagColor);
   if (!tagColors[a.tag]) tagColors[a.tag] = color;
 }
