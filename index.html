@@ -3993,6 +3993,12 @@ function createDashboardChart(element, renderer = null) {
     });
     return new Proxy(instance, {
       get(target, property) {
+        if (target.isDisposed()) {
+          if (property === 'getOption') return () => ({ series: [] });
+          if (property === 'getDom') return () => element;
+          if (property === 'isDisposed') return () => true;
+          if (['setOption', 'resize', 'dispatchAction', 'on', 'off', 'dispose'].includes(property)) return () => {};
+        }
         if (property === 'setOption') return (...args) => {
           try {
             const result = target.setOption(...args);
