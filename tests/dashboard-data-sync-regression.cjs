@@ -51,15 +51,16 @@ for (const article of newsData) {
   newsHourCounts[Number(article.time.slice(0, 2))] += 1;
 }
 
-assert.strictEqual(newsData.length, 90, 'ニュース90件を維持する必要があります');
+assert.strictEqual(newsData.length, 91, 'ニュース91件を維持する必要があります');
 assert.strictEqual(colData.length, 66, 'コラム66件を維持する必要があります');
-assert.strictEqual(newsData[0].id, 90, '最新ニュースID90を維持する必要があります');
-assert.strictEqual(newsData[0].date, '2026/10/23', '最新ニュースの公開日を維持する必要があります');
-assert.strictEqual(newsData[0].title, '【機能改善・安定化】Ver.4.3「AI案内の起動安定化」— クッキー設定と回答表示を整えました', '最新ニュースのタイトルを維持する必要があります');
+assert.strictEqual(newsData[0].id, 91, '最新ニュースID91を維持する必要があります');
+assert.strictEqual(newsData[0].date, '2026/11/18', '最新ニュースの公開日を維持する必要があります');
+assert.strictEqual(newsData[0].title, '【大規模更新】記事分析ダッシュボードの刷新と、Ver.5.0の今後について', '最新ニュースのタイトルを維持する必要があります');
 assert.strictEqual(newsData[0].tag, '新機能・改善', '最新ニュースのタグを維持する必要があります');
-assert.strictEqual(newsData[0].time, '21:25', '最新ニュースの公開時刻を維持する必要があります');
-assert.strictEqual(newsChars['90'], 3346, '最新ニュースの本文文字数を維持する必要があります');
-assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 90, '時刻分布にニュース全件を集計する必要があります');
+assert.strictEqual(newsData[0].time, '21:19', '最新ニュースの公開時刻を維持する必要があります');
+assert.strictEqual(newsChars['90'], 3346, '直前ニュースの本文文字数を維持する必要があります');
+assert.strictEqual(newsChars['91'], 5713, '最新ニュースの本文文字数を同期する必要があります');
+assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 91, '時刻分布にニュース全件を集計する必要があります');
 assert.strictEqual(newsHourCounts.slice(16, 20).reduce((sum, count) => sum + count, 0), 36, '16〜19時台の件数を維持する必要があります');
 
 assert.strictEqual(colData[0].id, 66, '最新コラムID66を維持する必要があります');
@@ -75,21 +76,21 @@ for (const article of colData) {
   assert(length >= 60 && length <= 105, 'コラムID' + article.id + 'の一覧説明は70〜105字である必要があります（' + length + '字）');
 }
 
-assert.strictEqual(totalNewsChars, 92770, 'ニュース本文総文字数を維持する必要があります');
+assert.strictEqual(totalNewsChars, 98483, 'ニュース本文総文字数を同期する必要があります');
 assert.strictEqual(totalColChars, 59193, 'コラム本文総文字数を維持する必要があります');
-assert.strictEqual(totalNewsChars + totalColChars, 151963, '全記事の総文字数を維持する必要があります');
-assert(html.includes('<dd id="print-total-summary">156記事・151,963字</dd>'), '印刷概要の件数と文字数を維持する必要があります');
-assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年10月25日（320日間）</dd>'), '印刷概要の対象期間を維持する必要があります');
-assert(html.includes('<span class="dashboard-select-value">全記事データ（156件）</span>'), '全記事CSVの件数を維持する必要があります');
+assert.strictEqual(totalNewsChars + totalColChars, 157676, '全記事の総文字数を同期する必要があります');
+assert(html.includes('<dd id="print-total-summary">157記事・157,676字</dd>'), '印刷概要の件数と文字数を維持する必要があります');
+assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年11月18日（344日間）</dd>'), '印刷概要の対象期間を維持する必要があります');
+assert(html.includes('<span class="dashboard-select-value">全記事データ（157件）</span>'), '全記事CSVの件数を維持する必要があります');
 assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '両媒体の一覧説明列を統一する必要があります');
 
 const requiredHeadings = [
-  '天命乃杜 — 320日間の軌跡が語るもの',
+  '天命乃杜 — 344日間の軌跡が語るもの',
   '▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）',
   '▍ フェーズ II — インフラ・機能拡張の集中期（2026年1月中旬〜2月）',
   '▍ フェーズ III — 投稿の空白と運営再開（2026年2月〜4月）',
   '▍ フェーズ IV — 「本数より質」への転換期（2026年5月〜8月）',
-  '▍ フェーズ V — 秋の継続改善と読み物の拡充（2026年9月〜10月）',
+  '▍ フェーズ V — 秋から初冬の継続改善と読み物の拡充（2026年9月〜11月）',
   '▍ ニュースとコラムの役割分担',
   '▍ 公開日時の分布から見える傾向',
   '▍ 文字数に宿る情報量の違い',
@@ -110,8 +111,8 @@ assert(!html.includes('chartDescriptionCopy'), '短文で長文説明を上書�
 assert(!html.includes('chart-desc-auto'), '短文用の空欄を残しません');
 assert(!html.includes('読み解きのポイント'), '説明欄ラベルを旧称へ統一します');
 
-const chartDescriptions = [...html.matchAll(/<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><p class="chart-desc-copy">([\s\S]*?)<\/p><\/div>/g)];
-assert.strictEqual(chartDescriptions.length, 46, '既存41個の説明に加え、新規4グラフの考察を維持する必要があります');
+const chartDescriptions = [...html.matchAll(/<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><div class="chart-desc-copy">([\s\S]*?)<\/div><\/div>/g)];
+assert.strictEqual(chartDescriptions.length, 49, '全49個の洞察・考察を維持する必要があります');
 for (const match of chartDescriptions) {
   const labels = [...match[1].matchAll(/<strong class="chart-insight-label">([^<]+)<\/strong>/g)].map((item) => item[1]);
   assert.deepStrictEqual(labels, ['指標の概要', '主な傾向', '解釈上の注意'], '全グラフの洞察・考察を同じ三段構成に統一します');
@@ -127,8 +128,8 @@ assert.strictEqual(originalDescriptionMinimums.length, 38, '既存説明文の�
 assert(descriptionLengths.slice(0, 38).every((length, index) => length >= originalDescriptionMinimums[index]), '既存38件の洞察・考察本文を一文字も短縮しません');
 assert(descriptionLengths.slice(38).every((length) => length >= 340 && length <= 520), '新規グラフの考察文も既存と同程度の文章量に揃えます');
 assert(Array.from(chartNarrativeText).length >= 16000, '全グラフの考察総文字数を維持する必要があります');
-assert((html.match(/▍ 洞察・考察/g) || []).length === 46, '説明欄の見出しを全件で統一する必要があります');
-assert((html.match(/class="chart-insight-label"/g) || []).length === 138, '全46件の考察を「指標の概要・主な傾向・解釈上の注意」の三段構成に統一します');
+assert((html.match(/▍ 洞察・考察/g) || []).length === 49, '説明欄の見出しを全49件で統一する必要があります');
+assert((html.match(/class="chart-insight-label"/g) || []).length === 147, '全49件の考察を「指標の概要・主な傾向・解釈上の注意」の三段構成に統一します');
 for (const id of ['chart-title-body-scatter', 'chart-day-of-month', 'chart-title-length', 'chart-advanced-weekday-month-heatmap', 'chart-advanced-title-monthly-median', 'chart-advanced-weekday-boxplot', 'chart-advanced-lorenz', 'chart-advanced-gap-scatter']) {
   assert(html.includes('id="' + id + '"'), '追加グラフの描画領域が必要です: ' + id);
 }
@@ -200,7 +201,7 @@ assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(ht
 assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
 
-assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-18 · b021ef42'), '本体リポジトリの確認コミットを最新に保ちます');
+assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-19 · a165e1aa'), '本体リポジトリの確認コミットを最新に保ちます');
 
 assert(html.includes('.subtitle{font-family:var(--font-main);font-style:italic;color:var(--tm-muted)}'), '副題は本体サイトと同じ明朝の編集見出しにします');
 assert(html.includes('.stat-number{color:var(--stat-accent,var(--tm-red))!important;font-family:var(--font-ui);'), '統計数値はUI書体と等幅数字で揃えます');
@@ -216,7 +217,7 @@ assert(rgbaValues.every((value) => allowedRgbaPrefixes.some((prefix) => value.to
 const syncScript = fs.readFileSync('scripts/sync-tenmei-data.mjs', 'utf8');
 assert(syncScript.includes('chart-desc-copy'), '自動同期は説明文の段落構造を正しく保護します');
 
-assert(html.includes('<p class="chart-desc-copy">'), '洞察・考察は共通段落構造を維持します');
+assert(html.includes('<div class="chart-desc-copy">'), '洞察・考察は共通コンテナ構造を維持します');
 
 const inlineScriptMatch = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].find((match) => match[2].includes('const newsData = ['));
 assert(inlineScriptMatch, '記事データを含むスクリプトが必要です');
@@ -261,7 +262,7 @@ const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
   .filter((script) => script.trim());
 for (const script of scripts) new Function(script);
 
-console.log('記事データ・46件の洞察文・詳細統計・パレート操作・凡例統一・総合分析の回帰テストに合格しました。');
+console.log('記事データ・49件の洞察文・詳細統計・パレート操作・凡例統一・総合分析の回帰テストに合格しました。');
 console.log(JSON.stringify({
   news: newsData.length,
   columns: colData.length,
