@@ -1630,16 +1630,8 @@
   </div>
 
   <div class="advanced-charts-grid advanced-charts-grid-extra">
-    <div class="chart-card advanced-chart-card">
-      <div class="chart-title">日付別投稿カレンダー — Calendar Heatmap</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-calendar"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>日ごとの記事本数を暦の配置に沿って示します。通常の時系列グラフでは日付の間隔を追う必要がありますが、カレンダーでは曜日と月の位置を保ったまま、公開が集中した日と長く空いた期間を直感的に比較できます。色の濃さはその日の収録記事数であり、執筆活動の量や公開準備の開始日を表すものではありません。祝日や曜日との関係を読む際も、公開日だけから投稿理由を推測しないでください。特定月のまとまりを見つけたら、日別ヒートマップや記事一覧で本数とタイトルを照合すると、単発の集中なのか複数日の連続なのかを確認できます。空白セルは記録上の投稿がない日であり、データ欠損と混同しないことが大切です。カレンダーは年間のリズムを把握し、詳細な本数はツールチップで確かめるための図です。 カレンダーの色は各日の件数を段階的に表現しているため、近い色同士の差を厳密な件数差として読み取るのは避けてください。対象期間の開始日と終了日を含む全日付を表示し、投稿のない日も暦の位置に残しています。月ごとの件数比較には月別グラフ、同じ月の細かな日別比較には日別ヒートマップを使い分けると、時間軸の粒度を混同せずに済みます。</div>
-    </div>
-    <div class="chart-card advanced-chart-card">
-      <div class="chart-title">曜日別の媒体構成 — Polar Bar</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-polar"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>曜日を円周上に並べ、ニュースとコラムの投稿数を放射状の棒で比較します。隣り合う曜日の偏りや、媒体ごとに投稿が集まりやすい曜日を一目で見つけられる構成です。棒の長さは件数を示し、角度の位置は曜日を示します。円形に配置しているため、週の始まりと終わりが隣接して見える点が通常の棒グラフと異なります。特定曜日の棒が長くても、その曜日に投稿する運用ルールがあるとは限らず、収録期間や一括公開の影響を受けます。ニュースとコラムは別系列として積み上げずに並べて表示するため、同じ曜日の媒体差を比較できます。曜日別集計と合わせて確認し、件数が少ない曜日の小さな差を過大評価しないでください。 円形の配置は曜日の周期性を見せるための表現で、角度や中心からの距離に曜日以外の意味はありません。ニュースとコラムの棒は同じ件数尺度を使っているので、同じ曜日における媒体差を比較できますが、収録期間に曜日ごとの日数差がある場合は単純な件数比較に偏りが生じます。投稿率を検討する場合は曜日ごとの対象日数で割る必要があり、この図はまず件数の分布を把握する用途です。</div>
-    </div>
+
+
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">分類別の記事数と累積構成比 — Pareto</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-pareto"></div>
@@ -1686,6 +1678,16 @@
       <div class="chart-title">月別の分類バリエーション数</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-breadth"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>各月に登場した異なる分類名の数を、ニュースとコラムに分けて数えます。記事本数ではなく、その月にどれだけ多くの分類へ投稿が広がったかを表すため、月別投稿数とは異なる視点でテーマの広がりを確認できます。たとえば投稿本数が増えていても分類数が変わらなければ、既存テーマへの投稿が増えた可能性があります。逆に記事数が少ない月でも分類数が多ければ、複数のテーマを少数ずつ扱った可能性があります。ただし、分類名の表記ゆれや未分類の扱いによって数値が変わることがあり、分類の細かさ自体も媒体ごとに異なる場合があります。分類数が多いことを、そのまま内容の多様性や質の高さと同一視しないでください。媒体・分類別記事構成のTreemap、分類別記事数のPareto、月別投稿数と照合すると、分類の広がりと各分類への集中度を分けて考察できます。各月の値はその月に一度でも現れた分類名を一つとして数えたユニーク数です。同じ分類の記事が何本あっても分類数は増えないため、投稿本数とは異なる動きをします。分類ルールや名称が途中で変更された場合は、見かけ上の増減が生じる可能性もあります。</div>
+    </div>
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">月別の媒体別活動日数</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-active-days"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>月ごとに、ニュースとコラムがそれぞれ何日間公開されたかを数えます。記事の本数ではなく、少なくとも一件の公開があった日を一日として集計するため、投稿活動が月内のどれくらいの日に分散しているかを確認できます。同じ日に同じ媒体の記事が複数本公開されても活動日数は一日です。投稿本数が多い月でも活動日数が少なければ、限られた日にまとめて公開された可能性があります。逆に活動日数が多ければ、月内の複数日にわたって公開が行われたことを示します。ただし、月の日数は28〜31日で異なり、期間の最初と最後には不完全な月が含まれる場合があります。月をまたいだ比較では、月の日数や収録期間の端にも注意してください。月別投稿数と一活動日あたりの記事数を合わせて見ると、活動頻度と一日の投稿量を分けて解釈できます。活動日数は制作日数や作業時間ではなく、公開記録から確認できる日数です。月によって日数の違いがあるため、活動日数だけで規則性を決めつけず、カレンダー上の分布や対象期間も確認してください。</div>
+    </div>
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">一活動日あたりの記事数</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-intensity"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>月ごとの記事本数を、その媒体で記事が公開された日数で割り、一活動日あたりの平均公開本数を表示します。月間投稿数だけでは、毎日のように少しずつ公開したのか、少数の日に複数本をまとめて公開したのかを区別できません。この指標は活動日数を分母にすることで、公開があった日の投稿密度を比較しやすくします。値が高い月は活動日に複数記事が公開される傾向があり、値が低い月は活動日あたりの公開本数が少ないことを示します。記事が一件もない月は割り算を行わず、欠測として表示します。活動日数が一日しかない月は、その日の本数がそのまま平均値になるため、他の月より値が大きく変動しやすい点に注意してください。月別投稿数と活動日数のグラフを併用し、分母の違いを確認してから比較することが重要です。この値は公開頻度の指標であり、記事の品質や執筆負荷を測定するものではありません。値が同じでも、月内のどの日に公開が集中したかまでは表さないため、日別タイムラインやヒートマップで実際の公開日の配置も確かめてください。</div>
     </div>
   </div>
 
@@ -5086,45 +5088,6 @@ setAdvancedOption(chartAdvancedRadar, 'chart-advanced-radar', {
   series: [{ type: 'radar', data: radarSeries }]
 });
 
-const dailyCalendarCounts = new Map();
-advancedArticles.forEach(a => {
-  const key = calendarDateKey(a.date);
-  dailyCalendarCounts.set(key, (dailyCalendarCounts.get(key) || 0) + 1);
-});
-const calendarSeriesData = [...dailyCalendarCounts.entries()].map(([date,value])=>[date,value]);
-const calendarMax = Math.max(1,...calendarSeriesData.map(row=>row[1]));
-const chartAdvancedCalendar = createAdvancedChart('chart-advanced-calendar', 'canvas');
-setAdvancedOption(chartAdvancedCalendar, 'chart-advanced-calendar', {
-  textStyle: { fontFamily: advancedFont },
-  tooltip: { ...advancedTooltip, formatter: p => p.value[0] + '<br>投稿数: ' + p.value[1] + '件' },
-  visualMap: { min: 0, max: calendarMax, calculable: true, orient: 'horizontal', left: 'center', bottom: 7, itemWidth: 16, itemHeight: 140, textStyle: { ...advancedFontText, fontSize: 11 }, inRange: { color: ['#f7f1e5','#e8c77b','#c0392b','#7b1c1c'] } },
-  calendar: {
-    range: [calendarDateKey(firstArticleDate),calendarDateKey(lastArticleDate)],
-    cellSize: [18, 24], top: 55, left: 58, right: 30, bottom: 82,
-    orient: 'horizontal', yearLabel: { show: true, position: 'left', color: '#5c3317', fontFamily: advancedFont },
-    monthLabel: { color: '#8b7355', fontFamily: advancedFont, nameMap: 'ja' },
-    dayLabel: { firstDay: 1, color: '#8b7355', fontFamily: advancedFont, nameMap: 'ja' },
-    itemStyle: { borderWidth: 2, borderColor: '#fffdfa' },
-    splitLine: { show: true, lineStyle: { color: '#d4c4a0', width: 1 } }
-  },
-  series: [{ type: 'heatmap', coordinateSystem: 'calendar', data: calendarSeriesData, progressive: 0, itemStyle: { borderRadius: 2, borderColor: '#fffdfa', borderWidth: 1 } }]
-});
-const weekdayLabelsJa = ['日','月','火','水','木','金','土'];
-const polarCounts = { news: Array(7).fill(0), col: Array(7).fill(0) };
-advancedArticles.forEach(a => polarCounts[a.type][a.date.getDay()]++);
-const chartAdvancedPolar = createAdvancedChart('chart-advanced-polar');
-setAdvancedOption(chartAdvancedPolar, 'chart-advanced-polar', {
-  textStyle: { fontFamily: advancedFont },
-  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => p.seriesName + '・' + p.name + '曜日: ' + p.value + '件' },
-  legend: { data: ['ニュース','コラム'], bottom: 0, textStyle: advancedFontText },
-  polar: { center: ['50%','46%'], radius: ['16%','72%'] },
-  angleAxis: { type: 'category', data: weekdayLabelsJa, startAngle: 90, clockwise: true, axisLabel: { color: '#5c3317', fontFamily: advancedFont, fontSize: 14, margin: 14 }, axisLine: { lineStyle: { color: '#d4c4a0' } }, splitLine: { lineStyle: { color: '#f0e7d6' } } },
-  radiusAxis: { type: 'value', min: 0, axisLabel: { color: '#8b7355', fontFamily: advancedFont, fontSize: 11, margin: 10 }, nameTextStyle: advancedFontText, splitLine: { lineStyle: { color: '#eadfc9', type: 'dashed' } } },
-  series: [
-    { name: 'ニュース', type: 'bar', coordinateSystem: 'polar', data: polarCounts.news, itemStyle: { color: '#c0392b', borderRadius: [4,4,0,0] }, barGap: '15%' },
-    { name: 'コラム', type: 'bar', coordinateSystem: 'polar', data: polarCounts.col, itemStyle: { color: '#b8860b', borderRadius: [4,4,0,0] } }
-  ]
-});
 const paretoCounts = [...advancedCounts.entries()].map(([key,value])=>({key,value}))
   .sort((a,b)=>b.value-a.value || a.key.localeCompare(b.key,'ja'));
 const paretoTop = paretoCounts.slice(0,11);
@@ -5257,6 +5220,13 @@ sortedMonths.forEach(m=>{for(const type of ['news','col'])monthlyBreadth[type].p
 const chartAdvancedBreadth=createAdvancedChart('chart-advanced-breadth');
 setAdvancedOption(chartAdvancedBreadth,'chart-advanced-breadth',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',axisPointer:{type:'shadow'}},legend:{data:['ニュースの分類数','コラムの分類数'],bottom:4,textStyle:advancedFontText},grid:{left:76,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'月内の異なる分類数',minInterval:1,axisLabel:{...advancedFontText,fontSize:11},splitLine:{lineStyle:{color:'#f0e7d6',type:'dashed'}}},series:[{name:'ニュースの分類数',type:'bar',data:monthlyBreadth.news,barMaxWidth:28,itemStyle:{color:'#c0392b',borderRadius:[3,3,0,0]}},{name:'コラムの分類数',type:'bar',data:monthlyBreadth.col,barMaxWidth:28,itemStyle:{color:'#b8860b',borderRadius:[3,3,0,0]}}]});
 
+
+const monthlyActiveDays={news:[],col:[]},monthlyPostsPerActiveDay={news:[],col:[]};
+sortedMonths.forEach(month=>{for(const type of ['news','col']){const rows=advancedArticles.filter(a=>a.type===type&&a.month===month);const days=new Set(rows.map(a=>calendarDateKey(a.date))).size;monthlyActiveDays[type].push(days);monthlyPostsPerActiveDay[type].push(days?Math.round(rows.length/days*100)/100:null);}});
+const chartAdvancedActiveDays=createAdvancedChart('chart-advanced-active-days');
+setAdvancedOption(chartAdvancedActiveDays,'chart-advanced-active-days',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',axisPointer:{type:'shadow'}},legend:{data:['ニュース','コラム'],bottom:4,textStyle:advancedFontText},grid:{left:76,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'月内の活動日数',minInterval:1,axisLabel:{...advancedFontText,fontSize:11},splitLine:{lineStyle:{color:'#f0e7d6',type:'dashed'}}},series:[{name:'ニュース',type:'bar',data:monthlyActiveDays.news,barMaxWidth:28,itemStyle:{color:'#c0392b',borderRadius:[3,3,0,0]}},{name:'コラム',type:'bar',data:monthlyActiveDays.col,barMaxWidth:28,itemStyle:{color:'#b8860b',borderRadius:[3,3,0,0]}}]});
+const chartAdvancedIntensity=createAdvancedChart('chart-advanced-intensity');
+setAdvancedOption(chartAdvancedIntensity,'chart-advanced-intensity',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',formatter:p=>p.map(x=>x.seriesName+': '+(x.value==null?'該当なし':x.value.toFixed(2)+'本/活動日')).join('<br>')},legend:{data:['ニュース','コラム'],bottom:4,textStyle:advancedFontText},grid:{left:80,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'一活動日あたりの記事数',axisLabel:{...advancedFontText,fontSize:11,formatter:v=>Number(v).toFixed(1)},splitLine:{lineStyle:{color:'#f0e7d6',type:'dashed'}}},series:[{name:'ニュース',type:'line',data:monthlyPostsPerActiveDay.news,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#c0392b',width:2.8},itemStyle:{color:'#c0392b'}},{name:'コラム',type:'line',data:monthlyPostsPerActiveDay.col,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#b8860b',width:2.8},itemStyle:{color:'#b8860b'}}]});
 const dashboardCharts = [
   { chart: chartMonthly, label: '月別投稿数', options: { magic: true } },
   { chart: chartMonthlyAvg, label: '月別ニュース文字数と平均文字数', options: { magic: true } },
@@ -5289,8 +5259,6 @@ const dashboardCharts = [
   { chart: chartAdvancedGraph, label: '媒体と分類の関係ネットワーク' },
   { chart: chartAdvancedParallel, label: '記事単位の多変量比較' },
   { chart: chartAdvancedRadar, label: '媒体別特徴プロファイル' },
-  { chart: chartAdvancedCalendar, label: '日付別投稿カレンダー' },
-  { chart: chartAdvancedPolar, label: '曜日別媒体構成' },
   { chart: chartAdvancedPareto, label: '分類別記事数と累積構成比' },
   { chart: chartAdvancedBeeswarm, label: '記事単位の文字数分布' },
   { chart: chartAdvancedEcdf, label: '媒体別・記事文字数の累積分布' },
@@ -5299,7 +5267,9 @@ const dashboardCharts = [
   { chart: chartAdvancedRolling, label: '30日移動平均による投稿ペース' },
   { chart: chartAdvancedGap, label: '投稿活動日の間隔分布' },
   { chart: chartAdvancedMedian, label: '月別記事文字数の中央値' },
-  { chart: chartAdvancedBreadth, label: '月別の分類バリエーション数' }
+  { chart: chartAdvancedBreadth, label: '月別の分類バリエーション数' },
+  { chart: chartAdvancedActiveDays, label: '月別の媒体別活動日数' },
+  { chart: chartAdvancedIntensity, label: '一活動日あたりの記事数' }
 ];
 
 const selectableLineCharts = dashboardCharts.filter(({ chart }) =>
