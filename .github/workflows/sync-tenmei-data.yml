@@ -48,8 +48,10 @@ jobs:
           node --check scripts/sync-tenmei-data.mjs
           grep -q 'const newsContentHashes = {' index.html
           grep -q 'const colContentHashes = {' index.html
-          grep -q 'data-insight-index="22"' index.html
-          test "$(grep -o 'data-insight-index="[0-9]*"' index.html | wc -l)" -eq 23
+          grep -q '▍ 洞察・考察' index.html
+          test "$(grep -o 'class="chart-desc-title">▍ 洞察・考察</div>' index.html | wc -l)" -eq 38
+          ! grep -q 'chartDescriptionCopy\|chart-desc-auto' index.html
+          node tests/dashboard-data-sync-regression.cjs
 
       - name: Verify source revision
         run: |
