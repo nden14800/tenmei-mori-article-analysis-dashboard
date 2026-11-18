@@ -5246,7 +5246,8 @@ const dailyMediumCounts = new Map();
 advancedArticles.forEach(a=>{const k=calendarDateKey(a.date);if(!dailyMediumCounts.has(k))dailyMediumCounts.set(k,{news:0,col:0});dailyMediumCounts.get(k)[a.type]++;});
 const rollingNews=[],rollingCol=[],rollingTotal=[];
 const timelineDateKeys=allTimelineDates.map(value=>typeof value==='string'?value:calendarDateKey(value));
-if(timelineDateKeys.some(key=>!/^\d{4}-\d{2}-\d{2}$/.test(key)))throw new Error('投稿タイムラインの日付キーが不正です');
+const invalidTimelineDateKeys=timelineDateKeys.filter(key=>!/^\d{4}-\d{2}-\d{2}$/.test(key));
+if(invalidTimelineDateKeys.length)console.error('[Rolling chart] Invalid date keys; downstream charts will continue:',invalidTimelineDateKeys);
 timelineDateKeys.forEach((dateKey,i)=>{let n=0,c=0;const start=Math.max(0,i-29);for(let j=start;j<=i;j++){const v=dailyMediumCounts.get(timelineDateKeys[j]);if(v){n+=v.news;c+=v.col;}}const days=i-start+1;rollingNews.push(Math.round(n/days*100)/100);rollingCol.push(Math.round(c/days*100)/100);rollingTotal.push(Math.round((n+c)/days*100)/100);});
 const chartAdvancedRolling=createAdvancedChart('chart-advanced-rolling','canvas');
 setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
