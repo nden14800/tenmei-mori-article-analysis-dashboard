@@ -4825,7 +4825,7 @@ const chartAdvancedBoxplot = createDashboardChart(document.getElementById('chart
 chartAdvancedBoxplot.setOption({
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
-    const v = p.data;
+    const v = Array.isArray(p.data) ? p.data : p.data.value;
     return '<strong>' + p.name + '</strong><br>最小 ' + Math.round(v[0]).toLocaleString() + '字<br>第1四分位 ' + Math.round(v[1]).toLocaleString() + '字<br>中央値 ' + Math.round(v[2]).toLocaleString() + '字<br>第3四分位 ' + Math.round(v[3]).toLocaleString() + '字<br>最大 ' + Math.round(v[4]).toLocaleString() + '字';
   }},
   grid: { left: 35, right: 18, top: 48, bottom: 65, containLabel: true },
@@ -4895,13 +4895,13 @@ chartAdvancedGraph.setOption({
     emphasis: { focus: 'adjacency', lineStyle: { width: 4 } }
   }]
 });
-const parallelRows = advancedArticles.map(a => [a.id, a.chars, a.dayOffset, a.type==='news'?0:1]);
+const parallelRows = advancedArticles.map(a => [a.id, a.chars, a.dayOffset, a.type==='news'?'ニュース':'コラム']);
 const chartAdvancedParallel = createDashboardChart(document.getElementById('chart-advanced-parallel'));
 chartAdvancedParallel.setOption({
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
     const row = p.data;
-    const article = advancedArticles.find(a=>a.id===row[0] && a.type===(row[3]===0?'news':'col'));
+    const article = advancedArticles.find(a=>a.id===row[0] && a.type===(row[3]==='ニュース'?'news':'col'));
     return article ? '<strong>#' + article.id + ' ' + article.title.slice(0,34) + '</strong><br>媒体: ' + article.mediumLabel + '<br>文字数: ' + article.chars.toLocaleString() + '字<br>公開日: ' + article.date.toLocaleDateString('ja-JP') : '';
   }},
   parallel: { left: 48, right: 35, top: 55, bottom: 38 },
@@ -4912,8 +4912,8 @@ chartAdvancedParallel.setOption({
     { dim: 3, name: '媒体', type: 'category', data: ['ニュース','コラム'], nameTextStyle: advancedFontText, axisLabel: advancedFontText }
   ],
   series: [
-    { name: '社務所だより', type: 'parallel', data: parallelRows.filter(r=>r[3]===0), lineStyle: { color: '#c0392b', opacity: .18, width: 1.2 }, smooth: false },
-    { name: '神籤草子', type: 'parallel', data: parallelRows.filter(r=>r[3]===1), lineStyle: { color: '#b8860b', opacity: .24, width: 1.2 }, smooth: false }
+    { name: '社務所だより', type: 'parallel', data: parallelRows.filter(r=>r[3]==='ニュース'), lineStyle: { color: '#c0392b', opacity: .18, width: 1.2 }, smooth: false },
+    { name: '神籤草子', type: 'parallel', data: parallelRows.filter(r=>r[3]==='コラム'), lineStyle: { color: '#b8860b', opacity: .24, width: 1.2 }, smooth: false }
   ]
 });
 function advancedMedian(values) {
@@ -4946,7 +4946,7 @@ chartAdvancedRadar.setOption({
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
     const metric = p.data.name==='社務所だより'?newsMetrics:colMetrics;
-    return '<strong>'+p.data.name+'</strong><br>'+metricLabels.map((label,i)=>label+': '+Math.round(metric[metricKeys[i]]).toLocaleString()+(i===0||i===4||i===5?'件':'字')).join('<br>');
+    return '<strong>'+p.data.name+'</strong><br>'+metricLabels.map((label,i)=>label+': '+Math.round(metric[metricKeys[i]]).toLocaleString()+(i===0?'件':i===4?'分類':i===5?'か月':'字')).join('<br>');
   }},
   legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: advancedFontText },
   radar: {
