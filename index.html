@@ -6240,7 +6240,7 @@ const dashboardCharts = [
 // 全グラフ共通の視覚調整。ライブラリ・バージョン・描画エンジンは変更しない。
 function polishDashboardChartOptions() {
  const font=dashboardChartFont;
- const palette=['#8f252b','#9b742e','#246a73','#416a9c','#76539a','#b45232','#4f7542','#a34768','#56616f','#8c6d3f','#2c8791','#7b654f'];
+ const palette=['#8f252b','#c4a059','#b65d32','#76504b','#7b654f','#a34768','#9b742e','#6f7548','#c18a68','#8d6b62','#a58a5c','#55443a'];
  const paletteSet=new Set(palette);
  const hashIndex=name=>{const value=String(name||'');let hash=2166136261;for(let i=0;i<value.length;i++)hash=Math.imul(hash^value.charCodeAt(i),16777619);return hash>>>0;};
  const createColorResolver=()=>{
@@ -6256,7 +6256,8 @@ function polishDashboardChartOptions() {
     const toHex=value=>Math.round(value*255).toString(16).padStart(2,'0');
     const hslHex=(h,s,l)=>{const a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return toHex(l-a*Math.max(Math.min(k-3,9-k,1),-1));};return '#'+f(0)+f(8)+f(4);};
     for(let step=0;step<3600&&!color;step++){
-     const hue=(seed*31+step*137.508)%360,saturation=.54+(step%3)*.06,lightness=.36+(Math.floor(step/3)%4)*.045;
+     const warmHue=(seed*13+step*17)%90;
+     const hue=warmHue<58?warmHue:330+(warmHue-58)*.9375,saturation=.46+(step%4)*.055,lightness=.37+(Math.floor(step/4)%5)*.04;
      const candidate=hslHex(hue,saturation,lightness);
      if(!used.has(candidate))color=candidate;
     }
@@ -6316,7 +6317,22 @@ function polishDashboardChartOptions() {
      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color})};
      if(item.symbolSize==null)output.symbolSize=6;
     }else if(item.type==='bar'){
-     output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),borderRadius:item.itemStyle?.borderRadius??[4,4,0,0]};
+     const categoryAxis=[...(current.xAxis||[]),...(current.yAxis||[])].find(axis=>axis.type==='category'&&Array.isArray(axis.data));
+     const singleCategoricalSeries=series.filter(candidate=>candidate.type==='bar').length===1&&Array.isArray(item.data)&&item.data.length>1&&categoryAxis?.data?.length===item.data.length;
+     if(singleCategoricalSeries){
+      output.colorBy='data';
+      output.data=item.data.map((datum,j)=>{
+       const entry=datum&&typeof datum==='object'&&!Array.isArray(datum)?datum:{value:datum};
+       const categoryName=String(categoryAxis.data[j]??entry.name??('category-'+j));
+       const categoryColor=resolveColor('category:'+categoryName,entry.itemStyle?.color,j);
+       return {...entry,itemStyle:{...entry.itemStyle,color:categoryColor}};
+      });
+      const {color:ignoredSeriesColor,...barItemStyle}=item.itemStyle||{};
+      output.itemStyle={...barItemStyle,borderRadius:item.itemStyle?.borderRadius??[4,4,0,0]};
+     }else{
+      output.colorBy='series';
+      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),borderRadius:item.itemStyle?.borderRadius??[4,4,0,0]};
+     }
      output.barMaxWidth=item.barMaxWidth||36;
     }else if(item.type==='scatter'){
      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),opacity:item.itemStyle?.opacity??.82};
