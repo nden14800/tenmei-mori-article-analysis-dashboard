@@ -171,7 +171,7 @@ function extractInsights(text) {
 }
 const insightsBefore = extractInsights(dashboard);
 if (!insightsBefore.length) throw new Error('洞察・考察が見つかりません');
-if (insightsBefore.length !== 38) throw new Error(`洞察・考察の件数が想定外です（38件想定）: ${insightsBefore.length}`);
+if (insightsBefore.length !== 41) throw new Error(`洞察・考察の件数が想定外です（既存38件＋追加3件の41件想定）: ${insightsBefore.length}`);
 const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleChars(text), 0);
 
 // Comprehensive Analysis も分析資産として完全保護する。
