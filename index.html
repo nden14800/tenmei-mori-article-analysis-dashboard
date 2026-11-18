@@ -49,7 +49,7 @@
     position: fixed;
     inset: 0;
     background-image:
-      radial-gradient(ellipse at 20% 20%, rgba(143,37,43,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 20%, rgba(48,41,35,0.04) 0%, transparent 50%),
       radial-gradient(ellipse at 80% 80%, rgba(196,160,89,0.05) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
@@ -109,8 +109,8 @@
     transform: translateY(-0.04em);
   }
   @keyframes shimmer {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(143,37,43,0); }
-    50% { box-shadow: 0 0 20px 4px rgba(143,37,43,0.3); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(48,41,35,0); }
+    50% { box-shadow: 0 0 20px 4px rgba(196,160,89,0.3); }
   }
 
   h1.site-title {
@@ -244,13 +244,13 @@
     border-radius: 14px;
     padding: 1.45rem 1.55rem;
     background: linear-gradient(160deg, #fffdfb 0%, #fffdfb 100%);
-    box-shadow: 0 5px 20px rgba(143,37,43,.055);
+    box-shadow: 0 5px 20px rgba(48,41,35,.055);
     transition: border-color .22s ease, box-shadow .22s ease, transform .22s ease;
     overflow: hidden;
   }
   .chart-card:hover {
     border-color: #e7ded7;
-    box-shadow: 0 10px 28px rgba(143,37,43,.085);
+    box-shadow: 0 10px 28px rgba(48,41,35,.085);
     transform: translateY(-2px);
   }
   .chart-card .chart-title {
@@ -382,7 +382,7 @@
     align-items: center;
     margin: 0 0 2rem;
     padding: 1.15rem 1.2rem;
-    background: linear-gradient(135deg, rgba(247,242,237,0.96), #fffdfb 60%, rgba(48,41,35,0.7));
+    background: linear-gradient(135deg, rgba(247,242,237,0.96), #fffdfb 60%, rgba(247,242,237,0.7));
     border: 1px solid var(--border);
     border-left: 3px solid var(--vermillion);
   }
@@ -895,8 +895,8 @@
 
   body {
     background:
-      radial-gradient(circle at 8% 0%, rgba(143,37,43,.075), transparent 28rem),
-      radial-gradient(circle at 92% 18%, rgba(143,37,43,.055), transparent 30rem),
+      radial-gradient(circle at 8% 0%, rgba(48,41,35,.075), transparent 28rem),
+      radial-gradient(circle at 92% 18%, rgba(48,41,35,.055), transparent 30rem),
       var(--paper);
     color: var(--ink);
   }
@@ -910,7 +910,7 @@
     width: 56px; height: 56px;
     margin-bottom: 12px;
     border-width: 1.5px;
-    box-shadow: 0 8px 28px rgba(143,37,43,.08);
+    box-shadow: 0 8px 28px rgba(48,41,35,.08);
   }
   h1.site-title { font-size: clamp(1.55rem, 2.5vw, 2.15rem); letter-spacing: .06em; }
   .subtitle { font-style: normal; font-family: var(--font-ui); color: var(--ver4-text-muted); }
@@ -939,7 +939,7 @@
     box-shadow: 0 10px 30px rgba(48,41,35,.055);
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   }
-  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(143,37,43,.09); border-color: #e7ded7; }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(48,41,35,.09); border-color: #e7ded7; }
   .stat-number { font-family: var(--font-ui); font-weight: 700; }
   .stat-label, .stat-sub { font-family: var(--font-ui); }
 
@@ -948,7 +948,7 @@
     border: 1px solid var(--ver4-line);
     border-radius: var(--ver4-card-radius);
     padding: var(--ver4-card-padding);
-    box-shadow: 0 10px 30px rgba(143,37,43,.045);
+    box-shadow: 0 10px 30px rgba(48,41,35,.045);
   }
   .chart-title, .chart-desc, .chart-desc p { font-family: var(--font-ui); }
   .chart-title { color: var(--ver4-red-dark); font-size: .92rem; font-weight: 700; letter-spacing: .055em; }
@@ -959,7 +959,7 @@
     border-left: 3px solid var(--ver4-gold);
     border-radius: var(--ver4-card-radius);
     background: rgba(247,242,237,.94);
-    box-shadow: 0 8px 24px rgba(143,37,43,.045);
+    box-shadow: 0 8px 24px rgba(48,41,35,.045);
   }
   .export-panel { border-left-color: var(--ver4-red); }
   .chart-interaction-guide h2, .export-panel h2 { font-family: var(--font-ui); color: var(--ver4-red-dark); }
@@ -992,7 +992,7 @@
   .tab-btn.active {
     background: #fffdfb;
     color: var(--ver4-red-dark);
-    box-shadow: 0 4px 14px rgba(143,37,43,.08);
+    box-shadow: 0 4px 14px rgba(48,41,35,.08);
   }
 
   .modern-filter-bar {
@@ -1005,7 +1005,7 @@
     background: rgba(247,242,237,.96);
     border: 1px solid var(--ver4-line);
     border-radius: var(--ver4-card-radius);
-    box-shadow: 0 8px 24px rgba(143,37,43,.045);
+    box-shadow: 0 8px 24px rgba(48,41,35,.045);
   }
   .dashboard-field { min-width: 0; }
   .dashboard-field label, .dashboard-field-label {
@@ -1022,7 +1022,7 @@
     border: 1px solid #e7ded7;
     border-radius: var(--ver4-control-radius);
     background: #fffdfb;
-    box-shadow: 0 2px 8px rgba(143,37,43,.035);
+    box-shadow: 0 2px 8px rgba(48,41,35,.035);
     transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
   }
   .dashboard-input-shell {
@@ -1115,7 +1115,7 @@
     background: var(--ver4-surface);
     border: 1px solid var(--ver4-line);
     border-radius: var(--ver4-card-radius);
-    box-shadow: 0 10px 30px rgba(143,37,43,.045);
+    box-shadow: 0 10px 30px rgba(48,41,35,.045);
   }
   table { border-collapse: separate; border-spacing: 0; font-family: var(--font-ui); }
   thead th {
@@ -1208,7 +1208,7 @@
     border-radius: var(--ver4-card-radius);
     padding: 1.25rem 1rem;
     background: var(--ver4-surface);
-    box-shadow: 0 8px 24px rgba(143,37,43,.045);
+    box-shadow: 0 8px 24px rgba(48,41,35,.045);
   }
   .stat-card::before {
     content: '';
@@ -1223,7 +1223,7 @@
   .stat-card:nth-child(4)::before { background: var(--deep-red); }
   .stat-card:nth-child(5)::before { background: #718b7b; }
   .stat-card:nth-child(6)::before { background: #7188a4; }
-  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(143,37,43,.075); }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(48,41,35,.075); }
   .stat-number { font-size: 2.45rem; }
   .stat-label { font-family: var(--font-ui); font-weight: 600; }
 
@@ -1232,7 +1232,7 @@
     border-radius: var(--ver4-card-radius);
     padding: 1.35rem;
     background: var(--ver4-surface);
-    box-shadow: 0 8px 24px rgba(143,37,43,.045);
+    box-shadow: 0 8px 24px rgba(48,41,35,.045);
   }
   .chart-title {
     min-height: 0;
@@ -1247,7 +1247,7 @@
     border-left: 3px solid var(--vermillion);
     border-radius: 16px;
     background: var(--ver4-surface);
-    box-shadow: 0 8px 24px rgba(143,37,43,.04);
+    box-shadow: 0 8px 24px rgba(48,41,35,.04);
   }
   .insight-title, .insight-body { font-family: var(--font-ui); }
   .insight-tag { border-radius: 999px; padding: .18rem .58rem; }
@@ -1285,17 +1285,17 @@
 
 
   /* Ver.4 visual alignment: Tenmei Mori framed hero and paper/gold/vermilion palette. */
-  header{width:min(1400px,calc(100% - 3rem));margin:1.5rem auto 2rem;padding:clamp(1.5rem,3.5vw,2.8rem);text-align:left;border:1px solid rgba(143,37,43,.34);border-radius:28px;background:radial-gradient(circle at 91% 16%,rgba(196,160,89,.18),transparent 25%),radial-gradient(circle at 6% 100%,rgba(143,37,43,.10),transparent 33%),linear-gradient(135deg,#fffdfb 0%,#f7f2ed 58%,#f7f2ed 100%);box-shadow:0 15px 34px rgba(48,41,35,.09);overflow:hidden}
-  header::before{content:"";top:-96px;right:-58px;bottom:auto;left:auto;width:252px;height:252px;padding:0;border:1px solid rgba(143,37,43,.14);border-radius:50%;background:transparent;transform:none;box-shadow:0 0 0 22px rgba(143,37,43,.06),0 0 0 46px rgba(143,37,43,.04);pointer-events:none}
+  header{width:min(1400px,calc(100% - 3rem));margin:1.5rem auto 2rem;padding:clamp(1.5rem,3.5vw,2.8rem);text-align:left;border:1px solid rgba(196,160,89,.34);border-radius:28px;background:radial-gradient(circle at 91% 16%,rgba(196,160,89,.18),transparent 25%),radial-gradient(circle at 6% 100%,rgba(143,37,43,.10),transparent 33%),linear-gradient(135deg,#fffdfb 0%,#f7f2ed 58%,#f7f2ed 100%);box-shadow:0 15px 34px rgba(48,41,35,.09);overflow:hidden}
+  header::before{content:"";top:-96px;right:-58px;bottom:auto;left:auto;width:252px;height:252px;padding:0;border:1px solid rgba(143,37,43,.14);border-radius:50%;background:transparent;transform:none;box-shadow:0 0 0 22px rgba(48,41,35,.06),0 0 0 46px rgba(48,41,35,.04);pointer-events:none}
   header::after{display:none}
   .header-kamon{display:block;width:68px;height:68px;margin:0 0 1rem;border:0;border-radius:12px;color:inherit;animation:none;box-shadow:0 8px 20px rgba(143,37,43,.16);overflow:hidden}
   .header-kamon img{display:block;width:100%;height:100%;object-fit:cover;border-radius:10px}
   h1.site-title{position:relative;z-index:1;max-width:980px;font-size:clamp(1.55rem,3vw,2.35rem);letter-spacing:.045em;line-height:1.35}
   .subtitle{position:relative;z-index:1;margin-top:.55rem;font-family:var(--font-ui);font-style:normal;font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-  .header-meta{position:relative;z-index:1;display:inline-flex;flex-wrap:wrap;align-items:center;gap:.3rem .5rem;margin:.9rem .45rem 0 0;padding:.42rem .78rem;border:1px solid rgba(143,37,43,.22);border-radius:999px;background:rgba(247,242,237,.76);font-family:var(--font-ui);font-size:.7rem;font-weight:700;letter-spacing:.035em;line-height:1.55}
+  .header-meta{position:relative;z-index:1;display:inline-flex;flex-wrap:wrap;align-items:center;gap:.3rem .5rem;margin:.9rem .45rem 0 0;padding:.42rem .78rem;border:1px solid rgba(196,160,89,.22);border-radius:999px;background:rgba(247,242,237,.76);font-family:var(--font-ui);font-size:.7rem;font-weight:700;letter-spacing:.035em;line-height:1.55}
   .container{max-width:1480px;padding-inline:clamp(1rem,2.2vw,2rem)}
   .stat-card,.chart-card,.insight-box,.chart-interaction-guide,.export-panel,.table-wrap,#mega-summary-content{border-radius:18px;box-shadow:0 8px 24px rgba(48,41,35,.055)}
-  .chart-card{background:#fffdfb;border-color:rgba(143,37,43,.26)}
+  .chart-card{background:#fffdfb;border-color:rgba(196,160,89,.26)}
   .chart-desc{border-radius:12px;background:linear-gradient(135deg,#f7f2ed,#fffdfb 72%)}
   .chart-interaction-guide,.export-panel{border-radius:18px;background:linear-gradient(135deg,rgba(247,242,237,.96),#fffdfb 60%,rgba(48,41,35,.65))}
   .chart-reset-button,.export-button,.line-style-button,.tab-btn,.dashboard-select-trigger,.dashboard-select-option{border-radius:10px}
@@ -1350,7 +1350,7 @@
   .stat-card{
     border:1px solid var(--tm-border);border-top:2px solid var(--tm-red);
     border-radius:14px;background:var(--tm-white);padding:1.25rem 1rem;
-    box-shadow:0 4px 16px rgba(143,37,43,.035);animation:none;
+    box-shadow:0 4px 16px rgba(48,41,35,.035);animation:none;
   }
   .stat-card:nth-child(n){border-top-color:var(--tm-gold)}
   .stat-card:nth-child(odd){border-top-color:var(--tm-vermilion)}
@@ -1375,7 +1375,7 @@
     opacity:.85;pointer-events:none;
   }
   .chart-card:hover,.advanced-chart-card:hover{
-    border-color:#e7ded7;box-shadow:0 6px 14px rgba(143,37,43,.04),0 18px 38px rgba(143,37,43,.085);
+    border-color:#e7ded7;box-shadow:0 6px 14px rgba(48,41,35,.04),0 18px 38px rgba(48,41,35,.085);
     transform:translateY(-2px);
   }
   .chart-title{
@@ -1416,7 +1416,7 @@
   .chart-interaction-guide,.export-panel{
     border:1px solid var(--tm-border);border-left:3px solid var(--tm-gold);
     border-radius:14px;background:linear-gradient(135deg,#fffdfb,#f7f2ed);
-    box-shadow:0 4px 16px rgba(143,37,43,.035);padding:1.05rem 1.2rem;
+    box-shadow:0 4px 16px rgba(48,41,35,.035);padding:1.05rem 1.2rem;
   }
   .chart-interaction-guide h2,.export-panel h2{
     color:var(--tm-red);font-family:var(--font-ui);font-size:.92rem;font-weight:700;letter-spacing:.025em;
@@ -1465,7 +1465,7 @@
   .filter-count,.modern-filter-count{font-family:var(--font-ui);font-size:.74rem;color:var(--tm-muted)}
   .table-wrap{
     border:1px solid var(--tm-border);border-radius:13px;background:#fffdfb;
-    box-shadow:0 5px 18px rgba(143,37,43,.035);overflow:auto;
+    box-shadow:0 5px 18px rgba(48,41,35,.035);overflow:auto;
   }
   table{border-collapse:separate;border-spacing:0;font-family:var(--font-ui);font-size:.79rem}
   thead th{
@@ -4700,8 +4700,8 @@ chartCumulative.setOption({
   xAxis: { type: 'category', data: cumDataDynamic.map(d=>d.date), axisLabel: { color: '#786e67', fontSize: 9, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLine: { lineStyle: { color: '#e7ded7' } } },
   yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
   series: [
-    { name: '累積ニュース', type: 'line', data: cumDataDynamic.map(d=>d.news), itemStyle: { color: '#8f252b' }, lineStyle: { color: '#8f252b', width: 2 }, areaStyle: { color: 'rgba(143,37,43,0.08)' }, showSymbol: false, smooth: false },
-    { name: '累積コラム',   type: 'line', data: cumDataDynamic.map(d=>d.col),  itemStyle: { color: '#c4a059' }, lineStyle: { color: '#c4a059', width: 2 }, areaStyle: { color: 'rgba(143,37,43,0.08)' }, showSymbol: false, smooth: false },
+    { name: '累積ニュース', type: 'line', data: cumDataDynamic.map(d=>d.news), itemStyle: { color: '#8f252b' }, lineStyle: { color: '#8f252b', width: 2 }, areaStyle: { color: 'rgba(48,41,35,0.08)' }, showSymbol: false, smooth: false },
+    { name: '累積コラム',   type: 'line', data: cumDataDynamic.map(d=>d.col),  itemStyle: { color: '#c4a059' }, lineStyle: { color: '#c4a059', width: 2 }, areaStyle: { color: 'rgba(48,41,35,0.08)' }, showSymbol: false, smooth: false },
     { name: '累積合計',     type: 'line', data: cumDataDynamic.map(d=>d.total), itemStyle: { color: '#55443a' }, lineStyle: { color: '#55443a', width: 2.5, type: 'dashed' }, showSymbol: false, smooth: false,
       markPoint: { data: [{ name: '100記事', coord: ['2026-02-18', 100], value: '100!' }], label: { color: '#f7f2ed', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, itemStyle: { color: '#8f252b' } }
     }
@@ -4734,7 +4734,7 @@ chartHours.setOption({
   yAxis: { type: 'value', axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
   visualMap: { show: false, min: 0, max: Math.max(...hourCounts), inRange: { color: ['#f7f2ed', '#d5b16b', '#8f252b'] } },
   series: [{ type: 'bar', data: hourCounts, barMaxWidth: 16,
-    markArea: { data: [[{ xAxis: '16時' }, { xAxis: '19時' }]], itemStyle: { color: 'rgba(143,37,43,0.08)' } }
+    markArea: { data: [[{ xAxis: '16時' }, { xAxis: '19時' }]], itemStyle: { color: 'rgba(48,41,35,0.08)' } }
   }]
 });
 
@@ -5498,8 +5498,8 @@ setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
     {type:'slider',height:16,bottom:34,borderColor:'transparent',backgroundColor:'#f7f2ed',fillerColor:'rgba(143,37,43,.14)',handleStyle:{color:'#8f252b',borderColor:'#8f252b'},textStyle:{...advancedFontText,color:'#786e67',fontSize:9},dataBackground:{lineStyle:{color:'#e7ded7'},areaStyle:{color:'#e7ded7'}},selectedDataBackground:{lineStyle:{color:'#8f252b'},areaStyle:{color:'rgba(143,37,43,.18)'}}}
   ],
   series:[
-    {name:'ニュース',type:'line',data:rollingNews,showSymbol:false,symbol:'circle',symbolSize:6,smooth:.24,connectNulls:false,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'},areaStyle:{color:'rgba(143,37,43,.045)'},emphasis:{focus:'series',scale:1.15,lineStyle:{width:3.8}}},
-    {name:'コラム',type:'line',data:rollingCol,showSymbol:false,symbol:'circle',symbolSize:6,smooth:.24,connectNulls:false,lineStyle:{color:'#c4a059',width:2.8},itemStyle:{color:'#c4a059'},areaStyle:{color:'rgba(143,37,43,.045)'},emphasis:{focus:'series',scale:1.15,lineStyle:{width:3.8}}},
+    {name:'ニュース',type:'line',data:rollingNews,showSymbol:false,symbol:'circle',symbolSize:6,smooth:.24,connectNulls:false,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'},areaStyle:{color:'rgba(48,41,35,.045)'},emphasis:{focus:'series',scale:1.15,lineStyle:{width:3.8}}},
+    {name:'コラム',type:'line',data:rollingCol,showSymbol:false,symbol:'circle',symbolSize:6,smooth:.24,connectNulls:false,lineStyle:{color:'#c4a059',width:2.8},itemStyle:{color:'#c4a059'},areaStyle:{color:'rgba(48,41,35,.045)'},emphasis:{focus:'series',scale:1.15,lineStyle:{width:3.8}}},
     {name:'合計',type:'line',data:rollingTotal,showSymbol:false,symbol:'circle',symbolSize:7,smooth:.2,connectNulls:false,lineStyle:{color:'#55443a',width:3.8},itemStyle:{color:'#55443a',borderColor:'#fffdfb',borderWidth:2},emphasis:{focus:'series',scale:1.2,lineStyle:{width:4.8}},z:5}
   ]
 });
@@ -5577,8 +5577,8 @@ setAdvancedOption(chartAdvancedDailyRate,'chart-advanced-daily-rate',{
   xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,rotate:28,interval:0,hideOverlap:true}},
   yAxis:{type:'value',min:0,name:'観測日あたりの記事数',axisLabel:{...advancedFontText,formatter:value=>Number(value).toFixed(2)},splitLine:{show:true,lineStyle:{color:'#e7ded7',type:'dashed'}}},
   series:[
-    {name:'ニュース',type:'line',data:monthlyDailyRate.news,connectNulls:false,symbol:'circle',symbolSize:6,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'},areaStyle:{color:'rgba(143,37,43,.08)'}},
-    {name:'コラム',type:'line',data:monthlyDailyRate.col,connectNulls:false,symbol:'circle',symbolSize:6,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'},areaStyle:{color:'rgba(143,37,43,.08)'}}
+    {name:'ニュース',type:'line',data:monthlyDailyRate.news,connectNulls:false,symbol:'circle',symbolSize:6,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'},areaStyle:{color:'rgba(48,41,35,.08)'}},
+    {name:'コラム',type:'line',data:monthlyDailyRate.col,connectNulls:false,symbol:'circle',symbolSize:6,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'},areaStyle:{color:'rgba(48,41,35,.08)'}}
   ]
 });
 
