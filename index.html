@@ -6159,7 +6159,7 @@ function polishDashboardChartOptions() {
         }
       };
       if(current.legend?.length)patch.legend=current.legend.map(legend=>({
-        ...legend,top:null,bottom:5,left:'center',right:null,
+        ...legend,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',
         itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',
         textStyle:{...legend.textStyle,fontFamily:font,color:'#55443a',fontSize:11},
         pageTextStyle:{fontFamily:font,color:'#55443a'}
