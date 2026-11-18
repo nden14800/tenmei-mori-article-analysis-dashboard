@@ -3954,31 +3954,68 @@ function articleDateTime(a) {
 
 // 最新の本サイトデータ規模では、拡大しても線・文字がぼやけないSVGレンダラーを使う。
 // SVGはベクター描画のため、固定のdevicePixelRatio指定を必要としない。
-function createDashboardChart(element, renderer = 'svg') {
+function createDashboardChart(element, renderer = null) {
   const chartId = element?.id || '(unknown chart)';
+  // 高密度データ・複雑な描画はCanvas、それ以外は軽量なSVGを使う。
+  const canvasChartIds = [
+    'chart-heatmap', 'chart-dow-hour-heatmap', 'chart-scatter',
+    'chart-timeline', 'chart-advanced-treemap', 'chart-advanced-sankey',
+    'chart-advanced-parallel', 'chart-advanced-date-scatter',
+    'chart-advanced-rolling'
+  ];
+  const selectedRenderer = renderer || (canvasChartIds.includes(chartId) ? 'canvas' : 'svg');
+  let instance = null;
   const showFailure = error => {
     console.error('[Dashboard chart failed]', chartId, error);
+    if (instance && !instance.isDisposed()) {
+      try { instance.dispose(); } catch (_) {}
+    }
     if (element) {
       element.dataset.chartState = 'error';
       const detail = String(error?.message || error || 'Unknown error').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
       element.innerHTML = '<div class="chart-render-fallback"><strong>' + chartId + '</strong><br>描画できませんでした。ほかのグラフは引き続き利用できます。<br><small>' + detail + '</small></div>';
     }
   };
-  const fallback = { setOption(){}, getOption(){return {series:[]};}, resize(){}, dispatchAction(){}, on(){}, getDom(){return element;} };
-  if (!element) { console.error('[Dashboard chart failed] Missing container.'); return fallback; }
+  const fallback = { setOption(){}, getOption(){return {series:[]};}, resize(){}, dispatchAction(){}, on(){}, getDom(){return element;}, isDisposed(){return true;} };
+  if (!element) { console.error('[Dashboard chart failed] Missing container:', chartId); return fallback; }
   try {
-    const instance = echarts.init(element, null, { renderer, useDirtyRect:false, useCoarsePointer:true });
+    element.dataset.chartState = 'initializing';
+    element.dataset.chartRenderer = selectedRenderer;
+    instance = echarts.getInstanceByDom(element) || echarts.init(element, null, {
+      renderer: selectedRenderer,
+      useDirtyRect: false,
+      useCoarsePointer: true
+    });
+    instance.on('rendered', () => {
+      if (element.isConnected && element.dataset.chartState !== 'error') {
+        element.dataset.chartState = 'ready';
+      }
+    });
     return new Proxy(instance, {
       get(target, property) {
         if (property === 'setOption') return (...args) => {
-          try { const result=target.setOption(...args); element.dataset.chartState='ready'; return result; }
-          catch(error) { showFailure(error); return undefined; }
+          try {
+            const result = target.setOption(...args);
+            element.dataset.chartState = 'configured';
+            window.requestAnimationFrame(() => {
+              if (!target.isDisposed() && element.isConnected && element.clientWidth > 0 && element.clientHeight > 0) {
+                target.resize();
+              }
+            });
+            return result;
+          } catch(error) {
+            showFailure(error);
+            return undefined;
+          }
         };
-        const value=Reflect.get(target,property,target);
-        return typeof value==='function' ? value.bind(target) : value;
+        const value = Reflect.get(target, property, target);
+        return typeof value === 'function' ? value.bind(target) : value;
       }
     });
-  } catch(error) { showFailure(error); return fallback; }
+  } catch(error) {
+    showFailure(error);
+    return fallback;
+  }
 }
 
 const chartMonthly = createDashboardChart(document.getElementById('chart-monthly'));
@@ -5549,7 +5586,16 @@ let dashboardResizeFrame = null;
 function resizeDashboardCharts() {
   if (dashboardResizeFrame) window.cancelAnimationFrame(dashboardResizeFrame);
   dashboardResizeFrame = window.requestAnimationFrame(() => {
-    dashboardCharts.forEach(({ chart }) => chart && chart.resize());
+    dashboardCharts.forEach(({ chart }) => {
+      if (!chart || chart.isDisposed?.()) return;
+      const element = chart.getDom?.();
+      if (!element || !element.isConnected) return;
+      const rect = element.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        try { chart.resize({ width: rect.width, height: rect.height, animation: { duration: 0 } }); }
+        catch (error) { console.error('[Dashboard chart resize failed]', element.id, error); }
+      }
+    });
     dashboardResizeFrame = null;
   });
 }
@@ -5567,6 +5613,29 @@ if (document.fonts?.ready) document.fonts.ready.then(resizeDashboardCharts).catc
 window.addEventListener('pageshow', resizeDashboardCharts, { passive: true });
 window.addEventListener('visibilitychange', () => { if (!document.hidden) resizeDashboardCharts(); }, { passive: true });
 window.requestAnimationFrame(resizeDashboardCharts);
+
+// iOS Safari等で初回レイアウト確定前に初期化されたチャートを、実寸確定後に再描画する。
+function recoverUnrenderedDashboardCharts(finalCheck = false) {
+  dashboardCharts.forEach(({ chart }) => {
+    if (!chart || chart.isDisposed?.()) return;
+    const element = chart.getDom?.();
+    if (!element || !element.isConnected || element.dataset.chartState === 'error') return;
+    const rect = element.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+    if (!element.querySelector('svg, canvas')) {
+      try { chart.resize({ width: rect.width, height: rect.height, animation: { duration: 0 } }); }
+      catch (error) { console.error('[Dashboard chart recovery failed]', element.id, error); }
+      if (finalCheck && !element.querySelector('svg, canvas')) {
+        element.dataset.chartState = 'error';
+        element.innerHTML = '<div class="chart-render-fallback"><strong>' + element.id + '</strong><br>描画領域を生成できませんでした。ページを再読み込みしても続く場合は、このグラフIDを知らせてください。</div>';
+        console.error('[Dashboard chart missing renderer]', element.id, rect.width, rect.height);
+      }
+    }
+  });
+}
+window.setTimeout(() => { resizeDashboardCharts(); recoverUnrenderedDashboardCharts(false); }, 350);
+window.setTimeout(() => { resizeDashboardCharts(); recoverUnrenderedDashboardCharts(false); }, 1100);
+window.setTimeout(() => recoverUnrenderedDashboardCharts(true), 2400);
 
 
 
