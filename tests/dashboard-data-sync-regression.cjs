@@ -133,7 +133,7 @@ for (const id of ['chart-title-body-scatter', 'chart-day-of-month', 'chart-title
   assert(html.includes('id="' + id + '"'), '追加グラフの描画領域が必要です: ' + id);
 }
 assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength") && html.includes("chart: chartAdvancedParetoFrontier") && html.includes("chart: chartAdvancedMonthlyBoxplot") && html.includes("chart: chartAdvancedLorenz") && html.includes("chart: chartAdvancedGapScatter"), '追加グラフを共通リサイズ・操作対象へ登録します');
-test.includes('calculateParetoFrontier') && test.includes('calculateLorenzCurve') && test.includes('paretoFrontierNews') && test.includes('lorenzNews'), 'パレートフロンティアとローレンツ曲線をデータから計算します');
+assert(html.includes('calculateParetoFrontier') && html.includes('calculateLorenzCurve') && html.includes('paretoFrontierNews') && html.includes('lorenzNews'), 'パレートフロンティアとローレンツ曲線をデータから計算します');
 
 const styleBlocks = [...html.matchAll(/<style\b/gi)];
 assert.strictEqual(styleBlocks.length, 1, 'スタイルシートは一つに統合する必要があります');
