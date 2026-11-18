@@ -18,8 +18,8 @@
 <style>
   :root {
     /* 天命乃杜本体と同一の書体定義 */
-    --font-main: 'Zen Old Mincho', 'Shippori Mincho', serif;
-    --font-ui: 'Zen Kaku Gothic New', 'Zen Old Mincho', serif;
+    --font-main: 'Shippori Mincho', 'Zen Old Mincho', serif;
+    --font-ui: 'Zen Kaku Gothic New', sans-serif;
     --ink: #1a1008;
     --paper: #faf6ef;
     --vermillion: #c0392b;
@@ -437,6 +437,31 @@
     .heatmap-card { padding: 1rem; }
     .heatmap-chart { min-width: 820px; }
     .heatmap-navigation-note { line-height: 1.6; }
+  }
+
+  .advanced-charts-intro {
+    margin: -0.55rem 0 1.35rem;
+    color: var(--mist);
+    font-family: var(--font-main);
+    font-size: 0.82rem;
+    line-height: 1.9;
+  }
+  .advanced-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .advanced-chart-card { min-width: 0; }
+  .advanced-chart-wide { grid-column: 1 / -1; }
+  .chart-box-advanced { height: 360px; }
+  @media (max-width: 900px) {
+    .advanced-charts-grid { grid-template-columns: 1fr; }
+    .advanced-chart-wide { grid-column: auto; }
+  }
+  @media (max-width: 700px) {
+    .chart-box-advanced { height: 330px; }
+    .advanced-charts-intro { font-size: 0.76rem; }
   }
 
   .chart-desc {
@@ -1516,6 +1541,53 @@
           <tbody id="top-col-chars"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+
+  <!-- ADVANCED CHARTS -->
+  <div class="section-title">多角的分析 — Advanced Views</div>
+  <p class="advanced-charts-intro">既存の時系列・分布グラフに加え、記事の構成、分類間の流れ、文字数のばらつき、媒体ごとの特徴を異なる視点から比較します。各図は収録済みの記事データから再計算しています。</p>
+  <div class="advanced-charts-grid">
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">媒体・分類別の記事構成 — Treemap</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-treemap"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>面積で記事数の規模を比較し、媒体全体から個別分類までを一画面で把握します。大きな分類だけでなく、小規模な分類も面積として残すため、構成の偏りと多様性を同時に確認できます。</div>
+    </div>
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">媒体・分類・記事長の階層 — Sunburst</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-sunburst"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>媒体から分類、記事長クラスへと階層を掘り下げます。分類ごとの記事本数だけでは見えない、短文・中程度・長文の構成差を比較できます。</div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">媒体から分類、記事長への流れ — Sankey</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-sankey"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事が「どの媒体に属し、どの分類に入り、どの文字数帯に分布するか」を流量で表します。分類名の重複は媒体別の内部IDで区別し、異なる分類を誤って一つにまとめない設計です。</div>
+    </div>
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">媒体・主要分類別の文字数分布 — Boxplot</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-boxplot"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>平均値だけでなく中央値と四分位範囲を比較します。少数の極端に長い記事に平均が引っ張られていないか、分類ごとの記事長の安定性を確認できます。</div>
+    </div>
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">月別の媒体構成変化 — ThemeRiver</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-themeriver"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>月ごとの投稿量を流れとして表し、ニュースとコラムの構成比や増減の転換点を見つけやすくします。投稿がない月もゼロとして扱い、時間軸を飛ばしません。</div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">媒体と記事分類の関係ネットワーク — Graph</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-graph"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>媒体ノードと分類ノードを記事本数で結び、分類の広がりや媒体ごとの構成をネットワークとして可視化します。線の太さは実際の記事数に対応し、関係のない分類同士を推測で接続しません。</div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">記事単位の多変量比較 — Parallel Coordinates</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-parallel"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事ID・文字数・対象期間内の日付位置・媒体を同時に表示します。複数の軸を横断して線のまとまりを見ることで、特定時期や媒体に偏った記事長の傾向を探せます。</div>
+    </div>
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">媒体別の特徴プロファイル — Radar</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-radar"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事数・平均文字数・中央値・最大文字数・分類数・活動月数を、それぞれ大きい媒体を100とする相対値にそろえて比較します。異なる単位の指標を一つの尺度で眺めるための補助図です。</div>
     </div>
   </div>
 
@@ -4378,6 +4450,8 @@ chartCatLen.setOption({
 
 // 全グラフで共通に使う公式ECharts機能。数値確認・復元・PNG保存を一貫して提供する。
 const dashboardChartFont = "'Zen Old Mincho', 'Shippori Mincho', serif";
+// Tenmei Moriと同じ明朝・ゴシックの組み合わせ。Web Font読込完了後に全チャートを再描画する。
+document.fonts?.ready?.then(() => dashboardCharts.forEach(({ chart }) => chart.resize()));
 function createChartToolbox(label, options = {}) {
   const { brush = false, zoom = false, magic = false } = options;
   const feature = {
@@ -4581,6 +4655,311 @@ function addChartCapabilities(chart, label, options = {}) {
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ADVANCED VIEWS — treemap / sunburst / sankey / boxplot / themeRiver /
+   graph / parallel / radar. Every value is derived from allArticles.
+   ═══════════════════════════════════════════════════════════════════════ */
+const advancedFont = dashboardChartFont;
+const advancedArticles = allArticles.map(article => {
+  const date = articleDate(article.date);
+  const classification = article.type === 'news' ? article.tag : article.cat;
+  const lengthBand = article.chars < 500 ? '500字未満'
+    : article.chars < 1000 ? '500〜999字'
+    : article.chars < 2000 ? '1,000〜1,999字'
+    : article.chars < 4000 ? '2,000〜3,999字' : '4,000字以上';
+  return {
+    ...article,
+    classification: classification || '未分類',
+    mediumLabel: article.type === 'news' ? '社務所だより' : '神籤草子',
+    date,
+    month: monthKey(date),
+    dayOffset: Math.round((date - firstArticleDate) / 86400000),
+    lengthBand
+  };
+});
+const advancedMediumColors = { '社務所だより': '#c0392b', '神籤草子': '#b8860b' };
+const advancedLengthBands = ['500字未満', '500〜999字', '1,000〜1,999字', '2,000〜3,999字', '4,000字以上'];
+const advancedFontText = { color: '#8b7355', fontFamily: advancedFont, fontSize: 10 };
+const advancedTooltip = {
+  backgroundColor: '#1a1008ee',
+  borderColor: '#b8860b',
+  textStyle: { color: '#f5e6c8', fontFamily: advancedFont, fontSize: 11 }
+};
+const advancedCounts = new Map();
+advancedArticles.forEach(article => {
+  const key = article.mediumLabel + '::' + article.classification;
+  advancedCounts.set(key, (advancedCounts.get(key) || 0) + 1);
+});
+function advancedClassificationChildren(mediumLabel) {
+  const grouped = new Map();
+  advancedArticles.filter(a => a.mediumLabel === mediumLabel).forEach(article => {
+    if (!grouped.has(article.classification)) grouped.set(article.classification, []);
+    grouped.get(article.classification).push(article);
+  });
+  return [...grouped.entries()].map(([name, rows]) => ({
+    name,
+    value: rows.length,
+    itemStyle: { color: mediumLabel === '社務所だより' ? '#c0392b' : '#b8860b' },
+    children: advancedLengthBands.map(band => ({
+      name: band,
+      value: rows.filter(row => row.lengthBand === band).length
+    })).filter(node => node.value > 0)
+  })).sort((a,b) => b.value-a.value);
+}
+const advancedHierarchy = ['社務所だより','神籤草子'].map(name => ({
+  name,
+  value: advancedArticles.filter(a => a.mediumLabel === name).length,
+  itemStyle: { color: advancedMediumColors[name] },
+  children: advancedClassificationChildren(name)
+}));
+const chartAdvancedTreemap = createDashboardChart(document.getElementById('chart-advanced-treemap'));
+chartAdvancedTreemap.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, formatter: p => {
+    const value = p.value || 0;
+    return '<strong>' + p.name + '</strong><br>記事数: ' + value.toLocaleString() + '件';
+  }},
+  series: [{
+    type: 'treemap', data: advancedHierarchy, roam: true, nodeClick: 'zoomToNode',
+    breadcrumb: { show: true, height: 22, itemStyle: { color: '#f5e6c8', borderColor: '#d4c4a0' }, textStyle: advancedFontText },
+    visibleMin: 1, squareRatio: 1.15, leafDepth: 2,
+    label: { show: true, formatter: '{b}\n{c}件', fontFamily: advancedFont, color: '#fffdfa', fontSize: 11 },
+    upperLabel: { show: true, height: 24, color: '#fffdfa', fontFamily: advancedFont, fontSize: 11 },
+    itemStyle: { borderColor: '#fffdfa', borderWidth: 2, gapWidth: 2 },
+    levels: [
+      { itemStyle: { borderColor: '#fffdfa', borderWidth: 3, gapWidth: 3 }, upperLabel: { show: true } },
+      { colorSaturation: [0.35,0.72], itemStyle: { borderColor: '#fffdfa', borderWidth: 2, gapWidth: 2 } },
+      { colorSaturation: [0.25,0.65], itemStyle: { borderColor: '#fffdfa', borderWidth: 1, gapWidth: 1 } }
+    ]
+  }]
+});
+const chartAdvancedSunburst = createDashboardChart(document.getElementById('chart-advanced-sunburst'));
+chartAdvancedSunburst.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, formatter: p => '<strong>' + p.name + '</strong><br>記事数: ' + Number(p.value || 0).toLocaleString() + '件' },
+  series: [{
+    type: 'sunburst', data: advancedHierarchy, radius: ['12%','88%'], sort: 'desc',
+    emphasis: { focus: 'ancestor' },
+    label: { rotate: 'radial', minAngle: 7, fontFamily: advancedFont, fontSize: 10, color: '#fffdfa' },
+    itemStyle: { borderColor: '#fffdfa', borderWidth: 2 },
+    levels: [
+      {},
+      { r0: '12%', r: '38%', label: { rotate: 0, fontSize: 12, fontWeight: 700 } },
+      { r0: '38%', r: '65%', label: { fontSize: 10 } },
+      { r0: '65%', r: '88%', label: { fontSize: 9 } }
+    ]
+  }]
+});
+const sankeyNodes = [];
+const sankeyLinks = [];
+const sankeyNodeNames = new Set();
+function addSankeyNode(name, label, depth, color) {
+  if (sankeyNodeNames.has(name)) return;
+  sankeyNodeNames.add(name);
+  sankeyNodes.push({ name, depth, itemStyle: { color }, label: { formatter: label, fontFamily: advancedFont, color: '#5c3317', fontSize: 10 } });
+}
+['社務所だより','神籤草子'].forEach(medium => {
+  const mediumId = 'medium:' + medium;
+  addSankeyNode(mediumId, medium, 0, advancedMediumColors[medium]);
+  const rows = advancedArticles.filter(a => a.mediumLabel === medium);
+  const classifications = [...new Set(rows.map(a => a.classification))];
+  classifications.forEach(classification => {
+    const classId = 'class:' + medium + ':' + classification;
+    addSankeyNode(classId, classification, 1, advancedMediumColors[medium]);
+    const count = rows.filter(a => a.classification === classification).length;
+    sankeyLinks.push({ source: mediumId, target: classId, value: count });
+    advancedLengthBands.forEach(band => {
+      const bandCount = rows.filter(a => a.classification === classification && a.lengthBand === band).length;
+      if (!bandCount) return;
+      const bandId = 'length:' + band;
+      addSankeyNode(bandId, band, 2, '#8b7355');
+      sankeyLinks.push({ source: classId, target: bandId, value: bandCount });
+    });
+  });
+});
+const chartAdvancedSankey = createDashboardChart(document.getElementById('chart-advanced-sankey'));
+chartAdvancedSankey.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
+    if (p.dataType === 'edge') return p.data.source.replace(/^medium:/,'').replace(/^class:[^:]+:/,'') + ' → ' + p.data.target.replace(/^class:[^:]+:/,'').replace(/^length:/,'') + '<br>記事数: ' + p.data.value + '件';
+    return '<strong>' + (p.name || '') + '</strong>';
+  }},
+  series: [{
+    type: 'sankey', data: sankeyNodes, links: sankeyLinks,
+    orient: 'horizontal', nodeAlign: 'justify', nodeWidth: 16, nodeGap: 10,
+    draggable: true, layoutIterations: 48,
+    emphasis: { focus: 'adjacency' },
+    lineStyle: { color: 'gradient', opacity: 0.36, curveness: 0.5 },
+    label: { fontFamily: advancedFont, fontSize: 10, color: '#5c3317' },
+    levels: [
+      { depth: 0, itemStyle: { color: '#c0392b' }, lineStyle: { opacity: 0.35 } },
+      { depth: 1, itemStyle: { color: '#b8860b' }, lineStyle: { opacity: 0.35 } },
+      { depth: 2, itemStyle: { color: '#8b7355' } }
+    ]
+  }]
+});
+function advancedQuantile(sorted, fraction) {
+  if (!sorted.length) return 0;
+  const position = (sorted.length - 1) * fraction;
+  const lower = Math.floor(position), upper = Math.ceil(position);
+  return sorted[lower] + (sorted[upper] - sorted[lower]) * (position - lower);
+}
+function advancedBoxStats(rows) {
+  const values = rows.map(a => a.chars).filter(Number.isFinite).sort((a,b)=>a-b);
+  if (!values.length) return [0,0,0,0,0];
+  return [values[0], advancedQuantile(values,.25), advancedQuantile(values,.5), advancedQuantile(values,.75), values[values.length-1]];
+}
+const advancedClassRank = [...new Set(advancedArticles.map(a => a.mediumLabel + '::' + a.classification))]
+  .map(key => ({ key, count: advancedCounts.get(key) || 0 }))
+  .sort((a,b)=>b.count-a.count).slice(0,4);
+const boxGroups = [
+  { label: 'ニュース全体', rows: advancedArticles.filter(a=>a.type==='news'), color: '#c0392b' },
+  { label: 'コラム全体', rows: advancedArticles.filter(a=>a.type==='col'), color: '#b8860b' },
+  ...advancedClassRank.map(item => {
+    const [medium, classification] = item.key.split('::');
+    return { label: classification + (medium==='社務所だより'?'（N）':'（C）'), rows: advancedArticles.filter(a=>a.mediumLabel===medium && a.classification===classification), color: advancedMediumColors[medium] };
+  })
+];
+const chartAdvancedBoxplot = createDashboardChart(document.getElementById('chart-advanced-boxplot'));
+chartAdvancedBoxplot.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
+    const v = p.data;
+    return '<strong>' + p.name + '</strong><br>最小 ' + Math.round(v[0]).toLocaleString() + '字<br>第1四分位 ' + Math.round(v[1]).toLocaleString() + '字<br>中央値 ' + Math.round(v[2]).toLocaleString() + '字<br>第3四分位 ' + Math.round(v[3]).toLocaleString() + '字<br>最大 ' + Math.round(v[4]).toLocaleString() + '字';
+  }},
+  grid: { left: 35, right: 18, top: 48, bottom: 65, containLabel: true },
+  xAxis: { type: 'category', data: boxGroups.map(g=>g.label), axisLabel: { ...advancedFontText, rotate: 15 } },
+  yAxis: { type: 'value', name: '文字数', axisLabel: advancedFontText, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
+  series: [{
+    type: 'boxplot', data: boxGroups.map(g=>({ value: advancedBoxStats(g.rows), itemStyle: { color: g.color, borderColor: g.color } })),
+    itemStyle: { borderWidth: 2 }, boxWidth: ['30%','58%']
+  }]
+});
+const themeRiverData = [];
+sortedMonths.forEach(month => {
+  ['社務所だより','神籤草子'].forEach(medium => {
+    const value = advancedArticles.filter(a=>a.month===month && a.mediumLabel===medium).length;
+    themeRiverData.push([month, value, medium]);
+  });
+});
+const chartAdvancedThemeRiver = createDashboardChart(document.getElementById('chart-advanced-themeriver'));
+chartAdvancedThemeRiver.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'axis' },
+  legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: advancedFontText },
+  singleAxis: {
+    type: 'category', data: sortedMonths, boundaryGap: false, top: 42, bottom: 42,
+    axisLabel: { ...advancedFontText, interval: Math.max(0, Math.ceil(sortedMonths.length/8)-1), rotate: 20 },
+    axisLine: { lineStyle: { color: '#d4c4a0' } }, axisTick: { show: false }
+  },
+  series: [{
+    type: 'themeRiver', data: themeRiverData, emphasis: { itemStyle: { shadowBlur: 18, shadowColor: 'rgba(92,51,23,.25)' } },
+    label: { show: false }, itemStyle: { opacity: .86 }
+  }]
+});
+const graphNodes = [
+  { id: 'medium:news', name: '社務所だより', category: 0, symbolSize: 54, itemStyle: { color: '#c0392b' }, label: { show: true, color: '#fffdfa', fontFamily: advancedFont, fontSize: 11 } },
+  { id: 'medium:col', name: '神籤草子', category: 0, symbolSize: 54, itemStyle: { color: '#b8860b' }, label: { show: true, color: '#fffdfa', fontFamily: advancedFont, fontSize: 11 } }
+];
+const graphLinks = [];
+const graphCategorySeen = new Set();
+advancedArticles.forEach(article => {
+  const id = article.type + ':' + article.classification;
+  if (!graphCategorySeen.has(id)) {
+    graphCategorySeen.add(id);
+    graphNodes.push({ id, name: article.classification, category: 1, symbolSize: 18, value: 0, itemStyle: { color: article.type==='news'?'#d98275':'#d4ad54' }, label: { show: true, color: '#5c3317', fontFamily: advancedFont, fontSize: 9 } });
+  }
+  const edgeId = id;
+  let edge = graphLinks.find(link=>link.target===edgeId);
+  if (!edge) {
+    edge = { source: article.type==='news'?'medium:news':'medium:col', target: edgeId, value: 0, lineStyle: { color: article.type==='news'?'#c0392b':'#b8860b' } };
+    graphLinks.push(edge);
+  }
+  edge.value++;
+  graphNodes.find(node=>node.id===edgeId).value++;
+});
+const chartAdvancedGraph = createDashboardChart(document.getElementById('chart-advanced-graph'));
+chartAdvancedGraph.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, formatter: p => p.dataType==='edge'
+    ? p.data.source + ' → ' + p.data.target + '<br>記事数: ' + p.data.value + '件'
+    : '<strong>' + p.name + '</strong>' + (p.value ? '<br>記事数: ' + p.value + '件' : '') },
+  legend: [{ data: ['媒体','分類'], top: 4, textStyle: advancedFontText }],
+  series: [{
+    type: 'graph', layout: 'force', data: graphNodes, links: graphLinks,
+    categories: [{ name: '媒体' },{ name: '分類' }],
+    roam: true, draggable: true, gravity: .08, repulsion: 260, edgeLength: [70,170],
+    label: { show: true, position: 'right', fontFamily: advancedFont, fontSize: 10, color: '#5c3317' },
+    lineStyle: { opacity: .55, curveness: .08 },
+    emphasis: { focus: 'adjacency', lineStyle: { width: 4 } }
+  }]
+});
+const parallelRows = advancedArticles.map(a => [a.id, a.chars, a.dayOffset, a.type==='news'?0:1]);
+const chartAdvancedParallel = createDashboardChart(document.getElementById('chart-advanced-parallel'));
+chartAdvancedParallel.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
+    const row = p.data;
+    const article = advancedArticles.find(a=>a.id===row[0] && a.type===(row[3]===0?'news':'col'));
+    return article ? '<strong>#' + article.id + ' ' + article.title.slice(0,34) + '</strong><br>媒体: ' + article.mediumLabel + '<br>文字数: ' + article.chars.toLocaleString() + '字<br>公開日: ' + article.date.toLocaleDateString('ja-JP') : '';
+  }},
+  parallel: { left: 48, right: 35, top: 55, bottom: 38 },
+  parallelAxis: [
+    { dim: 0, name: '記事ID', type: 'value', min: Math.min(...parallelRows.map(r=>r[0])), max: Math.max(...parallelRows.map(r=>r[0])), nameTextStyle: advancedFontText, axisLabel: advancedFontText },
+    { dim: 1, name: '文字数', type: 'value', min: 0, nameTextStyle: advancedFontText, axisLabel: advancedFontText },
+    { dim: 2, name: '期間内の日数', type: 'value', min: 0, max: activeDayCount, nameTextStyle: advancedFontText, axisLabel: advancedFontText },
+    { dim: 3, name: '媒体', type: 'category', data: ['ニュース','コラム'], nameTextStyle: advancedFontText, axisLabel: advancedFontText }
+  ],
+  series: [
+    { name: '社務所だより', type: 'parallel', data: parallelRows.filter(r=>r[3]===0), lineStyle: { color: '#c0392b', opacity: .18, width: 1.2 }, smooth: false },
+    { name: '神籤草子', type: 'parallel', data: parallelRows.filter(r=>r[3]===1), lineStyle: { color: '#b8860b', opacity: .24, width: 1.2 }, smooth: false }
+  ]
+});
+function advancedMedian(values) {
+  const sorted = [...values].sort((a,b)=>a-b);
+  return sorted.length ? advancedQuantile(sorted,.5) : 0;
+}
+function advancedMetricRows(type) {
+  const rows = advancedArticles.filter(a=>a.type===type);
+  const dates = [...new Set(rows.map(a=>a.month))];
+  return {
+    count: rows.length,
+    average: rows.reduce((sum,a)=>sum+a.chars,0)/(rows.length||1),
+    median: advancedMedian(rows.map(a=>a.chars)),
+    max: Math.max(0,...rows.map(a=>a.chars)),
+    classes: new Set(rows.map(a=>a.classification)).size,
+    months: dates.length
+  };
+}
+const newsMetrics = advancedMetricRows('news');
+const colMetrics = advancedMetricRows('col');
+const metricKeys = ['count','average','median','max','classes','months'];
+const metricLabels = ['記事数','平均文字数','中央値','最大文字数','分類数','活動月数'];
+const metricMaxima = metricKeys.map(key=>Math.max(newsMetrics[key],colMetrics[key])||1);
+const radarSeries = [
+  { name: '社務所だより', value: metricKeys.map((key,i)=>Math.round(newsMetrics[key]/metricMaxima[i]*100)), itemStyle: { color: '#c0392b' }, lineStyle: { color: '#c0392b', width: 2 }, areaStyle: { color: 'rgba(192,57,43,.15)' } },
+  { name: '神籤草子', value: metricKeys.map((key,i)=>Math.round(colMetrics[key]/metricMaxima[i]*100)), itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2 }, areaStyle: { color: 'rgba(184,134,11,.15)' } }
+];
+const chartAdvancedRadar = createDashboardChart(document.getElementById('chart-advanced-radar'));
+chartAdvancedRadar.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
+    const metric = p.data.name==='社務所だより'?newsMetrics:colMetrics;
+    return '<strong>'+p.data.name+'</strong><br>'+metricLabels.map((label,i)=>label+': '+Math.round(metric[metricKeys[i]]).toLocaleString()+(i===0||i===4||i===5?'件':'字')).join('<br>');
+  }},
+  legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: advancedFontText },
+  radar: {
+    center: ['50%','49%'], radius: '66%',
+    indicator: metricLabels.map(name=>({ name, max: 100 })),
+    axisName: { color: '#5c3317', fontFamily: advancedFont, fontSize: 10 },
+    splitArea: { areaStyle: { color: ['#fffdfa','#faf6ef'] } },
+    splitLine: { lineStyle: { color: '#d4c4a0' } },
+    axisLine: { lineStyle: { color: '#d4c4a0' } }
+  },
+  series: [{ type: 'radar', data: radarSeries }]
+});
+
 const dashboardCharts = [
   { chart: chartMonthly, label: '月別投稿数', options: { magic: true } },
   { chart: chartMonthlyAvg, label: '月別ニュース文字数と平均文字数', options: { magic: true } },
@@ -4604,7 +4983,15 @@ const dashboardCharts = [
   { chart: chartHist, label: '記事長ヒストグラム' },
   { chart: chartScatter, label: '記事IDと文字数の関係', options: { brush: true } },
   { chart: chartTagLen, label: 'ニュースタグ別平均文字数' },
-  { chart: chartCatLen, label: 'コラムカテゴリ別平均文字数' }
+  { chart: chartCatLen, label: 'コラムカテゴリ別平均文字数' },
+  { chart: chartAdvancedTreemap, label: '媒体・分類別記事構成' },
+  { chart: chartAdvancedSunburst, label: '媒体・分類・記事長の階層' },
+  { chart: chartAdvancedSankey, label: '媒体から分類・記事長への流れ' },
+  { chart: chartAdvancedBoxplot, label: '媒体・分類別文字数分布' },
+  { chart: chartAdvancedThemeRiver, label: '月別媒体構成の変化' },
+  { chart: chartAdvancedGraph, label: '媒体と分類の関係ネットワーク' },
+  { chart: chartAdvancedParallel, label: '記事単位の多変量比較' },
+  { chart: chartAdvancedRadar, label: '媒体別特徴プロファイル' }
 ];
 
 const selectableLineCharts = dashboardCharts.filter(({ chart }) =>
