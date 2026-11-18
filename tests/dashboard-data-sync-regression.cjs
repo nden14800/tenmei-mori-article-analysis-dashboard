@@ -180,6 +180,10 @@ assert(/\.charts-grid > \.chart-card:last-child:nth-child\(odd\)/.test(html), '�
 assert(/id="chart-advanced-radar"[^<]*|class="chart-card advanced-chart-card advanced-chart-wide"[\s\S]*?id="chart-advanced-radar"/.test(html), '詳細分析の最後のレーダー図は全幅で行を埋めます');
 assert(/\.advanced-charts-grid:not\(\.advanced-charts-grid-extra\) > \.advanced-chart-card:last-child[\s\S]*?grid-column:\s*1\s*\/\s*-1\s*!important/.test(html), '詳細分析の最初のグループで右側の空白列を作りません');
 
+
+assert(/class="chart-card advanced-chart-card advanced-chart-wide"[\s\S]{0,500}id="chart-advanced-lengthband"/.test(html), '長さ帯比較は次の全幅グラフの前で空白列を作らないよう全幅にします');
+assert(/class="chart-card advanced-chart-card advanced-chart-wide"[\s\S]{0,500}id="chart-advanced-intensity"/.test(html), '活動日あたりの記事数は次の全幅ECDFの前で空白列を作らないよう全幅にします');
+
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
   .map((match) => match[1])
   .filter((script) => script.trim());
