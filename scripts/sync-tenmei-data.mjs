@@ -166,7 +166,7 @@ const colChars = Object.fromEntries(colSource.map(a => {
 // 自動同期で index.html の配列を書き換えても、既存38件の文章を一文字も失わない。
 // 元サイトにこの分析文章の正本が存在しないため、現在のダッシュボード文を保護対象として扱う。
 function extractInsights(text) {
-  const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div>([\s\S]*?)<\/div>\s*<\/div>/g;
+  const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><p class="chart-desc-copy">([\s\S]*?)<\/p><\/div>/g;
   return [...text.matchAll(re)].map(m => m[1]);
 }
 const insightsBefore = extractInsights(dashboard);
