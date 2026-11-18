@@ -131,6 +131,22 @@ const inlineScriptMatch = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/scrip
 assert(inlineScriptMatch, '記事データを含むスクリプトが必要です');
 assert(!/\sstyle="/.test(html.slice(0, inlineScriptMatch.index)), '静的HTMLに個別のインラインスタイルを残しません');
 
+const remainingStyleAttributes = [...html.matchAll(/\sstyle="([^"]*)"/g)].map((match) => match[1]);
+assert.strictEqual(remainingStyleAttributes.length, 2, '動的なデータ色・進捗幅以外のインラインスタイルを残しません');
+assert(remainingStyleAttributes.some((value) => value.startsWith('--bar-width:')) && remainingStyleAttributes.some((value) => value.startsWith('--tag-color:')), '残すインライン値はデータ由来のCSS変数だけにします');
+
+const approvedPalette = new Set([
+  '#302923', '#8f252b', '#c4a059', '#d5b16b', '#55443a', '#786e67',
+  '#f7f2ed', '#e7ded7', '#718b7b', '#7188a4', '#8b7898', '#ead8c8',
+  '#9b793d', '#5f1717', '#89631f', '#fffdfb', '#302923dd', '#302923ee'
+]);
+const usedColors = [...new Set([...html.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((match) => match[0].toLowerCase()))];
+assert(usedColors.every((color) => approvedPalette.has(color)), '色は天命乃杜の統一パレット内に収めます');
+assert(html.includes('.char-bar__track') && html.includes('.char-bar__fill'), '文字数バーを共通コンポーネントで描画します');
+assert(html.includes('style="--tag-color:\${color}"'), 'タグ色は共通バッジのCSS変数で渡します');
+assert(!html.includes('Treemap') && !html.includes('ThemeRiver') && !html.includes('Pareto'), 'グラフ説明の専門用語は日本語表記に統一します');
+
+
 const summaryStart = html.indexOf('  <!-- MEGA SUMMARY -->');
 const summaryEnd = html.indexOf('  <!-- ARTICLE TABLES -->', summaryStart);
 assert(summaryStart >= 0 && summaryEnd > summaryStart, '総合分析本文が必要です');
