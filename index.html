@@ -2030,7 +2030,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
 
 
     
-    <div class="chart-card advanced-chart-card">
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体別の記事長クラス比較（グループ棒グラフ）</div>
       <div class="chart-box chart-box-advanced chart-box-compact" id="chart-advanced-lengthband"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy">記事を500字未満、500〜999字、1,000〜1,999字、2,000〜3,999字、4,000字以上の五つの帯に分け、ニュースとコラムの本数を並列棒で比較します。各帯の棒は同じゼロ基準から始まるため、媒体ごとの件数差を積み上げ図より直接読み取りやすくなります。全体の構成比だけでなく、どの文字数帯に記事が集まっているか、長文帯がどちらの媒体に多いかを確認できます。ただし、区分の境界は分析上の便宜的な設定であり、記事の難易度や完成度を示す基準ではありません。記事数の多い媒体は複数の帯で件数も増えやすいため、構成比を比べたい場合は各媒体の総記事数も確認してください。記事長ヒストグラムや経験累積分布（ECDF）と組み合わせれば、区分の中にある細かな分布や中央値付近の違いも補えます。境界値の近くにある記事はわずかな文字数差で別の帯に移るため、分類の差を過度に意味づけず、個別の文字数も必要に応じて確認してください。件数の比較と割合の比較は別の問いです。媒体ごとの記事総数が異なる場合は、各棒を媒体内の総数で割った割合も併せて考え、母数の違いによる見かけの差に注意してください。</p></div>
@@ -2065,7 +2065,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       <div class="chart-box chart-box-advanced" id="chart-advanced-active-days"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy">月ごとに、ニュースとコラムがそれぞれ何日間公開されたかを数えます。記事の本数ではなく、少なくとも一件の公開があった日を一日として集計するため、投稿活動が月内のどれくらいの日に分散しているかを確認できます。同じ日に同じ媒体の記事が複数本公開されても活動日数は一日です。投稿本数が多い月でも活動日数が少なければ、限られた日にまとめて公開された可能性があります。逆に活動日数が多ければ、月内の複数日にわたって公開が行われたことを示します。ただし、月の日数は28〜31日で異なり、期間の最初と最後には不完全な月が含まれる場合があります。月をまたいだ比較では、月の日数や収録期間の端にも注意してください。月別投稿数と一活動日あたりの記事数を合わせて見ると、活動頻度と一日の投稿量を分けて解釈できます。活動日数は制作日数や作業時間ではなく、公開記録から確認できる日数です。月によって日数の違いがあるため、活動日数だけで規則性を決めつけず、カレンダー上の分布や対象期間も確認してください。</p></div>
     </div>
-    <div class="chart-card advanced-chart-card">
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">一活動日あたりの記事数</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-intensity"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy">月ごとの記事本数を、その媒体で記事が公開された日数で割り、一活動日あたりの平均公開本数を表示します。月間投稿数だけでは、毎日のように少しずつ公開したのか、少数の日に複数本をまとめて公開したのかを区別できません。この指標は活動日数を分母にすることで、公開があった日の投稿密度を比較しやすくします。値が高い月は活動日に複数記事が公開される傾向があり、値が低い月は活動日あたりの公開本数が少ないことを示します。記事が一件もない月は割り算を行わず、欠測として表示します。活動日数が一日しかない月は、その日の本数がそのまま平均値になるため、他の月より値が大きく変動しやすい点に注意してください。月別投稿数と活動日数のグラフを併用し、分母の違いを確認してから比較することが重要です。この値は公開頻度の指標であり、記事の品質や執筆負荷を測定するものではありません。値が同じでも、月内のどの日に公開が集中したかまでは表さないため、日別タイムラインやヒートマップで実際の公開日の配置も確かめてください。</p></div></div>
