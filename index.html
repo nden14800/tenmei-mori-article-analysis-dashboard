@@ -182,8 +182,8 @@
   .stat-card:nth-child(2) { border-top-color: var(--gold); animation-delay: 0.1s; }
   .stat-card:nth-child(3) { border-top-color: var(--cedar); animation-delay: 0.2s; }
   .stat-card:nth-child(4) { border-top-color: var(--deep-red); animation-delay: 0.3s; }
-  .stat-card:nth-child(5) { border-top-color: #718b7b; animation-delay: 0.4s; }
-  .stat-card:nth-child(6) { border-top-color: #7188a4; animation-delay: 0.5s; }
+  .stat-card:nth-child(5) { border-top-color: var(--viz-sage); animation-delay: 0.4s; }
+  .stat-card:nth-child(6) { border-top-color: var(--viz-blue); animation-delay: 0.5s; }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -610,8 +610,8 @@
     animation: fadeUp 0.5s ease both;
   }
   .insight-box:nth-child(2) { border-left-color: var(--gold); }
-  .insight-box:nth-child(3) { border-left-color: #718b7b; }
-  .insight-box:nth-child(4) { border-left-color: #7188a4; }
+  .insight-box:nth-child(3) { border-left-color: var(--viz-sage); }
+  .insight-box:nth-child(4) { border-left-color: var(--viz-blue); }
 
   .insight-title {
     font-size: 0.78rem;
@@ -1546,8 +1546,8 @@
  --ver4-surface:var(--tm-paper);--ver4-surface-muted:var(--tm-soft);--ver4-line:var(--tm-border);
  --ver4-red:var(--tm-red);--ver4-red-dark:#5f1717;--ver4-gold:var(--tm-gold);--ver4-text-muted:var(--tm-muted);
  --ver4-focus:rgba(143,37,43,.16);
- --viz-news:var(--tm-red);--viz-col:var(--tm-gold);--viz-ink:var(--tm-ink);
- --viz-sage:#718b7b;--viz-blue:#7188a4;--viz-plum:#8b7898;--viz-paper:var(--tm-paper);
+ --viz-news:var(--tm-red);--viz-col:#9b742e;--viz-ink:var(--tm-ink);
+ --viz-sage:#246a73;--viz-blue:#416a9c;--viz-plum:#76539a;--viz-orange:#b45232;--viz-green:#4f7542;--viz-rose:#a34768;--viz-slate:#56616f;--viz-paper:var(--tm-paper);
  --viz-line:var(--tm-border);--viz-muted:var(--tm-muted);
 }
 html{scroll-behavior:smooth;scroll-padding-top:1.5rem}
@@ -6239,34 +6239,114 @@ const dashboardCharts = [
 
 // 全グラフ共通の視覚調整。ライブラリ・バージョン・描画エンジンは変更しない。
 function polishDashboardChartOptions() {
- const font=dashboardChartFont,palette=['#8f252b','#c4a059','#718b7b','#7188a4','#8b7898','#9b793d','#786e67'],paletteSet=new Set(palette);
- const mediumColor=n=>/ニュース|社務所だより/.test(String(n||''))?palette[0]:/コラム|神籤草子/.test(String(n||''))?palette[1]:null;
- const stableColor=(n,i=0)=>{const v=String(n||'');if(!v)return palette[i%palette.length];let h=2166136261;for(let j=0;j<v.length;j++)h=Math.imul(h^v.charCodeAt(j),16777619);return palette[(h>>>0)%palette.length];};
- const resolveColor=(n,e,i=0)=>mediumColor(n)||(typeof e==='string'&&paletteSet.has(e.toLowerCase())?e.toLowerCase():stableColor(n,i));
- const axisStyle=a=>({...a,axisLine:{...a.axisLine,lineStyle:{...a.axisLine?.lineStyle,color:'#e7ded7',width:1}},axisTick:{...a.axisTick,lineStyle:{...a.axisTick?.lineStyle,color:'#e7ded7'}},axisLabel:{...a.axisLabel,color:'#786e67',fontFamily:font,fontSize:a.axisLabel?.fontSize||11,margin:a.axisLabel?.margin||10},nameTextStyle:{...a.nameTextStyle,color:'#786e67',fontFamily:font,fontSize:11,fontWeight:600},splitLine:{...a.splitLine,show:a.splitLine?.show===false?false:(a.splitLine?.show??['value','time','log'].includes(a.type)),lineStyle:{...a.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}}});
- const tree=nodes=>(nodes||[]).map((n,i)=>({...n,itemStyle:{...n.itemStyle,color:resolveColor(n.name,n.itemStyle?.color,i),borderColor:'#fffdfb',borderWidth:1},...(n.children?{children:tree(n.children)}:{})}));
- dashboardCharts.forEach(({chart})=>{try{if(!chart||chart.isDisposed?.())return;const c=chart.getOption()||{},p={backgroundColor:'transparent',color:palette,animationDuration:520,animationDurationUpdate:320,textStyle:{fontFamily:font,color:'#55443a',fontSize:12},tooltip:{...c.tooltip?.[0],backgroundColor:'rgba(48,41,35,.97)',borderColor:'#c4a059',borderWidth:1,padding:[11,14],textStyle:{...c.tooltip?.[0]?.textStyle,fontFamily:font,color:'#fffdfb',fontSize:12},extraCssText:'border-radius:10px;box-shadow:0 10px 28px rgba(48,41,35,.16);'},axisPointer:{...c.axisPointer?.[0],lineStyle:{color:'#c4a059',width:1,type:'dashed'},crossStyle:{color:'#c4a059'}},toolbox:{...c.toolbox?.[0],show:true,right:8,top:6,itemSize:14,itemGap:8,backgroundColor:'rgba(247,242,237,.94)',borderColor:'#e7ded7',borderWidth:1,iconStyle:{...c.toolbox?.[0]?.iconStyle,borderColor:'#55443a'},emphasis:{...c.toolbox?.[0]?.emphasis,iconStyle:{borderColor:'#8f252b'}}}};
- if(c.legend?.length)p.legend=c.legend.map(l=>({...l,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',textStyle:{...l.textStyle,fontFamily:font,color:'#55443a',fontSize:11},pageTextStyle:{fontFamily:font,color:'#55443a'}}));
- if(c.xAxis?.length)p.xAxis=c.xAxis.map(axisStyle);if(c.yAxis?.length)p.yAxis=c.yAxis.map(axisStyle);if(c.singleAxis?.length)p.singleAxis=c.singleAxis.map(axisStyle);
- if(c.parallelAxis?.length)p.parallelAxis=c.parallelAxis.map(a=>({...a,nameTextStyle:{...a.nameTextStyle,fontFamily:font,color:'#55443a',fontSize:11},axisLabel:{...a.axisLabel,fontFamily:font,color:'#786e67',fontSize:10},axisLine:{...a.axisLine,lineStyle:{...a.axisLine?.lineStyle,color:'#e7ded7'}}}));
- if(c.grid?.length)p.grid=c.grid.map(g=>({...g,containLabel:g.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
- if(c.visualMap?.length)p.visualMap=c.visualMap.map(v=>({...v,inRange:{...v.inRange,color:['#fffdfb','#ead8c8','#c4a059','#8f252b']},textStyle:{...v.textStyle,fontFamily:font,color:'#55443a'}}));
- if(c.dataZoom?.length)p.dataZoom=c.dataZoom.map(z=>({...z,borderColor:'#e7ded7',backgroundColor:'#f7f2ed',fillerColor:'rgba(196,160,89,.22)',handleStyle:{...z.handleStyle,color:'#fffdfb',borderColor:'#9b793d'},moveHandleStyle:{...z.moveHandleStyle,color:'#c4a059'},textStyle:{...z.textStyle,fontFamily:font,color:'#786e67'}}));
- if(c.series?.length)p.series=c.series.map((s,i)=>{const color=resolveColor(s.name,s.itemStyle?.color||s.lineStyle?.color||s.areaStyle?.color,i),o={};
-  if(s.type==='line'){o.lineStyle={...s.lineStyle,color,width:s.lineStyle?.width||2.5};o.itemStyle={...s.itemStyle,color};if(s.symbolSize==null)o.symbolSize=6;}
-  else if(s.type==='bar'){o.itemStyle={...s.itemStyle,color,borderRadius:s.itemStyle?.borderRadius??[4,4,0,0]};o.barMaxWidth=s.barMaxWidth||36;}
-  else if(s.type==='scatter')o.itemStyle={...s.itemStyle,color,opacity:s.itemStyle?.opacity??.76};
-  else if(s.type==='boxplot'){o.itemStyle={...s.itemStyle,color,borderColor:color,borderWidth:2};if(Array.isArray(s.data))o.data=s.data.map((d,j)=>({...d,itemStyle:{...d.itemStyle,color:resolveColor(d.name,d.itemStyle?.color,j),borderColor:resolveColor(d.name,d.itemStyle?.borderColor||d.itemStyle?.color,j)}}));}
-  else if(s.type==='radar'){if(Array.isArray(s.data)&&s.data.length)o.data=s.data.map((d,j)=>{const cc=resolveColor(d.name,d.itemStyle?.color||d.lineStyle?.color||d.areaStyle?.color,j);return {...d,itemStyle:{...d.itemStyle,color:cc},lineStyle:{...d.lineStyle,color:cc,width:d.lineStyle?.width||2.4},areaStyle:{...d.areaStyle,color:cc,opacity:d.areaStyle?.opacity??.12}};});else{o.lineStyle={...s.lineStyle,color,width:2.4};o.itemStyle={...s.itemStyle,color};o.areaStyle={...s.areaStyle,color,opacity:s.areaStyle?.opacity??.12};}}
-  else if(s.type==='parallel')o.lineStyle={...s.lineStyle,color,opacity:s.lineStyle?.opacity??.3};
-  else if(s.type==='sankey'){o.lineStyle={...s.lineStyle,opacity:s.lineStyle?.opacity??.32};if(Array.isArray(s.data))o.data=s.data.map((n,j)=>({...n,itemStyle:{...n.itemStyle,color:resolveColor(n.name,n.itemStyle?.color,j)}}));o.label={...s.label,fontFamily:font,color:'#55443a',fontSize:10};}
-  else if(s.type==='treemap'){o.data=tree(s.data);o.label={...s.label,fontFamily:font,color:'#fffdfb',fontSize:11};o.upperLabel={...s.upperLabel,fontFamily:font,color:'#fffdfb'};o.itemStyle={...s.itemStyle,borderColor:'#fffdfb',borderWidth:2};}
-  else if(s.type==='pie'||s.type==='funnel'){o.colorBy='data';o.label={...s.label,fontFamily:font,color:'#55443a',fontSize:11};o.labelLine={...s.labelLine,lineStyle:{...s.labelLine?.lineStyle,color:'#e7ded7'}};if(Array.isArray(s.data))o.data=s.data.map((d,j)=>({...d,itemStyle:{...d.itemStyle,color:resolveColor(d.name,d.itemStyle?.color,j)}}));}
-  else if(s.type==='heatmap')o.itemStyle={...s.itemStyle,borderColor:'#fffdfb',borderWidth:1};
-  else if(s.type==='themeRiver')o.itemStyle={...s.itemStyle,opacity:.9};return o;});
- if(c.calendar?.length)p.calendar=c.calendar.map(v=>({...v,itemStyle:{...v.itemStyle,borderColor:'#fffdfb',borderWidth:1},dayLabel:{...v.dayLabel,color:'#786e67',fontFamily:font,fontSize:10},monthLabel:{...v.monthLabel,color:'#55443a',fontFamily:font,fontSize:11},yearLabel:{...v.yearLabel,color:'#55443a',fontFamily:font,fontSize:13}}));
- chart.setOption(p);
- }catch(error){console.warn('[Dashboard shared chart theme]',chart.getDom?.()?.id,error);}});
+ const font=dashboardChartFont;
+ const palette=['#8f252b','#9b742e','#246a73','#416a9c','#76539a','#b45232','#4f7542','#a34768','#56616f','#8c6d3f','#2c8791','#7b654f'];
+ const paletteSet=new Set(palette);
+ const mediumColor=name=>/ニュース|社務所だより/.test(String(name||''))?palette[0]:(/コラム|神籤草子/.test(String(name||''))?palette[1]:null);
+ const hashIndex=name=>{const value=String(name||'');let hash=2166136261;for(let i=0;i<value.length;i++)hash=Math.imul(hash^value.charCodeAt(i),16777619);return hash>>>0;};
+ const createColorResolver=()=>{
+  const used=new Set(),assigned=new Map();
+  return (name,existing,index=0)=>{
+   const key=String(name||'').trim()||('series-'+index);
+   if(assigned.has(key))return assigned.get(key);
+   const semantic=mediumColor(key);
+   if(semantic){assigned.set(key,semantic);used.add(semantic);return semantic;}
+   const preferred=typeof existing==='string'&&paletteSet.has(existing.toLowerCase())?existing.toLowerCase():null;
+   const seed=preferred?palette.indexOf(preferred):hashIndex(key)%palette.length;
+   let color=null;
+   for(let step=0;step<palette.length;step++){const candidate=palette[(seed+step)%palette.length];if(!used.has(candidate)){color=candidate;break;}}
+   if(!color)color=palette[(seed+index)%palette.length];
+   assigned.set(key,color);used.add(color);return color;
+  };
+ };
+ const axisStyle=(axis,role='x',integerValues=false)=>{
+  const type=axis.type||'value',numeric=type==='value';
+  const percentAxis=/割合|比率|構成比|パーセント|百分率|%/.test(String(axis.name||''))||Number(axis.max)===100;
+  const countAxis=integerValues||/件|記事数|投稿数|分類数|活動日数|日数|回数|公開件数/.test(String(axis.name||''));
+  return {
+   ...axis,
+   ...(numeric&&role==='y'&&!percentAxis?{max:null}:{}),
+   ...(numeric&&countAxis?{minInterval:axis.minInterval??1}:{}),
+   ...(numeric&&axis.splitNumber==null?{splitNumber:5}:{}),
+   axisLine:{...axis.axisLine,lineStyle:{...axis.axisLine?.lineStyle,color:'#e7ded7',width:1}},
+   axisTick:{...axis.axisTick,show:axis.axisTick?.show??false,lineStyle:{...axis.axisTick?.lineStyle,color:'#e7ded7'}},
+   axisLabel:{...axis.axisLabel,color:'#786e67',fontFamily:font,fontSize:axis.axisLabel?.fontSize||11,margin:axis.axisLabel?.margin||10,hideOverlap:axis.axisLabel?.hideOverlap??true},
+   nameTextStyle:{...axis.nameTextStyle,color:'#55443a',fontFamily:font,fontSize:11,fontWeight:600},
+   splitLine:{...axis.splitLine,show:axis.splitLine?.show===false?false:(axis.splitLine?.show??numeric),lineStyle:{...axis.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}}
+  };
+ };
+ const colorizeTree=(nodes,resolver)=>(nodes||[]).map((node,index)=>({...node,itemStyle:{...node.itemStyle,color:resolver(node.name,node.itemStyle?.color,index),borderColor:'#fffdfb',borderWidth:1},...(node.children?{children:colorizeTree(node.children,resolver)}:{})}));
+ dashboardCharts.forEach(({chart})=>{
+  try{
+   if(!chart||chart.isDisposed?.())return;
+   const current=chart.getOption()||{},series=current.series||[];
+   const resolveColor=createColorResolver();
+   const integerForAxis=axisIndex=>{
+    const relevant=series.filter(item=>(item.yAxisIndex||0)===axisIndex&&['bar','line'].includes(item.type));
+    const values=relevant.flatMap(item=>(item.data||[]).flat(Infinity)).map(value=>Array.isArray(value)?value[value.length-1]:value).filter(value=>typeof value==='number'&&Number.isFinite(value));
+    return values.length>0&&values.every(Number.isInteger);
+   };
+   const option={
+    backgroundColor:'transparent',color:palette,animationDuration:520,animationDurationUpdate:320,
+    textStyle:{fontFamily:font,color:'#55443a',fontSize:12},
+    tooltip:{...current.tooltip?.[0],backgroundColor:'rgba(48,41,35,.97)',borderColor:'#c4a059',borderWidth:1,padding:[11,14],textStyle:{...current.tooltip?.[0]?.textStyle,fontFamily:font,color:'#fffdfb',fontSize:12},extraCssText:'border-radius:10px;box-shadow:0 10px 28px rgba(48,41,35,.16);'},
+    axisPointer:{...current.axisPointer?.[0],lineStyle:{color:'#9b742e',width:1,type:'dashed'},crossStyle:{color:'#9b742e'}},
+    toolbox:{...current.toolbox?.[0],show:true,right:8,top:6,itemSize:14,itemGap:8,backgroundColor:'rgba(247,242,237,.94)',borderColor:'#e7ded7',borderWidth:1,iconStyle:{...current.toolbox?.[0]?.iconStyle,borderColor:'#55443a'},emphasis:{...current.toolbox?.[0]?.emphasis,iconStyle:{borderColor:'#8f252b'}}}
+   };
+   if(current.legend?.length)option.legend=current.legend.map(legend=>({...legend,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',textStyle:{...legend.textStyle,fontFamily:font,color:'#55443a',fontSize:11},pageTextStyle:{fontFamily:font,color:'#55443a'}}));
+   if(current.xAxis?.length)option.xAxis=current.xAxis.map(axis=>axisStyle(axis,'x'));
+   if(current.yAxis?.length)option.yAxis=current.yAxis.map((axis,index)=>axisStyle(axis,'y',integerForAxis(index)));
+   if(current.singleAxis?.length)option.singleAxis=current.singleAxis.map(axis=>axisStyle(axis,'single'));
+   if(current.parallelAxis?.length)option.parallelAxis=current.parallelAxis.map(axis=>({...axis,nameTextStyle:{...axis.nameTextStyle,fontFamily:font,color:'#55443a',fontSize:11},axisLabel:{...axis.axisLabel,fontFamily:font,color:'#786e67',fontSize:10},axisLine:{...axis.axisLine,lineStyle:{...axis.axisLine?.lineStyle,color:'#e7ded7'}}}));
+   if(current.grid?.length)option.grid=current.grid.map(grid=>({...grid,containLabel:grid.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
+   if(current.visualMap?.length)option.visualMap=current.visualMap.map(map=>({...map,inRange:{...map.inRange,color:['#fffdfb','#f1e5d5','#d6b36b','#b65d32','#8f252b']},textStyle:{...map.textStyle,fontFamily:font,color:'#55443a'}}));
+   if(current.dataZoom?.length)option.dataZoom=current.dataZoom.map(zoom=>({...zoom,borderColor:'#e7ded7',backgroundColor:'#f7f2ed',fillerColor:'rgba(155,116,46,.20)',handleStyle:{...zoom.handleStyle,color:'#fffdfb',borderColor:'#9b742e'},moveHandleStyle:{...zoom.moveHandleStyle,color:'#9b742e'},textStyle:{...zoom.textStyle,fontFamily:font,color:'#786e67'}}));
+   if(series.length)option.series=series.map((item,index)=>{
+    const rawColor=item.itemStyle?.color??item.lineStyle?.color??item.areaStyle?.color;
+    const color=typeof rawColor==='function'?rawColor:resolveColor(item.name,rawColor,index);
+    const output={};
+    if(item.type==='line'){
+     output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),width:item.lineStyle?.width||2.5};
+     output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color})};
+     if(item.symbolSize==null)output.symbolSize=6;
+    }else if(item.type==='bar'){
+     output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),borderRadius:item.itemStyle?.borderRadius??[4,4,0,0]};
+     output.barMaxWidth=item.barMaxWidth||36;
+    }else if(item.type==='scatter'){
+     output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),opacity:item.itemStyle?.opacity??.82};
+    }else if(item.type==='boxplot'){
+     output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color,borderColor:color}),borderWidth:item.itemStyle?.borderWidth??2};
+     if(Array.isArray(item.data)){const dataColor=createColorResolver();output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j),borderColor:dataColor(datum.name,datum.itemStyle?.borderColor||datum.itemStyle?.color,j)}}));}
+    }else if(item.type==='radar'){
+     if(Array.isArray(item.data)&&item.data.length){const dataColor=createColorResolver();output.data=item.data.map((datum,j)=>{const next=dataColor(datum.name,datum.itemStyle?.color||datum.lineStyle?.color||datum.areaStyle?.color,j);return {...datum,itemStyle:{...datum.itemStyle,color:next},lineStyle:{...datum.lineStyle,color:next,width:datum.lineStyle?.width||2.4},areaStyle:{...datum.areaStyle,color:next,opacity:datum.areaStyle?.opacity??.14}};});}
+     else{output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),width:item.lineStyle?.width||2.4};output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color})};output.areaStyle={...item.areaStyle,...(typeof color==='function'?{}:{color}),opacity:item.areaStyle?.opacity??.14};}
+    }else if(item.type==='parallel'){
+     output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),opacity:item.lineStyle?.opacity??.34};
+    }else if(item.type==='sankey'){
+     output.lineStyle={...item.lineStyle,opacity:item.lineStyle?.opacity??.38};
+     if(Array.isArray(item.data)){const nodeColor=createColorResolver();output.data=item.data.map((node,j)=>({...node,itemStyle:{...node.itemStyle,color:nodeColor(node.name,node.itemStyle?.color,j)}}));}
+     output.label={...item.label,fontFamily:font,color:'#55443a',fontSize:10};
+    }else if(item.type==='treemap'){
+     output.data=colorizeTree(item.data,createColorResolver());
+     output.label={...item.label,fontFamily:font,color:'#fffdfb',fontSize:11};
+     output.upperLabel={...item.upperLabel,fontFamily:font,color:'#fffdfb'};
+     output.itemStyle={...item.itemStyle,borderColor:'#fffdfb',borderWidth:2};
+    }else if(item.type==='pie'||item.type==='funnel'){
+     output.colorBy='data';
+     output.label={...item.label,fontFamily:font,color:'#55443a',fontSize:11};
+     output.labelLine={...item.labelLine,lineStyle:{...item.labelLine?.lineStyle,color:'#b9a99a'}};
+     if(Array.isArray(item.data)){const dataColor=createColorResolver();output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j)}}));}
+    }else if(item.type==='heatmap'){
+     output.itemStyle={...item.itemStyle,borderColor:'#fffdfb',borderWidth:1};
+    }else if(item.type==='themeRiver'){
+     output.itemStyle={...item.itemStyle,opacity:.92};
+    }
+    return output;
+   });
+   if(current.calendar?.length)option.calendar=current.calendar.map(calendar=>({...calendar,itemStyle:{...calendar.itemStyle,borderColor:'#fffdfb',borderWidth:1},dayLabel:{...calendar.dayLabel,color:'#786e67',fontFamily:font,fontSize:10},monthLabel:{...calendar.monthLabel,color:'#55443a',fontFamily:font,fontSize:11},yearLabel:{...calendar.yearLabel,color:'#55443a',fontFamily:font,fontSize:13}}));
+   chart.setOption(option);
+  }catch(error){console.warn('[Dashboard shared chart theme]',chart.getDom?.()?.id,error);}
+ });
 }
 polishDashboardChartOptions();
 
