@@ -4755,16 +4755,29 @@ chartTagBubble.setOption({
     formatter: p => `${p.data.name}<br>記事数: ${p.data.value[0]}本<br>平均文字数: ${p.data.value[1]}字<br>総文字数: ${p.data.value[2].toLocaleString()}字`,
     backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 }
   },
+  legend: { data: ['分類', '分類のパレート線'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
   grid: { left: '10%', right: '10%', bottom: '15%', top: '15%', containLabel: true },
   xAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f7f2ed' } } },
   yAxis: { type: 'value', name: '平均文字数', nameTextStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { type: 'dashed', color: '#f7f2ed' } } },
   series: [{
+    name: '分類',
     type: 'scatter',
     data: bubbleData,
     symbolSize: p => Math.sqrt(p[2]) * 0.4,
     label: { show: true, formatter: '{b}', position: 'top', color: '#55443a', fontSize: 9, fontFamily: "'Zen Kaku Gothic New', sans-serif" },
     labelLayout: { hideOverlap: true, moveOverlap: 'shiftY' },
     emphasis: { label: { show: true, fontWeight: 700 } }
+  }, {
+    name: '分類のパレート線',
+    type: 'line',
+    data: calculateScatterPareto(bubbleData, row => row.value[0], row => row.value[1]),
+    showSymbol: true,
+    symbol: 'diamond',
+    symbolSize: 7,
+    smooth: false,
+    lineStyle: { color: '#55443a', width: 2.6, type: 'dashed' },
+    itemStyle: { color: '#55443a' },
+    z: 5
   }]
 });
 
