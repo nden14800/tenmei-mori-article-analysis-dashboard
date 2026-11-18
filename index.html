@@ -5207,7 +5207,7 @@ const chartDayOfMonth = createDashboardChart(document.getElementById('chart-day-
 chartDayOfMonth.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: { trigger: 'axis', backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisPointer: { type: 'shadow' } },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
+  legend: { data: ['社務所だより', '神籤草子', 'ニュースのパレート線', 'コラムのパレート線'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
   grid: { left: '6%', right: '4%', top: '12%', bottom: '17%', containLabel: true },
   xAxis: { type: 'category', data: dayOfMonthLabels, name: '月内の日付', nameLocation: 'middle', nameGap: 30, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif", interval: 1 }, axisLine: { lineStyle: { color: '#e7ded7' } } },
   yAxis: { type: 'value', name: '公開件数', minInterval: 1, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
