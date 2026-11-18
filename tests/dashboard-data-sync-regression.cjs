@@ -127,6 +127,13 @@ assert(/\.charts-grid,.charts-grid-3,.advanced-charts-grid\{grid-template-column
 assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(html), 'グラフ内の書体をサイトUIと統一する必要があります');
 assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
+
+assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-18 · b021ef42'), '本体リポジトリの確認コミットを最新に保ちます');
+assert(!html.includes('181e5b3d') && !html.includes('partial') && !html.includes('outage') && !html.includes('operational'), '古い監視状態の文言を残しません');
+assert(html.includes('記事文字数の経験累積分布（ECDF）'), 'ECDFのグラフ名は日本語を主表記にします');
+assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー値を残しません');
+assert(html.includes('<p class="chart-desc-copy">'), '洞察・考察は共通段落構造を維持します');
+
 const inlineScriptMatch = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].find((match) => match[2].includes('const newsData = ['));
 assert(inlineScriptMatch, '記事データを含むスクリプトが必要です');
 assert(!/\sstyle="/.test(html.slice(0, inlineScriptMatch.index)), '静的HTMLに個別のインラインスタイルを残しません');
