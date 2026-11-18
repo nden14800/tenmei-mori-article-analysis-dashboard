@@ -172,6 +172,14 @@ assert(summaryStart >= 0 && summaryEnd > summaryStart, '総合分析本文が必
 const summaryText = html.slice(summaryStart, summaryEnd).replace(/<[^>]+>/g, '').replace(/\s+/g, '');
 assert(Array.from(summaryText).length >= 3000, '総合分析本文の文章量を維持する必要があります');
 
+
+/* Layout regression: no lone chart or unpaired final chart may leave an empty right column. */
+assert(/\.charts-grid > \.chart-card:only-child[\s\S]*?grid-column:\s*1\s*\/\s*-1\s*!important/.test(html), '単独グラフはカードを全幅に広げます');
+assert(/\.charts-grid > \.chart-card\.heatmap-card[\s\S]*?grid-column:\s*1\s*\/\s*-1\s*!important/.test(html), 'ヒートマップは全幅で配置します');
+assert(/\.charts-grid > \.chart-card:last-child:nth-child\(odd\)/.test(html), '奇数個のグラフ群で最後のカードを全幅にします');
+assert(/id="chart-advanced-radar"[^<]*|class="chart-card advanced-chart-card advanced-chart-wide"[\s\S]*?id="chart-advanced-radar"/.test(html), '詳細分析の最後のレーダー図は全幅で行を埋めます');
+assert(/\.advanced-charts-grid:not\(\.advanced-charts-grid-extra\) > \.advanced-chart-card:last-child[\s\S]*?grid-column:\s*1\s*\/\s*-1\s*!important/.test(html), '詳細分析の最初のグループで右側の空白列を作りません');
+
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
   .map((match) => match[1])
   .filter((script) => script.trim());
