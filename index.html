@@ -5562,6 +5562,12 @@ if ('ResizeObserver' in window) {
   dashboardCharts.forEach(({ chart }) => dashboardChartResizeObserver.observe(chart.getDom()));
 }
 
+// Recalculate after web fonts and page visibility settle; ECharts needs final container dimensions.
+if (document.fonts?.ready) document.fonts.ready.then(resizeDashboardCharts).catch(() => {});
+window.addEventListener('pageshow', resizeDashboardCharts, { passive: true });
+window.addEventListener('visibilitychange', () => { if (!document.hidden) resizeDashboardCharts(); }, { passive: true });
+window.requestAnimationFrame(resizeDashboardCharts);
+
 
 
 
