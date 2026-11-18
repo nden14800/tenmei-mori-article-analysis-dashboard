@@ -5,6 +5,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const faviconDir = path.join(root, 'favicon');
+assert(html.includes('<div class="header-kamon"><img src="/favicon/favicon.svg?v=20261118.1"'), 'ページ内のブランドアイコンはダッシュボード自身のfavicon.svgを使用する必要があります。');
 const requiredFiles = [
   'favicon.svg',
   'favicon.ico',
@@ -20,11 +21,11 @@ for (const file of requiredFiles) {
 }
 
 [
-  '<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png?v=20260818.2" sizes="96x96" />',
-  '<link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg?v=20260818.2" sizes="any" />',
-  '<link rel="shortcut icon" type="image/x-icon" href="/favicon/favicon.ico?v=20260818.2" />',
-  '<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png?v=20260818.2" />',
-  '<link rel="manifest" href="/favicon/site.webmanifest?v=20260818.2" />',
+  '<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png?v=20261118.1" sizes="96x96" />',
+  '<link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg?v=20261118.1" sizes="any" />',
+  '<link rel="shortcut icon" type="image/x-icon" href="/favicon/favicon.ico?v=20261118.1" />',
+  '<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png?v=20261118.1" />',
+  '<link rel="manifest" href="/favicon/site.webmanifest?v=20261118.1" />',
 ].forEach((reference) => {
   assert(html.includes(reference), `検索・ブラウザ向けファビコン宣言が不足しています: ${reference}`);
 });
