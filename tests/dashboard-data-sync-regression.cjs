@@ -129,6 +129,11 @@ assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes(
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
 
 assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-18 · b021ef42'), '本体リポジトリの確認コミットを最新に保ちます');
+
+assert(html.includes('.subtitle{font-family:var(--font-main);font-style:italic;color:var(--tm-muted)}'), '副題は本体サイトと同じ明朝の編集見出しにします');
+assert(html.includes('.stat-number{color:var(--stat-accent,var(--tm-red))!important;font-family:var(--font-ui);'), '統計数値はUI書体と等幅数字で揃えます');
+assert(!html.includes('2026年11月18日07:12:07 UTC'), '本文中の時刻表記は日本語に統一します');
+
 assert(!html.includes('181e5b3d') && !html.includes('partial') && !html.includes('outage') && !html.includes('operational'), '古い監視状態の文言を残しません');
 assert(html.includes('記事文字数の経験累積分布（ECDF）'), 'ECDFのグラフ名は日本語を主表記にします');
 assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー値を残しません');
