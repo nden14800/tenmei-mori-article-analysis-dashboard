@@ -2201,6 +2201,26 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       <div class="chart-box chart-box-advanced" id="chart-advanced-monthly-share"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 各月のニュースとコラムの記事数を合計し、その月の総数を100％として媒体ごとの構成比を積み上げ棒で示します。<br><strong class="chart-insight-label">主な傾向</strong> 2026年1月はニュース53本・コラム27本で、構成比は約66.3％対33.8％です。2月は12本対14本となり、コラムが上回りました。 棒全体の高さではなく、各色の帯の比率を見ることで、月ごとの投稿量の増減と媒体構成の変化を切り分けられます。たとえばニュースの比率が高い月でも、総記事数が少なければニュースの実数が多いとは限りません。実数を知りたい場合は月別投稿数のグラフやツールチップを確認し、比率だけで件数を推測しないことが大切です。投稿がない月や集計対象外の月は構成比を定義できないため、0％の媒体がある月とデータ自体がない月を混同しないでください。この図は媒体間の割合の変化を見るもので、記事の品質や読者の関心を示すものではありません。<br><strong class="chart-insight-label">解釈上の注意</strong> この値は公開履歴から得られる記述統計です。執筆の背景や制作時間、記事の正確さ・有用性を直接示すものではないため、関連するグラフや記事一覧と照らし合わせて解釈してください。</p></div>
     </div>
+<div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">タイトルの簡潔さと本文量のパレートフロンティア</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-pareto-frontier"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 各記事をタイトル文字数と本文文字数の二軸に配置し、タイトルは短いほど、本文は長いほど望ましいという二つの目標を同時に比較します。横軸はタイトル文字数、縦軸は本文文字数で、ニュースとコラムを別々の色で表示します。<br><strong class="chart-insight-label">主な傾向</strong> 156本のうち、ニュースは7点、コラムも7点がパレートフロンティア上に残ります。線上の点は、同じ媒体内に「タイトルが同じか短く、本文が同じか長い」記事がほかに存在しない非劣解です。線より内側の点は、タイトルの簡潔さと本文量の両方で別の記事に上回られる組み合わせを示します。フロンティア上では、タイトルを長くする代わりに本文量を増やすなど、二つの目標の間にある実際のトレードオフを確認できます。<br><strong class="chart-insight-label">解釈上の注意</strong> この線はタイトル文字数と本文文字数だけを目的にした比較であり、記事の質・読みやすさ・正確さを評価する総合順位ではありません。ニュースとコラムは別の母集団でフロンティアを算出しています。線上のどの点を選ぶかは、短い題名を優先するか、本文量を優先するかという判断によって変わります。</p></div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">月別の記事文字数分布（ニュースとコラム・箱ひげ図）</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-monthly-boxplot"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 月ごとに記事文字数の最小値、第1四分位、中央値、第3四分位、最大値を箱ひげ図で示します。ニュースとコラムを同じ月軸に並べ、記事長の中心とばらつきを比較します。記事がない月はゼロ字ではなく、集計対象なしとして表示します。<br><strong class="chart-insight-label">主な傾向</strong> 2026年6月の中央値はニュース3,677字・コラム1,311字で、ニュース側の中心値が大きくなっています。一方、1月はニュース562字・コラム625字でコラムが上回ります。月によって媒体間の関係が変わるため、全期間平均だけでは見えない時期ごとの違いを確認できます。箱の高さは中央50％の広がり、中央線は中央値を表し、ひげは観測された最小値と最大値を示します。<br><strong class="chart-insight-label">解釈上の注意</strong> 月ごとの記事数は均等ではなく、2026年9月のニュースは1本、6月はニュース2本です。少数記事の月では箱や中央値が個々の記事に強く左右されます。月別投稿数と併せて母数を確認し、月ごとの分布を安定した傾向と断定しないでください。</p></div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">記事文字数の集中度（ローレンツ曲線・ジニ係数）</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-lorenz"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 記事を文字数の短い順に並べ、横軸に累積記事割合、縦軸に累積文字数割合を置いたローレンツ曲線を表示します。完全に均等な場合の基準線も重ね、記事全体の文章量がどの程度の割合の記事に集まっているかを比較します。<br><strong class="chart-insight-label">主な傾向</strong> ジニ係数はニュース0.435、コラム0.230となり、ニュースの方が記事間の文字数の偏りが大きい結果です。文字数上位20％の記事が占める本文量はニュース51.6％、コラム35.4％で、下位20％ではそれぞれ5.7％・12.2％です。ニュースは一部の長文記事が総文字数を大きく担い、コラムは比較的均等に文章量が分布していることが曲線に表れています。<br><strong class="chart-insight-label">解釈上の注意</strong> ジニ係数は記事文字数の分布だけを測る指標で、内容の価値や品質、読者への影響を示すものではありません。媒体ごとに記事数が異なるため、係数だけで優劣を決めず、中央値・四分位範囲・記事一覧も合わせて確認してください。</p></div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">同一媒体内の公開間隔と記事文字数の関係</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-gap-scatter"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 同じ媒体の直前記事から何日後に公開されたかを横軸、記事本文の文字数を縦軸に置き、記事一件を一つの点として示します。ニュースとコラムは別系列とし、各媒体の最初の記事は比較対象となる直前記事がないため除外します。同日公開の次の記事は0日として扱います。<br><strong class="chart-insight-label">主な傾向</strong> 直前記事からの間隔の中央値はニュース・コラムとも1日ですが、最長はニュース58日、コラム57日です。同日公開による0日間隔もニュース39組、コラム24組あり、短い間隔と長い空白の両方が含まれています。点の分布から、長い空白の後に長文が続く例や、短い間隔で公開された記事の文字数の幅を媒体別に比較できます。<br><strong class="chart-insight-label">解釈上の注意</strong> 公開日の差は記事の制作期間や執筆開始日を表しません。同日公開は複数記事の公開日が一致したことを示すだけで、執筆が同時に行われたという意味ではありません。間隔と文字数に関係が見えても、空白期間が記事を長くしたといった因果関係はこの図から判断できません。</p></div>
+    </div>
   </div>
 
 
@@ -2223,26 +2243,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 記事タイトルの文字数を一定幅の区分にまとめ、ニュースとコラムの分布を比較します。<br><strong class="chart-insight-label">主な傾向</strong> 短いタイトルが多いか、説明的な長いタイトルが多いかを媒体別に把握でき、本文文字数のヒストグラムとは異なる編集上の特徴を確認できます。タイトルの長さの違いがどの媒体や時期に現れるかを確認する入口として使い、個別の記事名を一覧で照合することで、分類や記事形式との関係も追えます。各区分の件数は全期間の累計で、タイトル文字数はUnicode文字単位で数えます。<br><strong class="chart-insight-label">解釈上の注意</strong> 区分境界の近くにあるタイトルは一文字の差で隣の帯へ移るため、区分だけで個別タイトルの違いを大きく解釈しないでください。タイトルの長さは本文量や内容の充実度、検索結果での表示効果を直接測る指標ではありません。媒体ごとの題名の付け方を比較する補助資料として、実際のタイトルと合わせて確認してください。</p></div>
     </div>
 
-    <div class="chart-card advanced-chart-card advanced-chart-wide">
-      <div class="chart-title">タイトルの簡潔さと本文量のパレートフロンティア</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-pareto-frontier"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 各記事をタイトル文字数と本文文字数の二軸に配置し、タイトルは短いほど、本文は長いほど望ましいという二つの目標を同時に比較します。横軸はタイトル文字数、縦軸は本文文字数で、ニュースとコラムを別々の色で表示します。<br><strong class="chart-insight-label">主な傾向</strong> 156本のうち、ニュースは7点、コラムも7点がパレートフロンティア上に残ります。線上の点は、同じ媒体内に「タイトルが同じか短く、本文が同じか長い」記事がほかに存在しない非劣解です。線より内側の点は、タイトルの簡潔さと本文量の両方で別の記事に上回られる組み合わせを示します。フロンティア上では、タイトルを長くする代わりに本文量を増やすなど、二つの目標の間にある実際のトレードオフを確認できます。<br><strong class="chart-insight-label">解釈上の注意</strong> この線はタイトル文字数と本文文字数だけを目的にした比較であり、記事の質・読みやすさ・正確さを評価する総合順位ではありません。ニュースとコラムは別の母集団でフロンティアを算出しています。線上のどの点を選ぶかは、短い題名を優先するか、本文量を優先するかという判断によって変わります。</p></div>
-    </div>
-    <div class="chart-card advanced-chart-card advanced-chart-wide">
-      <div class="chart-title">月別の記事文字数分布（ニュースとコラム・箱ひげ図）</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-monthly-boxplot"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 月ごとに記事文字数の最小値、第1四分位、中央値、第3四分位、最大値を箱ひげ図で示します。ニュースとコラムを同じ月軸に並べ、記事長の中心とばらつきを比較します。記事がない月はゼロ字ではなく、集計対象なしとして表示します。<br><strong class="chart-insight-label">主な傾向</strong> 2026年6月の中央値はニュース3,677字・コラム1,311字で、ニュース側の中心値が大きくなっています。一方、1月はニュース562字・コラム625字でコラムが上回ります。月によって媒体間の関係が変わるため、全期間平均だけでは見えない時期ごとの違いを確認できます。箱の高さは中央50％の広がり、中央線は中央値を表し、ひげは観測された最小値と最大値を示します。<br><strong class="chart-insight-label">解釈上の注意</strong> 月ごとの記事数は均等ではなく、2026年9月のニュースは1本、6月はニュース2本です。少数記事の月では箱や中央値が個々の記事に強く左右されます。月別投稿数と併せて母数を確認し、月ごとの分布を安定した傾向と断定しないでください。</p></div>
-    </div>
-    <div class="chart-card advanced-chart-card advanced-chart-wide">
-      <div class="chart-title">記事文字数の集中度（ローレンツ曲線・ジニ係数）</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-lorenz"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 記事を文字数の短い順に並べ、横軸に累積記事割合、縦軸に累積文字数割合を置いたローレンツ曲線を表示します。完全に均等な場合の基準線も重ね、記事全体の文章量がどの程度の割合の記事に集まっているかを比較します。<br><strong class="chart-insight-label">主な傾向</strong> ジニ係数はニュース0.435、コラム0.230となり、ニュースの方が記事間の文字数の偏りが大きい結果です。文字数上位20％の記事が占める本文量はニュース51.6％、コラム35.4％で、下位20％ではそれぞれ5.7％・12.2％です。ニュースは一部の長文記事が総文字数を大きく担い、コラムは比較的均等に文章量が分布していることが曲線に表れています。<br><strong class="chart-insight-label">解釈上の注意</strong> ジニ係数は記事文字数の分布だけを測る指標で、内容の価値や品質、読者への影響を示すものではありません。媒体ごとに記事数が異なるため、係数だけで優劣を決めず、中央値・四分位範囲・記事一覧も合わせて確認してください。</p></div>
-    </div>
-    <div class="chart-card advanced-chart-card advanced-chart-wide">
-      <div class="chart-title">同一媒体内の公開間隔と記事文字数の関係</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-gap-scatter"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 同じ媒体の直前記事から何日後に公開されたかを横軸、記事本文の文字数を縦軸に置き、記事一件を一つの点として示します。ニュースとコラムは別系列とし、各媒体の最初の記事は比較対象となる直前記事がないため除外します。同日公開の次の記事は0日として扱います。<br><strong class="chart-insight-label">主な傾向</strong> 直前記事からの間隔の中央値はニュース・コラムとも1日ですが、最長はニュース58日、コラム57日です。同日公開による0日間隔もニュース39組、コラム24組あり、短い間隔と長い空白の両方が含まれています。点の分布から、長い空白の後に長文が続く例や、短い間隔で公開された記事の文字数の幅を媒体別に比較できます。<br><strong class="chart-insight-label">解釈上の注意</strong> 公開日の差は記事の制作期間や執筆開始日を表しません。同日公開は複数記事の公開日が一致したことを示すだけで、執筆が同時に行われたという意味ではありません。間隔と文字数に関係が見えても、空白期間が記事を長くしたといった因果関係はこの図から判断できません。</p></div>
-    </div>
+    
 
   </div>
 
