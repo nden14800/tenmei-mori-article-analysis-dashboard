@@ -50,7 +50,7 @@ jobs:
           grep -q 'const newsContentHashes = {' index.html
           grep -q 'const colContentHashes = {' index.html
           grep -q '▍ 洞察・考察' index.html
-          test "$(grep -o 'class="chart-desc-title">▍ 洞察・考察</div>' index.html | wc -l)" -eq 46
+          test "$(grep -o 'class="chart-desc-title">▍ 洞察・考察</div>' index.html | wc -l)" -eq 49
           ! grep -q 'chartDescriptionCopy\|chart-desc-auto' index.html
           node tests/dashboard-data-sync-regression.cjs
 

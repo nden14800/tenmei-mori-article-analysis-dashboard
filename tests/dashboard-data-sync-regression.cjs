@@ -42,6 +42,8 @@ const newsData = extractArray('newsData');
 const colData = extractArray('colData');
 const newsChars = extractObject('newsChars');
 const colChars = extractObject('colChars');
+const newsContentHashes = extractObject('newsContentHashes');
+const colContentHashes = extractObject('colContentHashes');
 const totalNewsChars = Object.values(newsChars).reduce((sum, value) => sum + value, 0);
 const totalColChars = Object.values(colChars).reduce((sum, value) => sum + value, 0);
 const validPublicationTime = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -53,6 +55,10 @@ for (const article of newsData) {
 
 assert.strictEqual(newsData.length, 91, 'ニュース91件を維持する必要があります');
 assert.strictEqual(colData.length, 66, 'コラム66件を維持する必要があります');
+assert.strictEqual(Object.keys(newsContentHashes).length, newsData.length, 'ニュース全件の本文ソースハッシュを保持する必要があります');
+assert.strictEqual(Object.keys(colContentHashes).length, colData.length, 'コラム全件の本文ソースハッシュを保持する必要があります');
+for (const article of newsData) assert(/^[a-f0-9]{64}$/.test(newsContentHashes[String(article.id)] || ''), 'ニュースID' + article.id + 'の本文ソースハッシュが必要です');
+for (const article of colData) assert(/^[a-f0-9]{64}$/.test(colContentHashes[String(article.id)] || ''), 'コラムID' + article.id + 'の本文ソースハッシュが必要です');
 assert.strictEqual(newsData[0].id, 91, '最新ニュースID91を維持する必要があります');
 assert.strictEqual(newsData[0].date, '2026/11/18', '最新ニュースの公開日を維持する必要があります');
 assert.strictEqual(newsData[0].title, '【大規模更新】記事分析ダッシュボードの刷新と、Ver.5.0の今後について', '最新ニュースのタイトルを維持する必要があります');
@@ -201,7 +207,7 @@ assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(ht
 assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
 
-assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-19 · a165e1aa'), '本体リポジトリの確認コミットを最新に保ちます');
+assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-19 · 5988e5ac'), '本体リポジトリの確認コミットを最新に保ちます');
 
 assert(html.includes('.subtitle{font-family:var(--font-main);font-style:italic;color:var(--tm-muted)}'), '副題は本体サイトと同じ明朝の編集見出しにします');
 assert(html.includes('.stat-number{color:var(--stat-accent,var(--tm-red))!important;font-family:var(--font-ui);'), '統計数値はUI書体と等幅数字で揃えます');
