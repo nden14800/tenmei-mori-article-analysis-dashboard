@@ -144,7 +144,7 @@ for (const id of ['chart-advanced-weekday-month-heatmap', 'chart-advanced-title-
 assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength") && html.includes("chart: chartAdvancedWeekdayMonthHeatmap") && html.includes("chart: chartAdvancedTitleMonthlyMedian") && html.includes("chart: chartAdvancedWeekdayBoxplot") && html.includes("chart: chartAdvancedLorenz") && html.includes("chart: chartAdvancedGapScatter"), '追加グラフを共通リサイズ・操作対象へ登録します');
 assert(html.includes('calculateScatterPareto') && html.includes('calculateLorenzCurve') && html.includes('chart-title-body-scatter') && html.includes('chart-advanced-gap-scatter') && html.includes('chart-advanced-date-scatter') && html.includes('lorenzNews'), '複数の既存散布図へパレート線を統合し、ローレンツ曲線をデータから計算します');
 assert((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length >= 6, '3つの既存散布図へ媒体別のパレート線を追加します');
-assert.strictEqual((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length, 11, '6つのグラフにパレート線を配置します');
+assert.strictEqual((html.match(/name: ?'(?:ニュース|コラム)のパレート線'|name: ?'分類のパレート線'/g) || []).length, 11, '6つのグラフにパレート線を配置します');
 assert(html.includes('id="pareto-toggle-all"') && html.includes('function applyParetoVisibility'), '全グラフのパレート表示を一括で切り替える操作を用意します');
 assert(html.includes("type: visible ? 'legendSelect' : 'legendUnSelect'"), '凡例操作と連動してパレート線を全グラフで表示・非表示にします');
 assert(html.includes('pareto-chart-hidden') && html.includes("paretoChartCard?.classList.toggle('pareto-chart-hidden', !visible)"), '独立したパレート図も一括操作の対象にします');
