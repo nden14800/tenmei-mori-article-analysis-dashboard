@@ -5856,7 +5856,7 @@ setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
     ...advancedTooltip,trigger:'axis',axisPointer:{type:'line',lineStyle:{color:'#c4a059',width:1.2,type:'dashed'}},
     valueFormatter:value=>Number.isFinite(Number(value))?Number(value).toFixed(2)+' 本/日':'—'
   },
-  legend:{data:['ニュース','コラム','合計'],top:8,right:18,itemWidth:12,itemHeight:8,itemGap:22,textStyle:{...advancedFontText,color:'#55443a',fontSize:11}},
+  legend:{data:['ニュース','コラム','合計'],bottom:5,itemWidth:12,itemHeight:8,itemGap:18,textStyle:{...advancedFontText,color:'#55443a',fontSize:11}},
   grid:{left:70,right:34,top:58,bottom:94,containLabel:true},
   xAxis:{
     type:'category',data:timelineDateKeys,boundaryGap:false,
