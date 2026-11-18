@@ -4579,12 +4579,12 @@ const tagPieData = Object.entries(mainTags).map(([k, v]) => ({ name: k, value: v
 
 const chartNewsTags = createDashboardChart(document.getElementById('chart-news-tags'));
 chartNewsTags.setOption({
-  textStyle:{fontFamily:dashboardChartFont},
+  textStyle:{fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif"},
   tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:items=>items[0].axisValue+': '+items[0].value+'件'},
   grid:{left:118,right:48,top:22,bottom:30,containLabel:true},
-  xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#766957',fontSize:11,fontFamily:dashboardChartFont},splitLine:{show:true,lineStyle:{color:'#eee8df',type:'dashed'}}},
-  yAxis:{type:'category',inverse:true,data:tagPieData.map(item=>item.name),axisLabel:{color:'#5c5042',fontSize:11,fontFamily:dashboardChartFont,width:108,overflow:'truncate'}},
-  series:[{name:'ニュース記事数',type:'bar',data:tagPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#a63d36',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:dashboardChartFont,fontSize:10,formatter:'{c}件'}}]
+  xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#766957',fontSize:11,fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif"},splitLine:{show:true,lineStyle:{color:'#eee8df',type:'dashed'}}},
+  yAxis:{type:'category',inverse:true,data:tagPieData.map(item=>item.name),axisLabel:{color:'#5c5042',fontSize:11,fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif",width:108,overflow:'truncate'}},
+  series:[{name:'ニュース記事数',type:'bar',data:tagPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#a63d36',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif",fontSize:10,formatter:'{c}件'}}]
 });
 
 const catCount = {};
@@ -4593,12 +4593,12 @@ const catPieData = Object.entries(catCount).map(([k,v]) => ({ name: k, value: v 
 
 const chartColCats = createDashboardChart(document.getElementById('chart-col-cats'));
 chartColCats.setOption({
-  textStyle:{fontFamily:dashboardChartFont},
+  textStyle:{fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif"},
   tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:items=>items[0].axisValue+': '+items[0].value+'件'},
   grid:{left:112,right:48,top:22,bottom:30,containLabel:true},
-  xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#766957',fontSize:11,fontFamily:dashboardChartFont},splitLine:{show:true,lineStyle:{color:'#eee8df',type:'dashed'}}},
-  yAxis:{type:'category',inverse:true,data:catPieData.map(item=>item.name),axisLabel:{color:'#5c5042',fontSize:11,fontFamily:dashboardChartFont,width:102,overflow:'truncate'}},
-  series:[{name:'コラム記事数',type:'bar',data:catPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#b8893c',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:dashboardChartFont,fontSize:10,formatter:'{c}件'}}]
+  xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#766957',fontSize:11,fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif"},splitLine:{show:true,lineStyle:{color:'#eee8df',type:'dashed'}}},
+  yAxis:{type:'category',inverse:true,data:catPieData.map(item=>item.name),axisLabel:{color:'#5c5042',fontSize:11,fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif",width:102,overflow:'truncate'}},
+  series:[{name:'コラム記事数',type:'bar',data:catPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#b8893c',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:"'Zen Old Mincho', 'Shippori Mincho', serif",fontSize:10,formatter:'{c}件'}}]
 });
 
 const groups = {
