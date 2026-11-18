@@ -166,12 +166,12 @@ const colChars = Object.fromEntries(colSource.map(a => {
 // 自動同期で index.html の配列を書き換えても、既存46件の文章を一文字も失わない。
 // 元サイトにこの分析文章の正本が存在しないため、現在のダッシュボード文を保護対象として扱う。
 function extractInsights(text) {
-  const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><p class="chart-desc-copy">([\s\S]*?)<\/p><\/div>/g;
+  const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><div class="chart-desc-copy">([\s\S]*?)<\/div><\/div>/g;
   return [...text.matchAll(re)].map(m => m[1]);
 }
 const insightsBefore = extractInsights(dashboard);
 if (!insightsBefore.length) throw new Error('洞察・考察が見つかりません');
-if (insightsBefore.length !== 46) throw new Error(`洞察・考察の件数が想定外です（既存41件＋追加5件の46件想定）: ${insightsBefore.length}`);
+if (insightsBefore.length !== 49 throw new Error(`洞察・考察の件数が想定外です（既存41件＋追加5件の49件想定）: ${insightsBefore.length}`);
 const insightCharsBefore = insightsBefore.reduce((sum, text) => sum + visibleChars(text), 0);
 
 // Comprehensive Analysis も分析資産として完全保護する。
