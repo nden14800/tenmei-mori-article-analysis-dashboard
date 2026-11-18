@@ -1674,7 +1674,7 @@
   <p class="print-report-meta" id="print-report-meta">天命乃杜 記事分析レポート　|　対象期間: <span id="print-period">--</span>　|　出力日時: <span id="print-generated-at">--</span></p>
 
   <!-- OVERVIEW -->
-  <div class="section-title">総覧 — Overview</div>
+  <div class="section-title">全体概要</div>
   <div class="stat-grid">
     <div class="stat-card">
       <div class="stat-number" id="overview-total-articles">--</div>
@@ -1722,7 +1722,7 @@
   </aside>
 
   <!-- CHARTS ROW 1 -->
-  <div class="section-title">投稿分布 — Distribution</div>
+  <div class="section-title">投稿分布</div>
   <div class="charts-grid">
     <div class="chart-card chart-card-wide">
       <div class="chart-title">月別投稿数の推移（ニュース vs コラム）</div>
@@ -1747,7 +1747,7 @@
   </div>
 
   <!-- WEEKLY -->
-  <div class="section-title">週次推移 — Weekly Breakdown</div>
+  <div class="section-title">週次推移</div>
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-title">週別投稿数（ニュース vs コラム）</div>
@@ -1762,7 +1762,7 @@
   </div>
 
   <!-- 高度な相関分析 (ADVANCED CORRELATION) -->
-  <div class="section-title">高度な相関分析 — Advanced Correlation</div>
+  <div class="section-title">詳細な分析</div>
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-title">分類別の記事数と平均文字数（バブルチャート）</div>
@@ -1886,7 +1886,7 @@
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="19"></div>文字数ヒストグラムを6区分で見ると、ニュースは300字以下8本、301〜500字18本、501〜700字20本、701〜900字16本、901〜1,200字7本、1,200字超21本。コラムは同じ順に0本、5本、21本、16本、7本、17本。1,200字超はニュース21本・コラム17本で、長文帯の構成にも媒体差がある。ニュースでは1,200字超が21本、コラムでは17本あり、両媒体とも長文帯が一定の割合を占める。コラムは501〜700字帯が21本で最多、ニュースは同じ帯が20本で最多だが、ニュースは1,200字超も多く、短めの記事と大型更新記事の両方を含む。分布を平均値だけでまとめるとこうした複数の山が隠れるため、ヒストグラムでは区分ごとの件数を確認することが重要である。1,200字超はニュース21本・コラム17本で合計38本、全体の約24.4%。長文は両媒体に存在する。ヒストグラムは区分の境界で見え方が変わるため、平均値と併せて分布の形を確認したい。</div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">記事IDごとの文字数（時系列散布図）</div>
+      <div class="chart-title">記事IDと文字数の関係（散布図）</div>
       <div class="chart-box" id="chart-scatter"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="20"></div>記事IDと文字数の散布図では、ニュースID87のVer.4.0は4,022字、ID88のVer.4.1は4,248字、ID89のVer.4.2は3,952字、ID90のVer.4.3は3,346字。コラムではID65が2,110字で最長、ID66は1,543字。ID66は氏神・産土神・鎮守・崇敬神社の違いを扱う基礎知識記事として追加された。後半のニュースID87〜90は約3,300〜4,200字の長文が続き、更新内容や背景を詳しく記録する形式が見られる。コラムではID65が2,110字、ID66が1,543字で、知識記事も一定の説明量を持つ。ID番号は公開履歴上の識別子であり、連番の増加が内容の重要度や品質の上昇を意味するわけではない。記事単位の文字数を併せて見ることで、件数だけでは分からない個別記事の規模を比較できる。IDは公開履歴の識別子であり品質尺度ではない。ニュースID87〜90は3,346〜4,248字、コラムID65・66も長文帯にある。連番や文字数だけで内容の高度さや理解度は判断できない。</div>
     </div>
@@ -1910,7 +1910,7 @@
   <!-- Top/Bottom Articles -->
   <div class="charts-grid" style="margin-bottom:1.5rem">
     <div class="chart-card">
-      <div class="chart-title">文字数ランキング TOP 10（ニュース）</div>
+      <div class="chart-title">ニュース記事の文字数ランキング（上位10件）</div>
       <div style="overflow-x:auto">
         <table style="font-size:0.78rem">
           <thead><tr style="background:#1a1008;color:#f5e6c8">
@@ -1924,7 +1924,7 @@
       </div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">文字数ランキング TOP 10（コラム）</div>
+      <div class="chart-title">コラム記事の文字数ランキング（上位10件）</div>
       <div style="overflow-x:auto">
         <table style="font-size:0.78rem">
           <thead><tr style="background:#1a1008;color:#f5e6c8">
@@ -2028,7 +2028,7 @@
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">一活動日あたりの記事数</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-intensity"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div>月ごとの記事本数を、その媒体で記事が公開された日数で割り、一活動日あたりの平均公開本数を表示します。月間投稿数だけでは、毎日のように少しずつ公開したのか、少数の日に複数本をまとめて公開したのかを区別できません。この指標は活動日数を分母にすることで、公開があった日の投稿密度を比較しやすくします。値が高い月は活動日に複数記事が公開される傾向があり、値が低い月は活動日あたりの公開本数が少ないことを示します。記事が一件もない月は割り算を行わず、欠測として表示します。活動日数が一日しかない月は、その日の本数がそのまま平均値になるため、他の月より値が大きく変動しやすい点に注意してください。月別投稿数と活動日数のグラフを併用し、分母の違いを確認してから比較することが重要です。この値は公開頻度の指標であり、記事の品質や執筆負荷を測定するものではありません。値が同じでも、月内のどの日に公開が集中したかまでは表さないため、日別タイムラインやヒートマップで実際の公開日の配置も確かめてください。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div>月ごとの記事本数を、その媒体で記事が公開された日数で割り、一活動日あたりの平均公開本数を表示します。月間投稿数だけでは、毎日のように少しずつ公開したのか、少数の日に複数本をまとめて公開したのかを区別できません。この指標は活動日数を分母にすることで、公開があった日の投稿密度を比較しやすくします。値が高い月は活動日に複数記事が公開される傾向があり、値が低い月は活動日あたりの公開本数が少ないことを示します。記事が一件もない月は割り算を行わず、欠測として表示します。活動日数が一日しかない月は、その日の本数がそのまま平均値になるため、他の月より値が大きく変動しやすい点に注意してください。月別投稿数と活動日数のグラフを併用し、分母の違いを確認してから比較することが重要です。この値は公開頻度の指標であり、記事の品質や執筆負荷を測定するものではありません。値が同じでも、月内のどの日に公開が集中したかまでは表さないため、日別タイムラインやヒートマップで実際の公開日の配置も確かめてください。</div></div>
 
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">記事文字数の累積分布（ECDF）</div>
@@ -2044,7 +2044,6 @@
       <div class="chart-title">月別の媒体構成比</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-monthly-share"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div>月ごとの記事総数を100％として、ニュースとコラムの構成比を積み上げ棒で比較します。投稿本数の増減と媒体の構成変化を分けて確認でき、特定の月にどちらの媒体の比重が高かったかを把握できます。件数そのものはツールチップで確認してください。</div>
-    </div>
     </div>
   </div>
 
