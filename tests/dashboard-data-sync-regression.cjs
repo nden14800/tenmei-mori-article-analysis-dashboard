@@ -144,14 +144,14 @@ for (const id of ['chart-advanced-weekday-month-heatmap', 'chart-advanced-title-
 assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength") && html.includes("chart: chartAdvancedWeekdayMonthHeatmap") && html.includes("chart: chartAdvancedTitleMonthlyMedian") && html.includes("chart: chartAdvancedWeekdayBoxplot") && html.includes("chart: chartAdvancedLorenz") && html.includes("chart: chartAdvancedGapScatter"), '追加グラフを共通リサイズ・操作対象へ登録します');
 assert(html.includes('calculateScatterPareto') && html.includes('calculateLorenzCurve') && html.includes('chart-title-body-scatter') && html.includes('chart-advanced-gap-scatter') && html.includes('chart-advanced-date-scatter') && html.includes('lorenzNews'), '複数の既存散布図へパレート線を統合し、ローレンツ曲線をデータから計算します');
 assert((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length >= 6, '3つの既存散布図へ媒体別のパレート線を追加します');
-assert.strictEqual((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length, 10, '5つのグラフに媒体別のパレート線を配置します');
+assert.strictEqual((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length, 11, '6つのグラフにパレート線を配置します');
 assert(html.includes('id="pareto-toggle-all"') && html.includes('function applyParetoVisibility'), '全グラフのパレート表示を一括で切り替える操作を用意します');
 assert(html.includes("type: visible ? 'legendSelect' : 'legendUnSelect'"), '凡例操作と連動してパレート線を全グラフで表示・非表示にします');
 assert(html.includes('pareto-chart-hidden') && html.includes("paretoChartCard?.classList.toggle('pareto-chart-hidden', !visible)"), '独立したパレート図も一括操作の対象にします');
-assert(html.includes('top:null,bottom:5,left:\'center\',right:null'), '全グラフの凡例を下部中央へ統一します');
+assert(html.includes('top:null,bottom:5,left:\'center\',right:null,selectedMode:\'multiple\''), '全グラフの凡例を下部中央へ統一し、複数系列を切り替え可能にします');
 assert(/zoomLegendBottom\s*=\s*5/.test(html) && /bottom:\s*28/.test(html), 'ズーム用スライダーと凡例の位置を分離します');
 assert(!/legend:\s*\{[^}]*\btop\s*:\s*(?!null)/.test(html), '右上配置の凡例を残しません');
-assert(html.includes('chartMonthly.setOption') && html.includes('chartScatter.setOption'), '月別投稿数と記事ID・文字数の散布図にもパレート線を表示します');
+assert(html.includes('chartMonthly.setOption') && html.includes('chartScatter.setOption') && html.includes('chartTagBubble.setOption') && html.includes('分類のパレート線'), '月別投稿数・記事ID・カテゴリバブル分析にもパレート線を表示します');
 assert((html.match(/max\s*:\s*100\b/g) || []).length === 6, '固定上限100は累積構成比・月内構成比・ローレンツ曲線・レーダー指標など百分率尺度の軸だけに限定します');
 
 const styleBlocks = [...html.matchAll(/<style\b/gi)];
