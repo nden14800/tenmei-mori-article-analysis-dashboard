@@ -162,7 +162,7 @@ const colChars = Object.fromEntries(colSource.map(a => {
   return [key, Object.prototype.hasOwnProperty.call(historicalColChars, key) && (!previousColContentHashes[key] || previousColContentHashes[key] === colContentHashes[key]) ? historicalColChars[key] : visibleChars(a.content)];
 }));
 
-// 「洞察・考察」は記事データとは別の分析資産。
+// 「洞察・考察」は記事データとは別の分析資産。現行49件の文章を一文字も失わない。
 // 自動同期で index.html の配列を書き換えても、既存46件の文章を一文字も失わない。
 // 元サイトにこの分析文章の正本が存在しないため、現在のダッシュボード文を保護対象として扱う。
 function extractInsights(text) {
