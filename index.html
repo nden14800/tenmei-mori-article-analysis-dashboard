@@ -1655,6 +1655,106 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     }
   }
 
+
+  /* Final chart layout system: auto-fit collapses unused tracks so an orphaned
+     chart fills the row instead of leaving a blank column on the right. */
+  .charts-grid,
+  .charts-grid-3,
+  .advanced-charts-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)) !important;
+    grid-auto-flow: row;
+    align-items: stretch !important;
+    gap: clamp(1rem, 1.35vw, 1.4rem) !important;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 clamp(1.4rem, 2vw, 2rem) !important;
+  }
+
+  .chart-card,
+  .advanced-chart-card {
+    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    grid-column: auto !important;
+    margin: 0 !important;
+    padding: clamp(1rem, 1.45vw, 1.45rem) !important;
+    border: 1px solid var(--tm-border) !important;
+    border-radius: var(--tm-radius) !important;
+    background: linear-gradient(155deg, #fffdfb 0%, #fffdfb 72%, #f7f2ed 100%) !important;
+    box-shadow: 0 4px 12px rgba(48,41,35,.04), 0 12px 28px rgba(48,41,35,.055) !important;
+    overflow: visible !important;
+    animation: none !important;
+  }
+
+  .chart-card-wide,
+  .heatmap-card,
+  .chart-card:last-child:nth-child(odd),
+  .advanced-chart-card.advanced-chart-wide {
+    grid-column: 1 / -1 !important;
+  }
+
+  .chart-card > .chart-box,
+  .chart-card > .chart-box-tall,
+  .chart-card > .heatmap-scroll,
+  .advanced-chart-card > .chart-box-advanced {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: 0 0 auto;
+  }
+
+  .chart-box { height: clamp(320px, 27vw, 380px) !important; }
+  .chart-box-tall { height: clamp(360px, 30vw, 420px) !important; }
+  .chart-box-advanced { height: clamp(350px, 28vw, 400px) !important; }
+  .advanced-chart-wide .chart-box-advanced { height: clamp(390px, 33vw, 450px) !important; }
+
+  .chart-card .chart-title,
+  .advanced-chart-card .chart-title {
+    min-height: 0 !important;
+    margin: 0 0 .65rem !important;
+    padding: .1rem 0 .75rem !important;
+    line-height: 1.65 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .chart-card .chart-desc,
+  .advanced-chart-card .chart-desc {
+    display: block;
+    width: 100%;
+    max-width: none !important;
+    margin: .85rem 0 0 !important;
+    padding: clamp(.85rem, 1.2vw, 1.05rem) !important;
+    font-size: .8rem !important;
+    line-height: 1.9 !important;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 640px) {
+    .charts-grid,
+    .charts-grid-3,
+    .advanced-charts-grid {
+      grid-template-columns: minmax(0, 1fr) !important;
+      gap: 1rem !important;
+    }
+    .chart-card-wide,
+    .heatmap-card,
+    .chart-card:last-child:nth-child(odd),
+    .advanced-chart-card.advanced-chart-wide {
+      grid-column: 1 !important;
+    }
+    .chart-box { height: 310px !important; }
+    .chart-box-tall { height: 350px !important; }
+    .chart-box-advanced { height: 340px !important; }
+    .advanced-chart-wide .chart-box-advanced { height: 370px !important; }
+    .chart-card,
+    .advanced-chart-card { padding: .9rem !important; }
+  }
+
 </style>
 </head>
 <body>
