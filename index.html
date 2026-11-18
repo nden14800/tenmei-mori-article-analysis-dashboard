@@ -240,7 +240,7 @@
   }
   /* Shared visual polish: retain the existing ECharts library and chart types. */
   .chart-card {
-    border: 1px solid #e8dfd1;
+    border: 1px solid #e7ded7;
     border-radius: 14px;
     padding: 1.45rem 1.55rem;
     background: linear-gradient(160deg, #fffdfbdfb 0%, #fffdfbdfb 100%);
@@ -270,7 +270,7 @@
     height: 1.2em;
     flex: 0 0 3px;
     border-radius: 3px;
-    background: linear-gradient(180deg, #a63b32, #c4a059);
+    background: linear-gradient(180deg, #8f252b, #c4a059);
   }
   .chart-card .chart-desc {
     border: 1px solid #e7ded7;
@@ -852,10 +852,10 @@
       break-inside: avoid-page;
     }
     .print-overview-note h2 { margin: 0 0 0.35rem; color: #55443a; font-family: var(--font-main); font-size: 0.78rem; letter-spacing: 0.08em; }
-    .print-overview-note p { margin: 0; color: #4b3a2b; font-family: var(--font-main); font-size: 0.64rem; line-height: 1.8; }
+    .print-overview-note p { margin: 0; color: #55443a; font-family: var(--font-main); font-size: 0.64rem; line-height: 1.8; }
     .print-overview-list { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.65rem; margin: 0; font-family: var(--font-main); font-size: 0.61rem; line-height: 1.7; }
     .print-overview-list dt { color: #9b793d; font-weight: 700; }
-    .print-overview-list dd { margin: 0; color: #4b3a2b; }
+    .print-overview-list dd { margin: 0; color: #55443a; }
     /* CSS Grid全体を一塊として次頁へ送らないよう、印刷時はカードを縦に展開する。 */
     .charts-grid, .charts-grid-3 { display: block; margin-bottom: 0; }
     .chart-card { margin: 0 0 0.7rem; padding: 0.65rem; animation: none; break-inside: avoid-page; page-break-inside: avoid; }
@@ -1090,7 +1090,7 @@
     border: 0;
     border-radius: 9px;
     background: transparent;
-    color: #4f402f;
+    color: #55443a;
     font: 500 .84rem var(--font-ui);
     cursor: pointer;
     text-align: left;
@@ -1120,7 +1120,7 @@
   table { border-collapse: separate; border-spacing: 0; font-family: var(--font-ui); }
   thead th {
     background: #f7f2ed;
-    color: #695845;
+    color: #55443a;
     font-size: .72rem;
     letter-spacing: .04em;
     border-bottom: 1px solid var(--ver4-line);
@@ -1146,7 +1146,7 @@
     box-shadow: 0 5px 14px rgba(118,29,27,.14);
     transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
   }
-  .export-button:hover { transform: translateY(-1px); box-shadow: 0 9px 20px rgba(118,29,27,.18); background: #8b2621; }
+  .export-button:hover { transform: translateY(-1px); box-shadow: 0 9px 20px rgba(118,29,27,.18); background: #8f252b; }
   .csv-export-select { border-radius: 12px; min-height: var(--ver4-control-height); font-family: var(--font-ui); }
   .csv-dashboard-select { min-width: 220px; flex: 1 1 220px; }
 
@@ -1450,7 +1450,7 @@
     border:1px solid var(--tm-border);border-radius:10px;background:#fffdfbdfb;
     box-shadow:0 12px 28px rgba(55,39,25,.12);overflow:hidden;
   }
-  .dashboard-select-option{padding:.6rem .8rem;color:#554637}
+  .dashboard-select-option{padding:.6rem .8rem;color:#55443a}
   .dashboard-select-option:hover,.dashboard-select-option.active{background:#f7f2ed;color:var(--tm-red)}
   .tab-btn{border:1px solid var(--tm-border);border-radius:9px;background:#fffdfbdfb;color:#55443a;padding:.65rem 1rem}
   .tab-btn.active{background:var(--tm-red);border-color:var(--tm-red);color:white}
@@ -1471,7 +1471,7 @@
   thead th{
     position:sticky;top:0;z-index:1;background:#f7f2ed;color:#55443a;
     font-family:var(--font-ui);font-size:.73rem;font-weight:700;letter-spacing:.015em;
-    border-bottom:1px solid #dfd2be;
+    border-bottom:1px solid #e7ded7;
   }
   tbody td{border-bottom:1px solid #e7ded7;color:#55443a;line-height:1.75}
   tbody tr:nth-child(even){background:#fffdfb}
@@ -1481,7 +1481,7 @@
     border:1px solid var(--tm-border)!important;border-top:3px solid var(--tm-red)!important;
     border-radius:14px;background:#fffdfbdfb!important;padding:clamp(1rem,2.5vw,2rem)!important;
     box-shadow:var(--tm-shadow);font-family:var(--font-ui)!important;font-size:.84rem!important;
-    line-height:1.95!important;color:#514638!important;
+    line-height:1.95!important;color:#55443a!important;
   }
   #mega-summary-content p{font-family:var(--font-ui)!important;line-height:1.95}
   #mega-summary-content p:first-child{
@@ -1599,7 +1599,7 @@ tbody tr:nth-child(even){background:#fffdfbdfb}tbody tr:hover{background:#f7f2ed
 .summary-table thead th{position:static;background:transparent!important;color:inherit!important;border-bottom:1px solid rgba(255,255,255,.15)}
 .summary-table-cell--id{text-align:center;white-space:nowrap;color:var(--tm-muted)}.summary-table-cell--title{font-family:var(--font-main);color:var(--tm-cedar)}
 .summary-table-cell--excerpt{max-width:260px;line-height:1.55}.summary-table-cell--news-count{color:var(--tm-red);font-weight:700;white-space:nowrap}.summary-table-cell--column-count{color:#9b793d;font-weight:700;white-space:nowrap}
-#mega-summary-content,.summary-editorial{border:1px solid var(--tm-border)!important;border-top:3px solid var(--tm-red)!important;border-radius:14px!important;background:#fffdfbdfb!important;padding:clamp(1.1rem,2.5vw,2rem)!important;margin-bottom:2rem!important;box-shadow:var(--tm-shadow)!important;font-family:var(--font-ui)!important;font-size:.86rem!important;line-height:1.95!important;color:#514638!important}
+#mega-summary-content,.summary-editorial{border:1px solid var(--tm-border)!important;border-top:3px solid var(--tm-red)!important;border-radius:14px!important;background:#fffdfbdfb!important;padding:clamp(1.1rem,2.5vw,2rem)!important;margin-bottom:2rem!important;box-shadow:var(--tm-shadow)!important;font-family:var(--font-ui)!important;font-size:.86rem!important;line-height:1.95!important;color:#55443a!important}
 #mega-summary-content p{font-family:var(--font-ui)!important;line-height:1.95!important;margin:0 0 1.15rem!important}
 #mega-summary-content .summary-lead{font-family:'Zen Old Mincho','Shippori Mincho',serif!important;font-size:1.08rem!important;font-weight:700!important;letter-spacing:.035em;color:var(--tm-red)!important}
 #mega-summary-content .summary-subheading{margin:1.7rem 0 .6rem!important;font-family:'Zen Old Mincho','Shippori Mincho',serif!important;font-size:.98rem!important;font-weight:700!important;color:var(--tm-cedar)!important;letter-spacing:.025em}
@@ -1611,6 +1611,15 @@ tbody tr:nth-child(even){background:#fffdfbdfb}tbody tr:hover{background:#f7f2ed
 @media(max-width:420px){.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.6rem!important}.stat-number{font-size:1.55rem!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}.chart-card:hover,.advanced-chart-card:hover{transform:none!important}}
 
+
+.char-bar{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.char-bar__track{width:60px;height:6px;flex:none;background:var(--tm-soft);border-radius:3px;overflow:hidden}
+.char-bar__fill{width:var(--bar-width);height:100%;background:var(--bar-color);border-radius:3px}
+.char-bar__value{font-family:var(--font-ui);font-size:.85rem;color:var(--bar-color)}
+.tag-badge{background:color-mix(in srgb,var(--tag-color) 12%,#fffdfb)!important;color:var(--tag-color)!important;border:1px solid color-mix(in srgb,var(--tag-color) 32%,var(--tm-border))!important}
+.table-time{color:var(--tm-gold);font-size:.72rem}
+.summary-table-cell--rank{text-align:center;white-space:nowrap;color:var(--tm-muted)}
+.summary-table-cell--article-id{font-family:var(--font-ui);color:var(--tm-cedar)}
 </style>
 </head>
 <body>
@@ -3919,110 +3928,108 @@ document.getElementById('stat-total-col-sub').innerText = `コラム${totalColCh
 const top10News = [...newsData].sort((a,b) => b.chars - a.chars).slice(0,10);
 document.getElementById('top-news-chars').innerHTML = top10News.map((a,i) => `
   <tr>
-    <td style="padding:0.4rem 0.8rem;color:#786e67;text-align:center">${i+1}</td>
-    <td style="padding:0.4rem 0.8rem;font-family:var(--font-main);color:#55443a">#${a.id}</td>
-    <td style="padding:0.4rem 0.8rem;max-width:220px;line-height:1.4">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
-    <td style="padding:0.4rem 0.8rem;color:#8f252b;font-weight:bold;white-space:nowrap">${a.chars.toLocaleString()}</td>
+    <td class="summary-table-cell summary-table-cell--rank">${i+1}</td>
+    <td class="summary-table-cell summary-table-cell--article-id">#${a.id}</td>
+    <td class="summary-table-cell summary-table-cell--excerpt">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
+    <td class="summary-table-cell summary-table-cell--news-count">${a.chars.toLocaleString()}</td>
   </tr>
 `).join('');
 
 const top10Col = [...colData].sort((a,b) => b.chars - a.chars).slice(0,10);
 document.getElementById('top-col-chars').innerHTML = top10Col.map((a,i) => `
   <tr>
-    <td style="padding:0.4rem 0.8rem;color:#786e67;text-align:center">${i+1}</td>
-    <td style="padding:0.4rem 0.8rem;font-family:var(--font-main);color:#55443a">#${a.id}</td>
-    <td style="padding:0.4rem 0.8rem;max-width:220px;line-height:1.4">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
-    <td style="padding:0.4rem 0.8rem;color:#c4a059;font-weight:bold;white-space:nowrap">${a.chars.toLocaleString()}</td>
+    <td class="summary-table-cell summary-table-cell--rank">${i+1}</td>
+    <td class="summary-table-cell summary-table-cell--article-id">#${a.id}</td>
+    <td class="summary-table-cell summary-table-cell--excerpt">${a.title.length > 26 ? a.title.slice(0,26)+'…' : a.title}</td>
+    <td class="summary-table-cell summary-table-cell--column-count">${a.chars.toLocaleString()}</td>
   </tr>
 `).join('');
 
 // ヘルパー
 function charBar(n, max=2400) {
   const pct = Math.round(n/max*100);
-  const col = n < 400 ? '#95a5a6' : n < 700 ? '#7188a4' : n < 1000 ? '#e67e22' : '#8f252b';
-  return `<div style="display:flex;align-items:center;gap:6px;white-space:nowrap">
-    <div style="width:60px;height:6px;background:#f7f2ed;border-radius:3px;overflow:hidden">
-      <div style="width:${pct}%;height:100%;background:${col};border-radius:3px"></div>
-    </div>
-    <span style="font-family:var(--font-main);font-size:0.85rem;color:${col}">${n ? n.toLocaleString() : '—'}</span>
+  const col = n < 400 ? '#786e67' : n < 700 ? '#7188a4' : n < 1000 ? '#c4a059' : '#8f252b';
+  return `<div class="char-bar" style="--bar-width:${pct}%;--bar-color:${col}">
+    <div class="char-bar__track"><div class="char-bar__fill"></div></div>
+    <span class="char-bar__value">${n ? n.toLocaleString() : '—'}</span>
   </div>`;
 }
 
 const tagColors = {
-  "新機能・改善": "#1d4ed8",
-  "安定化・セキュリティ": "#b91c1c",
-  "機能改善": "#0f766e",
-  "新機能": "#1d4ed8",
-  "メジャーアップデート": "#b91c1c",
-  "セキュリティ": "#1d4ed8",
-  "開発予告": "#b45309",
-  "強化・改訂": "#7e22ce",
-  "意匠": "#be185d",
-  "お知らせ": "#1d4ed8",
-  "新機能・報告": "#1d4ed8",
-  "不具合修正": "#047857",
-  "システム強化": "#b91c1c",
-  "意匠調整": "#4b5563",
-  "大規模更新": "#1d4ed8",
-  "UI刷新 (β)": "#1d4ed8",
-  "機能昇格": "#1d4ed8",
-  "表記修正": "#4b5563",
-  "重要・お詫び": "#b91c1c",
-  "重要・お知らせ": "#b91c1c",
-  "修繕・更新": "#1d4ed8",
-  "デザイン統一": "#b91c1c",
-  "システム報告": "#4b5563",
-  "機能撤去": "#4b5563",
-  "結界修復": "#b91c1c",
-  "重要・仕様変更": "#b91c1c",
-  "機能変更": "#4b5563",
-  "システム・仕様": "#0f766e",
-  "重要・復旧": "#b91c1c",
-  "制限緩和": "#047857",
-  "システム刷新": "#7e22ce",
-  "重要・システム": "#b91c1c",
-  "機能廃棄": "#4b5563",
-  "システム・規律": "#b91c1c",
-  "意匠変更": "#b45309",
-  "開発秘話": "#b91c1c",
-  "デザイン刷新": "#0f766e",
-  "システム更新": "#1d4ed8",
-  "システム解説": "#c2410c",
-  "デザイン・作法": "#0f766e",
-  "不具合解消": "#047857",
-  "セキュリティ・システム": "#b91c1c",
-  "新機能・規約": "#1d4ed8",
-  "機能追加・修正": "#1d4ed8",
-  "デザイン修正": "#4b5563",
-  "障害報告": "#b91c1c",
-  "機能追加": "#0f766e",
-  "システム": "#4b5563",
-  "デザイン": "#1d4ed8",
-  "重要": "#b91c1c",
-  "メンテナンス": "#047857",
-  "ご挨拶": "#4b5563"
+  "新機能・改善": "#7188a4",
+  "安定化・セキュリティ": "#8f252b",
+  "機能改善": "#718b7b",
+  "新機能": "#7188a4",
+  "メジャーアップデート": "#8f252b",
+  "セキュリティ": "#7188a4",
+  "開発予告": "#9b793d",
+  "強化・改訂": "#8b7898",
+  "意匠": "#8b7898",
+  "お知らせ": "#7188a4",
+  "新機能・報告": "#7188a4",
+  "不具合修正": "#718b7b",
+  "システム強化": "#8f252b",
+  "意匠調整": "#786e67",
+  "大規模更新": "#7188a4",
+  "UI刷新 (β)": "#7188a4",
+  "機能昇格": "#7188a4",
+  "表記修正": "#786e67",
+  "重要・お詫び": "#8f252b",
+  "重要・お知らせ": "#8f252b",
+  "修繕・更新": "#7188a4",
+  "デザイン統一": "#8f252b",
+  "システム報告": "#786e67",
+  "機能撤去": "#786e67",
+  "結界修復": "#8f252b",
+  "重要・仕様変更": "#8f252b",
+  "機能変更": "#786e67",
+  "システム・仕様": "#718b7b",
+  "重要・復旧": "#8f252b",
+  "制限緩和": "#718b7b",
+  "システム刷新": "#8b7898",
+  "重要・システム": "#8f252b",
+  "機能廃棄": "#786e67",
+  "システム・規律": "#8f252b",
+  "意匠変更": "#9b793d",
+  "開発秘話": "#8f252b",
+  "デザイン刷新": "#718b7b",
+  "システム更新": "#7188a4",
+  "システム解説": "#9b793d",
+  "デザイン・作法": "#718b7b",
+  "不具合解消": "#718b7b",
+  "セキュリティ・システム": "#8f252b",
+  "新機能・規約": "#7188a4",
+  "機能追加・修正": "#7188a4",
+  "デザイン修正": "#786e67",
+  "障害報告": "#8f252b",
+  "機能追加": "#718b7b",
+  "システム": "#786e67",
+  "デザイン": "#7188a4",
+  "重要": "#8f252b",
+  "メンテナンス": "#718b7b",
+  "ご挨拶": "#786e67"
 };
 const catColors = {
-  "基礎知識": "#047857",
-  "年中行事": "#a16207",
-  "干支・暦": "#4b3fa4",
-  "作法": "#a16207",
-  "建築": "#c2410c",
-  "豆知識": "#c2410c",
-  "おすすめ": "#b91c1c",
-  "雑学": "#4b3fa4",
-  "読み解き": "#7e22ce",
-  "歴史": "#b91c1c",
-  "開運": "#047857",
-  "歳時記": "#2563eb",
-  "クイズ": "#4b3fa4",
-  "特別クイズ": "#a16207",
-  "開発秘話": "#b91c1c"
+  "基礎知識": "#718b7b",
+  "年中行事": "#9b793d",
+  "干支・暦": "#8b7898",
+  "作法": "#9b793d",
+  "建築": "#9b793d",
+  "豆知識": "#9b793d",
+  "おすすめ": "#8f252b",
+  "雑学": "#8b7898",
+  "読み解き": "#8b7898",
+  "歴史": "#8f252b",
+  "開運": "#718b7b",
+  "歳時記": "#7188a4",
+  "クイズ": "#8b7898",
+  "特別クイズ": "#9b793d",
+  "開発秘話": "#8f252b"
 };
 
 function tagBadge(tag, map) {
   const color = map[tag] || '#786e67';
-  return `<span class="tag-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${tag}</span>`;
+  return `<span class="tag-badge" style="--tag-color:${color}">${tag}</span>`;
 }
 
 const allArticles = [
@@ -4570,7 +4577,7 @@ chartNewsTags.setOption({
   grid:{left:118,right:48,top:22,bottom:30,containLabel:true},
   xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#786e67',fontSize:11,fontFamily:"'Zen Kaku Gothic New', sans-serif"},splitLine:{show:true,lineStyle:{color:'#e7ded7',type:'dashed'}}},
   yAxis:{type:'category',inverse:true,data:tagPieData.map(item=>item.name),axisLabel:{color:'#55443a',fontSize:11,fontFamily:"'Zen Kaku Gothic New', sans-serif",width:108,overflow:'truncate'}},
-  series:[{name:'ニュース記事数',type:'bar',data:tagPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#8f252b',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:"'Zen Kaku Gothic New', sans-serif",fontSize:10,formatter:'{c}件'}}]
+  series:[{name:'ニュース記事数',type:'bar',data:tagPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#8f252b',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#55443a',fontFamily:"'Zen Kaku Gothic New', sans-serif",fontSize:10,formatter:'{c}件'}}]
 });
 
 const catCount = {};
@@ -4584,7 +4591,7 @@ chartColCats.setOption({
   grid:{left:112,right:48,top:22,bottom:30,containLabel:true},
   xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#786e67',fontSize:11,fontFamily:"'Zen Kaku Gothic New', sans-serif"},splitLine:{show:true,lineStyle:{color:'#e7ded7',type:'dashed'}}},
   yAxis:{type:'category',inverse:true,data:catPieData.map(item=>item.name),axisLabel:{color:'#55443a',fontSize:11,fontFamily:"'Zen Kaku Gothic New', sans-serif",width:102,overflow:'truncate'}},
-  series:[{name:'コラム記事数',type:'bar',data:catPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#c4a059',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:"'Zen Kaku Gothic New', sans-serif",fontSize:10,formatter:'{c}件'}}]
+  series:[{name:'コラム記事数',type:'bar',data:catPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#c4a059',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#55443a',fontFamily:"'Zen Kaku Gothic New', sans-serif",fontSize:10,formatter:'{c}件'}}]
 });
 
 const groups = {
@@ -4656,7 +4663,7 @@ chartGroupAvgChars.setOption({
       itemStyle: {
         color: (() => {
           const map = {
-            'バグ修正系': '#718b7b', '新機能追加': '#e67e22', 'デザイン改善': '#718b7b',
+            'バグ修正系': '#718b7b', '新機能追加': '#c4a059', 'デザイン改善': '#718b7b',
             'システム関連': '#8b7898', 'お知らせ系': '#786e67', '機能撤去廃棄': '#8f252b',
             '重要事項': '#8f252b', '機能改善': '#7188a4'
           };
@@ -4693,7 +4700,7 @@ chartCumulative.setOption({
   xAxis: { type: 'category', data: cumDataDynamic.map(d=>d.date), axisLabel: { color: '#786e67', fontSize: 9, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLine: { lineStyle: { color: '#e7ded7' } } },
   yAxis: { type: 'value', name: '記事数', nameTextStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
   series: [
-    { name: '累積ニュース', type: 'line', data: cumDataDynamic.map(d=>d.news), itemStyle: { color: '#8f252b' }, lineStyle: { color: '#8f252b', width: 2 }, areaStyle: { color: 'rgba(192,57,43,0.08)' }, showSymbol: false, smooth: false },
+    { name: '累積ニュース', type: 'line', data: cumDataDynamic.map(d=>d.news), itemStyle: { color: '#8f252b' }, lineStyle: { color: '#8f252b', width: 2 }, areaStyle: { color: 'rgba(143,37,43,0.08)' }, showSymbol: false, smooth: false },
     { name: '累積コラム',   type: 'line', data: cumDataDynamic.map(d=>d.col),  itemStyle: { color: '#c4a059' }, lineStyle: { color: '#c4a059', width: 2 }, areaStyle: { color: 'rgba(184,134,11,0.08)' }, showSymbol: false, smooth: false },
     { name: '累積合計',     type: 'line', data: cumDataDynamic.map(d=>d.total), itemStyle: { color: '#55443a' }, lineStyle: { color: '#55443a', width: 2.5, type: 'dashed' }, showSymbol: false, smooth: false,
       markPoint: { data: [{ name: '100記事', coord: ['2026-02-18', 100], value: '100!' }], label: { color: '#f7f2ed', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, itemStyle: { color: '#8f252b' } }
@@ -4727,7 +4734,7 @@ chartHours.setOption({
   yAxis: { type: 'value', axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
   visualMap: { show: false, min: 0, max: Math.max(...hourCounts), inRange: { color: ['#f7f2ed', '#d5b16b', '#8f252b'] } },
   series: [{ type: 'bar', data: hourCounts, barMaxWidth: 16,
-    markArea: { data: [[{ xAxis: '16時' }, { xAxis: '19時' }]], itemStyle: { color: 'rgba(192,57,43,0.08)' } }
+    markArea: { data: [[{ xAxis: '16時' }, { xAxis: '19時' }]], itemStyle: { color: 'rgba(143,37,43,0.08)' } }
   }]
 });
 
@@ -5469,12 +5476,12 @@ const chartAdvancedRolling=createAdvancedChart('chart-advanced-rolling','canvas'
 setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
   animationDuration:650,
   animationDurationUpdate:380,
-  textStyle:{fontFamily:advancedFont,color:'#665846'},
+  textStyle:{fontFamily:advancedFont,color:'#55443a'},
   tooltip:{
     ...advancedTooltip,trigger:'axis',axisPointer:{type:'line',lineStyle:{color:'#c4a059',width:1.2,type:'dashed'}},
     valueFormatter:value=>Number.isFinite(Number(value))?Number(value).toFixed(2)+' 本/日':'—'
   },
-  legend:{data:['ニュース','コラム','合計'],top:8,right:18,itemWidth:12,itemHeight:8,itemGap:22,textStyle:{...advancedFontText,color:'#665846',fontSize:11}},
+  legend:{data:['ニュース','コラム','合計'],top:8,right:18,itemWidth:12,itemHeight:8,itemGap:22,textStyle:{...advancedFontText,color:'#55443a',fontSize:11}},
   grid:{left:70,right:34,top:58,bottom:94,containLabel:true},
   xAxis:{
     type:'category',data:timelineDateKeys,boundaryGap:false,
@@ -5488,7 +5495,7 @@ setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
   },
   dataZoom:[
     {type:'inside',filterMode:'none',zoomOnMouseWheel:true,moveOnMouseMove:true},
-    {type:'slider',height:16,bottom:34,borderColor:'transparent',backgroundColor:'#f7f2ed',fillerColor:'rgba(169,71,62,.14)',handleStyle:{color:'#8f252b',borderColor:'#8f252b'},textStyle:{...advancedFontText,color:'#786e67',fontSize:9},dataBackground:{lineStyle:{color:'#cbbda8'},areaStyle:{color:'#e7ded7'}},selectedDataBackground:{lineStyle:{color:'#8f252b'},areaStyle:{color:'rgba(169,71,62,.18)'}}}
+    {type:'slider',height:16,bottom:34,borderColor:'transparent',backgroundColor:'#f7f2ed',fillerColor:'rgba(169,71,62,.14)',handleStyle:{color:'#8f252b',borderColor:'#8f252b'},textStyle:{...advancedFontText,color:'#786e67',fontSize:9},dataBackground:{lineStyle:{color:'#e7ded7'},areaStyle:{color:'#e7ded7'}},selectedDataBackground:{lineStyle:{color:'#8f252b'},areaStyle:{color:'rgba(169,71,62,.18)'}}}
   ],
   series:[
     {name:'ニュース',type:'line',data:rollingNews,showSymbol:false,symbol:'circle',symbolSize:6,smooth:.24,connectNulls:false,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'},areaStyle:{color:'rgba(169,71,62,.045)'},emphasis:{focus:'series',scale:1.15,lineStyle:{width:3.8}}},
@@ -5641,7 +5648,7 @@ const dashboardCharts = [
 // 全グラフ共通の視覚調整。ライブラリ・バージョン・描画エンジンは変更しない。
 function polishDashboardChartOptions() {
   const font = dashboardChartFont;
-  const palette = ['#8f252b','#c4a059','#718b7b','#7188a4','#8b7898','#c4a059','#514337'];
+  const palette = ['#8f252b','#c4a059','#718b7b','#7188a4','#8b7898','#c4a059','#55443a'];
   const mediumColor = name => /ニュース|社務所だより/.test(String(name||'')) ? palette[0]
     : /コラム|神籤草子/.test(String(name||'')) ? palette[1] : null;
   const axisStyle = axis => ({
@@ -5667,7 +5674,7 @@ function polishDashboardChartOptions() {
         color:palette,
         animationDuration:520,
         animationDurationUpdate:320,
-        textStyle:{fontFamily:font,color:'#514337',fontSize:12},
+        textStyle:{fontFamily:font,color:'#55443a',fontSize:12},
         tooltip:{
           ...current.tooltip?.[0],
           backgroundColor:'rgba(35,27,20,.97)',borderColor:'#c4a059',borderWidth:1,
@@ -5677,7 +5684,7 @@ function polishDashboardChartOptions() {
         axisPointer:{...current.axisPointer?.[0],lineStyle:{color:'#c4a059',width:1,type:'dashed'},crossStyle:{color:'#c4a059'}},
         toolbox:{
           ...current.toolbox?.[0],show:true,right:8,top:6,itemSize:14,itemGap:8,
-          backgroundColor:'rgba(255,253,248,.94)',borderColor:'#e9dfd1',borderWidth:1,
+          backgroundColor:'rgba(255,253,248,.94)',borderColor:'#e7ded7',borderWidth:1,
           iconStyle:{...current.toolbox?.[0]?.iconStyle,borderColor:'#55443a'},
           emphasis:{...current.toolbox?.[0]?.emphasis,iconStyle:{borderColor:'#8f252b'}}
         }
@@ -5685,21 +5692,21 @@ function polishDashboardChartOptions() {
       if(current.legend?.length)patch.legend=current.legend.map(legend=>({
         ...legend,top:legend.top,bottom:legend.bottom,left:legend.left,right:legend.right,
         itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',
-        textStyle:{...legend.textStyle,fontFamily:font,color:'#665846',fontSize:11},
-        pageTextStyle:{fontFamily:font,color:'#665846'}
+        textStyle:{...legend.textStyle,fontFamily:font,color:'#55443a',fontSize:11},
+        pageTextStyle:{fontFamily:font,color:'#55443a'}
       }));
       if(current.xAxis?.length)patch.xAxis=current.xAxis.map(axisStyle);
       if(current.yAxis?.length)patch.yAxis=current.yAxis.map(axisStyle);
       if(current.singleAxis?.length)patch.singleAxis=current.singleAxis.map(axisStyle);
       if(current.parallelAxis?.length)patch.parallelAxis=current.parallelAxis.map(axis=>({
-        ...axis,nameTextStyle:{...axis.nameTextStyle,fontFamily:font,color:'#665846',fontSize:11},
+        ...axis,nameTextStyle:{...axis.nameTextStyle,fontFamily:font,color:'#55443a',fontSize:11},
         axisLabel:{...axis.axisLabel,fontFamily:font,color:'#786e67',fontSize:10},
         axisLine:{...axis.axisLine,lineStyle:{...axis.axisLine?.lineStyle,color:'#e7ded7'}}
       }));
       if(current.grid?.length)patch.grid=current.grid.map(grid=>({...grid,containLabel:grid.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
       if(current.visualMap?.length)patch.visualMap=current.visualMap.map(map=>({
         ...map,inRange:{...map.inRange,color:['#f7f2ed','#f7f2ed','#c4a059','#8f252b']},
-        textStyle:{...map.textStyle,fontFamily:font,color:'#665846'}
+        textStyle:{...map.textStyle,fontFamily:font,color:'#55443a'}
       }));
       if(current.dataZoom?.length)patch.dataZoom=current.dataZoom.map(zoom=>({
         ...zoom,borderColor:'#e7ded7',backgroundColor:'#f7f2ed',fillerColor:'rgba(184,137,60,.22)',
@@ -6068,7 +6075,7 @@ function renderNewsTable(data) {
   tb.innerHTML = data.map(a => `
     <tr>
       <td class="id-cell">#${a.id}</td>
-      <td class="date-cell">${a.date}<br><span style="color:#c4a059;font-size:0.72rem">${a.time}</span></td>
+      <td class="date-cell">${a.date}<br><span class="table-time">${a.time}</span></td>
       <td>${tagBadge(a.tag, tagColors)}</td>
       <td class="title-cell">${a.title}</td>
       <td>${charBar(a.chars)}</td>
