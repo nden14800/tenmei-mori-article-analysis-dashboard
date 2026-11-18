@@ -102,9 +102,15 @@ const dashboardColorMap = {
   '#be185d': '#8b7898', '#db2777': '#8b7898', '#4b3fa4': '#8b7898',
   '#2c3e50': '#55443a', '#4b5563': '#786e67', '#7f8c8d': '#786e67'
 };
+const approvedDashboardColors = new Set([
+  '#302923', '#8f252b', '#c4a059', '#d5b16b', '#55443a', '#786e67',
+  '#f7f2ed', '#e7ded7', '#718b7b', '#7188a4', '#8b7898', '#ead8c8',
+  '#9b793d', '#5f1717', '#89631f', '#fffdfb'
+]);
 function normalizeDashboardColor(value) {
   const color = String(value || '').trim().toLowerCase();
-  return dashboardColorMap[color] || color;
+  const normalized = dashboardColorMap[color] || color;
+  return approvedDashboardColors.has(normalized) ? normalized : '#786e67';
 }
 // 同じカテゴリでも記事ごとに色クラスが変わる場合がある。
 // 記事データ側の colorClass はそのまま保持し、カテゴリ集計図では最新記事の色を代表色にする。
