@@ -4206,9 +4206,9 @@ document.getElementById('print-period-summary').textContent = reportPeriodText;
 // Min/Max/Medians
 const sortedNews = [...newsData].sort((a,b) => b.chars - a.chars);
 const sortedCol = [...colData].sort((a,b) => b.chars - a.chars);
-const medianOf = rows => {const values=rows.map(a=>a.chars).filter(Number.isFinite).sort((a,b)=>a-b);if(!values.length)return 0;const mid=Math.floor(values.length/2);return Math.round(values.length%2?values[mid]:(values[mid-1]+values[mid])/2);};
-const medianNews=medianOf(newsData);
-const medianCol=medianOf(colData);
+const medianForSummary = rows => {const values=rows.map(a=>a.chars).filter(Number.isFinite).sort((a,b)=>a-b);if(!values.length)return 0;const mid=Math.floor(values.length/2);return Math.round(values.length%2?values[mid]:(values[mid-1]+values[mid])/2);};
+const medianNews=medianForSummary(newsData);
+const medianCol=medianForSummary(colData);
 
 document.getElementById('stat-max-news').innerText = sortedNews[0].chars.toLocaleString();
 document.getElementById('stat-max-news-sub').innerText = `#${sortedNews[0].id} ${sortedNews[0].title.slice(0,10)}...`;
@@ -6243,7 +6243,7 @@ function polishDashboardChartOptions() {
  const mediumColor=n=>/ニュース|社務所だより/.test(String(n||''))?palette[0]:/コラム|神籤草子/.test(String(n||''))?palette[1]:null;
  const stableColor=(n,i=0)=>{const v=String(n||'');if(!v)return palette[i%palette.length];let h=2166136261;for(let j=0;j<v.length;j++)h=Math.imul(h^v.charCodeAt(j),16777619);return palette[(h>>>0)%palette.length];};
  const resolveColor=(n,e,i=0)=>mediumColor(n)||(typeof e==='string'&&paletteSet.has(e.toLowerCase())?e.toLowerCase():stableColor(n,i));
- const axisStyle=a=>({...a,axisLine:{...a.axisLine,lineStyle:{...a.axisLine?.lineStyle,color:'#e7ded7',width:1}},axisTick:{...a.axisTick,lineStyle:{...a.axisTick?.lineStyle,color:'#e7ded7'}},axisLabel:{...a.axisLabel,color:'#786e67',fontFamily:font,fontSize:a.axisLabel?.fontSize||11,margin:a.axisLabel?.margin||10},nameTextStyle:{...a.nameTextStyle,color:'#786e67',fontFamily:font,fontSize:11,fontWeight:600},splitLine:{...a.splitLine,show:a.splitLine?.show===false?false:(a.splitLine?.show??['value','time','log'].includes(a.type)),lineStyle:{...a.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}});
+ const axisStyle=a=>({...a,axisLine:{...a.axisLine,lineStyle:{...a.axisLine?.lineStyle,color:'#e7ded7',width:1}},axisTick:{...a.axisTick,lineStyle:{...a.axisTick?.lineStyle,color:'#e7ded7'}},axisLabel:{...a.axisLabel,color:'#786e67',fontFamily:font,fontSize:a.axisLabel?.fontSize||11,margin:a.axisLabel?.margin||10},nameTextStyle:{...a.nameTextStyle,color:'#786e67',fontFamily:font,fontSize:11,fontWeight:600},splitLine:{...a.splitLine,show:a.splitLine?.show===false?false:(a.splitLine?.show??['value','time','log'].includes(a.type)),lineStyle:{...a.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}}});
  const tree=nodes=>(nodes||[]).map((n,i)=>({...n,itemStyle:{...n.itemStyle,color:resolveColor(n.name,n.itemStyle?.color,i),borderColor:'#fffdfb',borderWidth:1},...(n.children?{children:tree(n.children)}:{})}));
  dashboardCharts.forEach(({chart})=>{try{if(!chart||chart.isDisposed?.())return;const c=chart.getOption()||{},p={backgroundColor:'transparent',color:palette,animationDuration:520,animationDurationUpdate:320,textStyle:{fontFamily:font,color:'#55443a',fontSize:12},tooltip:{...c.tooltip?.[0],backgroundColor:'rgba(48,41,35,.97)',borderColor:'#c4a059',borderWidth:1,padding:[11,14],textStyle:{...c.tooltip?.[0]?.textStyle,fontFamily:font,color:'#fffdfb',fontSize:12},extraCssText:'border-radius:10px;box-shadow:0 10px 28px rgba(48,41,35,.16);'},axisPointer:{...c.axisPointer?.[0],lineStyle:{color:'#c4a059',width:1,type:'dashed'},crossStyle:{color:'#c4a059'}},toolbox:{...c.toolbox?.[0],show:true,right:8,top:6,itemSize:14,itemGap:8,backgroundColor:'rgba(247,242,237,.94)',borderColor:'#e7ded7',borderWidth:1,iconStyle:{...c.toolbox?.[0]?.iconStyle,borderColor:'#55443a'},emphasis:{...c.toolbox?.[0]?.emphasis,iconStyle:{borderColor:'#8f252b'}}}};
  if(c.legend?.length)p.legend=c.legend.map(l=>({...l,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',textStyle:{...l.textStyle,fontFamily:font,color:'#55443a',fontSize:11},pageTextStyle:{fontFamily:font,color:'#55443a'}}));
