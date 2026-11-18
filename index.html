@@ -4611,7 +4611,20 @@ function createDashboardChart(element, renderer = null) {
 const chartMonthly = createDashboardChart(document.getElementById('chart-monthly'));
 chartMonthly.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: '#302923dd',
+    textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" },
+    formatter: params => {
+      const rows = params.filter(item => !String(item.seriesName || '').includes('パレート線'));
+      if (!rows.length) return '';
+      const label = rows[0].axisValueLabel || rows[0].name || '';
+      return '<strong>' + label + '</strong><br>' + rows.map(item => {
+        const value = Array.isArray(item.value) ? item.value[item.value.length - 1] : item.value;
+        return item.marker + item.seriesName + ': ' + Number(value).toLocaleString() + '件';
+      }).join('<br>');
+    }
+  },
   legend: { data: ['社務所だより', '神籤草子', 'ニュースのパレート線', 'コラムのパレート線'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '15%', top: '10%', containLabel: true },
   xAxis: { type: 'category', data: sortedMonths, axisLabel: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 }, axisLine: { lineStyle: { color: '#e7ded7' } } },
@@ -4619,8 +4632,8 @@ chartMonthly.setOption({
   series: [
     { name: '社務所だより', type: 'bar', data: mNewsCnt, itemStyle: { color: '#8f252b' }, barMaxWidth: 40 },
     { name: '神籤草子', type: 'bar', data: mColCnt, itemStyle: { color: '#c4a059' }, barMaxWidth: 40 },
-    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(mNewsCnt.map((value,index)=>({index,value})),row=>-row.index,row=>row.value).reverse().map(row=>[sortedMonths[row.index],row.value]), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#8f252b',width:2.5,type:'dashed'}, itemStyle:{color:'#8f252b'}, z:5 },
-    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(mColCnt.map((value,index)=>({index,value})),row=>-row.index,row=>row.value).reverse().map(row=>[sortedMonths[row.index],row.value]), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#c4a059',width:2.5,type:'dashed'}, itemStyle:{color:'#c4a059'}, z:5 }
+    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(mNewsCnt.map((value,index)=>({index,value})),row=>-row.index,row=>row.value).reverse().map(row=>[sortedMonths[row.index],row.value]), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#8f252b',width:2.5,type:'dashed'}, itemStyle:{color:'#8f252b'}, tooltip:{show:false}, z:5 },
+    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(mColCnt.map((value,index)=>({index,value})),row=>-row.index,row=>row.value).reverse().map(row=>[sortedMonths[row.index],row.value]), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#c4a059',width:2.5,type:'dashed'}, itemStyle:{color:'#c4a059'}, tooltip:{show:false}, z:5 }
   ]
 });
 
@@ -4777,7 +4790,7 @@ chartTagBubble.setOption({
     smooth: false,
     lineStyle: { color: '#55443a', width: 2.6, type: 'dashed' },
     itemStyle: { color: '#55443a' },
-    z: 5
+    tooltip:{show:false}, z: 5
   }]
 });
 
@@ -5021,8 +5034,8 @@ chartScatter.setOption({
   series: [
     { name: '社務所だより', type: 'scatter', data: scatterNews, symbolSize: 7, itemStyle: { color: '#8f252b', opacity: 0.75 } },
     { name: '神籤草子',     type: 'scatter', data: scatterCol,  symbolSize: 7, itemStyle: { color: '#c4a059', opacity: 0.75 } },
-    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(scatterNews,row=>-row[0],row=>row[1]).reverse().map(row=>row.slice(0,4)), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#8f252b',width:2.5,type:'dashed'}, itemStyle:{color:'#8f252b'}, z:5 },
-    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(scatterCol,row=>-row[0],row=>row[1]).reverse().map(row=>row.slice(0,4)), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#c4a059',width:2.5,type:'dashed'}, itemStyle:{color:'#c4a059'}, z:5 }
+    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(scatterNews,row=>-row[0],row=>row[1]).reverse().map(row=>row.slice(0,4)), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#8f252b',width:2.5,type:'dashed'}, itemStyle:{color:'#8f252b'}, tooltip:{show:false}, z:5 },
+    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(scatterCol,row=>-row[0],row=>row[1]).reverse().map(row=>row.slice(0,4)), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#c4a059',width:2.5,type:'dashed'}, itemStyle:{color:'#c4a059'}, tooltip:{show:false}, z:5 }
   ]
 });
 
@@ -5192,8 +5205,8 @@ chartTitleBodyScatter.setOption({
   series: [
     { name: '社務所だより', type: 'scatter', data: titleBodyScatterData('news'), symbolSize: 10, itemStyle: { color: '#8f252b', opacity: 0.76 }, emphasis: { focus: 'series', scale: 1.45 } },
     { name: '神籤草子', type: 'scatter', data: titleBodyScatterData('col'), symbolSize: 10, itemStyle: { color: '#c4a059', opacity: 0.82 }, emphasis: { focus: 'series', scale: 1.45 } },
-    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('news'),d=>d[0],d=>d[1]).map(d=>[d[0],d[1]]), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#8f252b',width:2.6}, itemStyle:{color:'#8f252b'}, z:5 },
-    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('col'),d=>d[0],d=>d[1]).map(d=>[d[0],d[1]]), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#c4a059',width:2.6}, itemStyle:{color:'#c4a059'}, z:5 }
+    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('news'),d=>d[0],d=>d[1]).map(d=>[d[0],d[1]]), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#8f252b',width:2.6}, itemStyle:{color:'#8f252b'}, tooltip:{show:false}, z:5 },
+    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('col'),d=>d[0],d=>d[1]).map(d=>[d[0],d[1]]), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#c4a059',width:2.6}, itemStyle:{color:'#c4a059'}, tooltip:{show:false}, z:5 }
   ]
 });
 
@@ -5847,8 +5860,8 @@ setAdvancedOption(chartAdvancedDateScatter,'chart-advanced-date-scatter',{
   series:[
     {name:'社務所だより',type:'scatter',data:advancedArticles.filter(a=>a.type==='news').map(a=>({value:[a.date.getTime(),a.chars],article:a})),symbolSize:13,itemStyle:{color:'#8f252b',opacity:.76,borderColor:'#fffdfb',borderWidth:1},emphasis:{focus:'series',scale:1.45}},
     {name:'神籤草子',type:'scatter',data:advancedArticles.filter(a=>a.type==='col').map(a=>({value:[a.date.getTime(),a.chars],article:a})),symbolSize:13,itemStyle:{color:'#c4a059',opacity:.82,borderColor:'#fffdfb',borderWidth:1},emphasis:{focus:'series',scale:1.45}},
-    {name:'ニュースのパレート線',type:'line',data:calculateScatterPareto(advancedArticles.filter(a=>a.type==='news'),a=>-a.date.getTime(),a=>a.chars).reverse().map(a=>({value:[a.date.getTime(),a.chars],article:a})),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'},z:5},
-    {name:'コラムのパレート線',type:'line',data:calculateScatterPareto(advancedArticles.filter(a=>a.type==='col'),a=>-a.date.getTime(),a=>a.chars).reverse().map(a=>({value:[a.date.getTime(),a.chars],article:a})),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'},z:5}
+    {name:'ニュースのパレート線',type:'line',data:calculateScatterPareto(advancedArticles.filter(a=>a.type==='news'),a=>-a.date.getTime(),a=>a.chars).reverse().map(a=>({value:[a.date.getTime(),a.chars],article:a})),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'},tooltip:{show:false}, z:5},
+    {name:'コラムのパレート線',type:'line',data:calculateScatterPareto(advancedArticles.filter(a=>a.type==='col'),a=>-a.date.getTime(),a=>a.chars).reverse().map(a=>({value:[a.date.getTime(),a.chars],article:a})),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'},tooltip:{show:false}, z:5}
   ]
 });
 
@@ -6059,8 +6072,8 @@ setAdvancedOption(chartAdvancedGapScatter,'chart-advanced-gap-scatter',{
   series:[
     {name:'社務所だより',type:'scatter',data:sameMediumNewsGaps,symbolSize:10,itemStyle:{color:'#8f252b',opacity:.74,borderColor:'#fffdfb',borderWidth:1},emphasis:{focus:'series',scale:1.45}},
     {name:'神籤草子',type:'scatter',data:sameMediumColGaps,symbolSize:10,itemStyle:{color:'#c4a059',opacity:.82,borderColor:'#fffdfb',borderWidth:1},emphasis:{focus:'series',scale:1.45}},
-    {name:'ニュースのパレート線',type:'line',data:calculateScatterPareto(sameMediumNewsGaps,d=>d.value[0],d=>d.value[1]),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'},z:5},
-    {name:'コラムのパレート線',type:'line',data:calculateScatterPareto(sameMediumColGaps,d=>d.value[0],d=>d.value[1]),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'},z:5}
+    {name:'ニュースのパレート線',type:'line',data:calculateScatterPareto(sameMediumNewsGaps,d=>d.value[0],d=>d.value[1]),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'},tooltip:{show:false}, z:5},
+    {name:'コラムのパレート線',type:'line',data:calculateScatterPareto(sameMediumColGaps,d=>d.value[0],d=>d.value[1]),showSymbol:true,symbol:'diamond',symbolSize:8,smooth:false,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'},tooltip:{show:false}, z:5}
   ]
 });
 

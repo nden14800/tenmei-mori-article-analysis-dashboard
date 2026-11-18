@@ -167,6 +167,10 @@ for (const [chartStart, paretoNames] of paretoLegendCharts) {
   }
 }
 
+
+assert.strictEqual((html.match(/tooltip\s*:\s*\{\s*show\s*:\s*false\s*\}/g) || []).length, 11, '全11本のパレート系列は独立したツールチップを表示しません');
+assert(html.includes("params.filter(item => !String(item.seriesName || '').includes('パレート線'))"), '軸ツールチップからパレート線を除外します');
+
 const dayOfMonthChartStart = html.indexOf('chartDayOfMonth.setOption({');
 const dayOfMonthChartEnd = html.indexOf('\n});', dayOfMonthChartStart);
 assert(dayOfMonthChartStart >= 0 && dayOfMonthChartEnd > dayOfMonthChartStart, '月内の公開日分布の設定が必要です');
