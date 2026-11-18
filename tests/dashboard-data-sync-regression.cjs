@@ -111,14 +111,24 @@ assert(!html.includes('chart-desc-auto'), '短文用の空欄を残しません'
 assert(!html.includes('読み解きのポイント'), '説明欄ラベルを旧称へ統一します');
 
 const chartDescriptions = [...html.matchAll(/<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><p class="chart-desc-copy">([\s\S]*?)<\/p><\/div>/g)];
-assert.strictEqual(chartDescriptions.length, 38, '38個すべてのグラフ説明を維持する必要があります');
+assert.strictEqual(chartDescriptions.length, 41, '既存38個の説明に加え、新規3グラフの考察を維持する必要があります');
 const chartNarrativeText = chartDescriptions
-  .map((match) => match[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ''))
+  .map((match) => match[1].replace(/<strong class="chart-insight-label">[^<]*<\/strong>/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ''))
   .join('');
-const descriptionLengths = chartDescriptions.map((match) => Array.from(match[1].replace(/<[^>]+>/g, '').replace(/\s+/g, '')).length);
-assert(descriptionLengths.every((length) => length >= 340 && length <= 520), '全グラフの考察文を同じ文章量の範囲に保つ必要があります');
+const descriptionLengths = chartDescriptions.map((match) =>
+  Array.from(match[1].replace(/<strong class="chart-insight-label">[^<]*<\/strong>/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, '')).length
+);
+const originalDescriptionMinimums = [432, 406, 503, 373, 435, 435, 371, 375, 404, 399, 413, 410, 395, 421, 363, 369, 432, 458, 411, 428, 469, 489, 456, 456, 482, 472, 482, 491, 436, 440, 449, 447, 477, 437, 442, 345, 407, 393];
+assert.strictEqual(originalDescriptionMinimums.length, 38, '既存説明文の基準文字数を38件保持します');
+assert(descriptionLengths.slice(0, 38).every((length, index) => length >= originalDescriptionMinimums[index]), '既存38件の洞察・考察本文を一文字も短縮しません');
+assert(descriptionLengths.slice(38).every((length) => length >= 340 && length <= 520), '新規グラフの考察文も既存と同程度の文章量に揃えます');
 assert(Array.from(chartNarrativeText).length >= 16000, '全グラフの考察総文字数を維持する必要があります');
-assert((html.match(/▍ 洞察・考察/g) || []).length === 38, '説明欄の見出しを全38件で統一する必要があります');
+assert((html.match(/▍ 洞察・考察/g) || []).length === 41, '説明欄の見出しを全41件で統一する必要があります');
+assert((html.match(/class="chart-insight-label"/g) || []).length === 123, '全41件の考察を「指標の概要・主な傾向・解釈上の注意」の三段構成に統一します');
+for (const id of ['chart-title-body-scatter', 'chart-day-of-month', 'chart-title-length']) {
+  assert(html.includes('id="' + id + '"'), '追加グラフの描画領域が必要です: ' + id);
+}
+assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength"), '追加グラフを共通リサイズ・操作対象へ登録します');
 
 const styleBlocks = [...html.matchAll(/<style\b/gi)];
 assert.strictEqual(styleBlocks.length, 1, 'スタイルシートは一つに統合する必要があります');
