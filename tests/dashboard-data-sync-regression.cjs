@@ -122,8 +122,10 @@ assert((html.match(/▍ 洞察・考察/g) || []).length === 38, '説明欄の�
 
 const styleBlocks = [...html.matchAll(/<style\b/gi)];
 assert.strictEqual(styleBlocks.length, 1, 'スタイルシートは一つに統合する必要があります');
-assert(/\.charts-grid,.charts-grid-3,.advanced-charts-grid\{display:grid!important;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/.test(html), '全グラフのPCレイアウトを共通化する必要があります');
-assert(/\.charts-grid,.charts-grid-3,.advanced-charts-grid\{grid-template-columns:minmax\(0,1fr\)!important/.test(html), '全グラフのモバイルレイアウトを共通化する必要があります');
+assert(/grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*400px\),\s*1fr\)\)\s*!important/.test(html), '未使用列を折りたたみ、最終行のグラフも横幅いっぱいに広げます');
+assert(/@media\s*\(max-width:\s*640px\)[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)\s*!important/.test(html), 'スマートフォンではグラフを一列に配置します');
+assert(/\.chart-card\s*,\s*\.advanced-chart-card\s*\{[\s\S]*?width:\s*100%\s*!important/.test(html), 'グラフカードは親グリッドの横幅を使い切ります');
+assert(/\.chart-card\s*>\s*\.chart-box[\s\S]*?width:\s*100%\s*!important/.test(html), 'EChartsの描画領域はカード幅に追従します');
 assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(html), 'グラフ内の書体をサイトUIと統一する必要があります');
 assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
