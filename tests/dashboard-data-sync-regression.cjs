@@ -132,6 +132,12 @@ assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-18 · b0
 assert(!html.includes('181e5b3d') && !html.includes('partial') && !html.includes('outage') && !html.includes('operational'), '古い監視状態の文言を残しません');
 assert(html.includes('記事文字数の経験累積分布（ECDF）'), 'ECDFのグラフ名は日本語を主表記にします');
 assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー値を残しません');
+
+const rgbaValues = [...new Set(html.match(/rgba\([^)]*\)/gi) || [])];
+const allowedRgbaPrefixes = ['rgba(48,41,35,', 'rgba(143,37,43,', 'rgba(196,160,89,', 'rgba(247,242,237,', 'rgba(255,253,251,'];
+assert(rgbaValues.every((value) => allowedRgbaPrefixes.some((prefix) => value.toLowerCase().startsWith(prefix))), '透過色も共通パレットに統一します');
+assert(html.includes('const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\\/div><p class="chart-desc-copy">'), '自動同期は説明文の段落構造を正しく保護します');
+
 assert(html.includes('<p class="chart-desc-copy">'), '洞察・考察は共通段落構造を維持します');
 
 const inlineScriptMatch = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].find((match) => match[2].includes('const newsData = ['));
