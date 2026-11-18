@@ -1528,6 +1528,9 @@
     *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
   }
 
+
+  .charts-grid .chart-box-tall,.charts-grid-3 .chart-box-tall{height:420px}
+  @media(max-width:700px){.charts-grid .chart-box-tall,.charts-grid-3 .chart-box-tall{height:400px}}
 </style>
 <style id="dashboard-chart-finish">
   /* TENMEI CHART SYSTEM — shrine-inspired editorial dashboard, shared by every ECharts view. */
@@ -1622,7 +1625,7 @@
 <header>
   <div class="header-kamon"><img src="/favicon/favicon.svg?v=20261118.1" width="64" height="64" alt="天命乃杜 記事分析ダッシュボードの紋章" fetchpriority="high"></div>
   <h1 class="site-title">運勢・天命乃杜 — 記事分析ダッシュボード</h1>
-  <p class="subtitle">Article Analytics Report &nbsp;·&nbsp; Data Intelligence</p>
+  <p class="subtitle">記事の公開傾向・構成・文字数を多角的に分析</p>
   <p class="header-meta">分析対象期間: <span id="meta-period">--</span> &ensp;|&ensp; 社務所だより: <span id="meta-news-count">--</span>記事 &ensp;|&ensp; 神籤草子: <span id="meta-col-count">--</span>記事</p>
   <p class="header-meta">GitHub本体 main 確認基準：2026-11-18 · 181e5b3d · 記事データ最新公開：2026-10-25（神籤草子 ID66） · 最新ソース変更：ヘルス履歴・状態スナップショット（記事データ変更なし） · 本体状態：一部障害（サイトCSP・おみくじ／API正常）</p>
 </header>
@@ -1711,7 +1714,7 @@
   <aside class="print-overview-note" aria-label="PDFレポートの概要">
     <div>
       <h2>本レポートの見方</h2>
-      <p>天命乃杜の社務所だよりと神籤草子を、公開日・本数・文字数・分類・投稿傾向から俯瞰するための固定レポートです。グラフでは変化の位置を、洞察・考察では各数値の背景を確認できます。記事ごとの明細や集計値の再利用には、画面上のCSV出力をご利用ください。</p>
+      <p>天命乃杜の社務所だよりと神籤草子を、公開日・本数・文字数・分類・投稿傾向から俯瞰するための分析レポートです。グラフでは変化の位置を、各グラフの解説では数値の背景を確認できます。記事ごとの明細や集計値の再利用には、画面上のCSV出力をご利用ください。</p>
     </div>
     <dl class="print-overview-list">
       <dt>対象媒体</dt><dd>社務所だより／神籤草子</dd>
@@ -1725,7 +1728,7 @@
   <div class="section-title">投稿分布</div>
   <div class="charts-grid">
     <div class="chart-card chart-card-wide">
-      <div class="chart-title">月別投稿数の推移（ニュース vs コラム）</div>
+      <div class="chart-title">月別投稿数の推移（ニュースとコラム）</div>
       <div class="chart-box" id="chart-monthly"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="0"></div>対象期間は2025年12月10日から2026年10月25日まで。月別では2026年1月がニュース53本・コラム27本の計80本で最大となった。12月は6本、2月26本、3月0本、4月4本、5月14本、6月7本、7月8本、8月4本、9月3本、10月4本。10月はニュース2本にコラムID65・66の2本が加わり、最後の追加は10月25日のID66である。この月別構成からは、年明けの一斉公開が全期間の総数を大きく押し上げた一方、春以降は更新頻度が落ち着いたことが読み取れる。10月は4本という本数だけで判断せず、ニュースとコラムの両方が含まれる点、最後に基礎知識記事が追加された点を分けて見る必要がある。月ごとの本数は活動量の指標だが、記事の重要度や内容の充実度をそのまま表すものではない。1月の80本は全156本の約51.3%を占めるため、全期間平均は初期集中に引っ張られる。後半は本数が減ってもニュース平均文字数が伸びており、頻度と説明量は別々に読む必要がある。</div>
     </div>
@@ -1750,7 +1753,7 @@
   <div class="section-title">週次推移</div>
   <div class="charts-grid">
     <div class="chart-card">
-      <div class="chart-title">週別投稿数（ニュース vs コラム）</div>
+      <div class="chart-title">週別投稿数（ニュースとコラム）</div>
       <div class="chart-box" id="chart-weekly"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="3"></div>週次推移では、1月4日週が21本、1月11日週と1月25日週がそれぞれ22本の集中週となった。その後、2月24日〜4月20日の56日間は投稿がなく、4月21日から再開。5月以降は月ごとに3〜14本の範囲で推移し、最新の投稿は10月25日まで収録されている。集中週の22本は月初・月末に近い一括公開の影響を受けている可能性があるため、週次の山をそのまま継続的な制作速度と解釈しないことが重要である。春の空白後は月別の総数が3〜14本の範囲に収まり、初期の集中期とは異なるペースに移っている。最新日まで含めた週次集計は、ニュースとコラムを合算した公開履歴の全体像を示す。週次の山は月別集計では隠れる公開集中を示す一方、週の区切りは日曜始まりである。56日間の空白は複数週にまたがる。週次本数をそのまま開発速度や作業量に置き換えないことが重要である。</div>
     </div>
@@ -1776,12 +1779,12 @@
   <div class="charts-grid-3">
     <div class="chart-card">
       <div class="chart-title">ニュースタグ分布（主要カテゴリ）</div>
-      <div class="chart-box" id="chart-news-tags"></div>
+      <div class="chart-box chart-box-tall" id="chart-news-tags"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="7"></div>ニュース90本のタグ分布は52種類。最多は「新機能・改善」9本、「機能改善」「新機能」各8本、「不具合修正」6本、「お知らせ」5本。41種類のタグは1記事だけに付与されており、少数タグは個別の更新内容を示す細分類として扱うのが適切。52種類というタグの広がりに対し、41種類が1記事のみという構成は、分類が大分類だけでなく個別の更新内容まで細かく表現していることを示す。頻出タグは横断的な傾向を読むのに向き、単発タグは特定の記事の主題を探すために役立つ。したがって、タグ分布を比較する際は最多タグだけで全体を代表させず、少数タグの存在も含めて分類体系の細かさとして理解する必要がある。52タグ中41タグが1記事のみで、分類は細かく分かれている。頻出タグは横断比較に向き、単発タグは個別の出来事を示す。集約ルールが変われば過去の比較値も変わる。</div>
     </div>
     <div class="chart-card">
       <div class="chart-title">コラムカテゴリ分布</div>
-      <div class="chart-box" id="chart-col-cats"></div>
+      <div class="chart-box chart-box-tall" id="chart-col-cats"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="8"></div>神籤草子は66本。カテゴリ別では「クイズ」11本が最多、「年中行事」7本、「歳時記」6本、「基礎知識」「豆知識」「読み解き」が各5本。ID66「氏神・産土神・崇敬神社の違い」は「基礎知識」に分類され、同カテゴリは5本となった。「クイズ」が最多である一方、年中行事・歳時記・基礎知識など複数のカテゴリに記事が分散している。これは神籤草子が一つの形式だけに偏らず、参加型の読み物と神社文化・季節知識の解説を併存させていることを示す。ID66の追加によって基礎知識は5本となり、コラム群の中で知識解説の位置づけが明確になった。件数だけでは各記事の深さや読者への有用性までは評価できない。クイズ11本はコラム66本の約16.7%で最多だが、全体の大半ではない。季節行事や基礎知識も並び、参加型企画と知識記事が共存する。ID66は基礎知識の幅を補う記事である。</div>
     </div>
     <div class="chart-card">
@@ -1818,7 +1821,7 @@
   </div>
 
   <!-- BEHAVIOR PATTERNS -->
-  <div class="section-title">行動パターン — Posting Behavior</div>
+  <div class="section-title">投稿の行動パターン</div>
   <div class="charts-grid-3">
     <div class="chart-card">
       <div class="chart-title">投稿時刻の分布（24時間・ニュース）</div>
@@ -1837,14 +1840,14 @@
   <div class="charts-grid">
     
     <div class="chart-card">
-      <div class="chart-title">曜日別投稿数 比較（ニュース vs 神籤草子）</div>
+      <div class="chart-title">曜日別投稿数の比較（社務所だよりと神籤草子）</div>
       <div class="chart-box" id="chart-dow-compare"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 読み解きのポイント</div><div class="chart-desc-auto" data-insight-index="18"></div>ニュースとコラムの曜日別比較では、ニュースは土曜日22本・日曜日17本、コラムは火曜日17本・土曜日14本・日曜日と金曜日が各11本。媒体ごとの公開日の違いは見えるが、テーマや制作意図との因果関係までは断定できない。ニュースは土曜・日曜の合計が39本、コラムは火曜が17本で最多というように、媒体ごとに異なる公開曜日の山がある。ニュースは機能更新や運用記録、コラムは季節行事・神社文化・クイズを扱うため、公開スケジュールの違いが集計に表れている可能性はある。ただし、記事テーマと曜日の因果関係はこの集計だけでは証明できず、観察できるのはあくまで公開日の分布である。ニュースは週末、コラムは火曜日に山がある。ただし媒体ごとにテーマや公開準備が異なり、曜日の差から編集方針の因果関係までは断定できない。月別・カテゴリ別集計が追加検証に役立つ。</div>
     </div>
   </div>
 
   <!-- CHAR COUNT ANALYSIS -->
-  <div class="section-title">文字数分析 — Content Length Analysis</div>
+  <div class="section-title">文字数分析</div>
 
   <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:1.5rem">
     <div class="stat-card" style="border-top-color:#c0392b">
@@ -1941,7 +1944,7 @@
 
 
   <!-- ADVANCED CHARTS -->
-  <div class="section-title">多角的分析 — Advanced Views</div>
+  <div class="section-title">多角的な分析</div>
   <p class="advanced-charts-intro">既存の時系列・分布グラフに加え、記事の構成、分類間の流れ、文字数のばらつき、媒体ごとの特徴を異なる視点から比較します。各図は収録済みの記事データから再計算しています。</p>
   <div class="advanced-charts-grid">
     <div class="chart-card advanced-chart-card advanced-chart-wide">
@@ -4569,15 +4572,12 @@ const tagPieData = Object.entries(mainTags).map(([k, v]) => ({ name: k, value: v
 
 const chartNewsTags = createDashboardChart(document.getElementById('chart-news-tags'));
 chartNewsTags.setOption({
-  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
-  series: [{
-    type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
-    data: tagPieData,
-    label: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10 },
-    itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
-  }],
-  color: ['#c0392b','#27ae60','#e67e22','#2980b9','#8e44ad','#f39c12','#7f8c8d','#1abc9c','#2c3e50','#95a5a6','#d4c4a0']
+  textStyle:{fontFamily:dashboardChartFont},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:items=>items[0].axisValue+': '+items[0].value+'件'},
+  grid:{left:118,right:48,top:22,bottom:30,containLabel:true},
+  xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#766957',fontSize:11,fontFamily:dashboardChartFont},splitLine:{show:true,lineStyle:{color:'#eee8df',type:'dashed'}}},
+  yAxis:{type:'category',inverse:true,data:tagPieData.map(item=>item.name),axisLabel:{color:'#5c5042',fontSize:11,fontFamily:dashboardChartFont,width:108,overflow:'truncate'}},
+  series:[{name:'ニュース記事数',type:'bar',data:tagPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#a63d36',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:dashboardChartFont,fontSize:10,formatter:'{c}件'}}]
 });
 
 const catCount = {};
@@ -4586,15 +4586,12 @@ const catPieData = Object.entries(catCount).map(([k,v]) => ({ name: k, value: v 
 
 const chartColCats = createDashboardChart(document.getElementById('chart-col-cats'));
 chartColCats.setOption({
-  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
-  series: [{
-    type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'],
-    data: catPieData,
-    label: { color: '#5c3317', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 10 },
-    itemStyle: { borderColor: '#faf6ef', borderWidth: 2 }
-  }],
-  color: ['#c0392b','#27ae60','#2980b9','#e67e22','#8e44ad','#7f8c8d','#f39c12','#16a085','#2c3e50','#e74c3c','#1abc9c','#d35400','#95a5a6','#9b59b6']
+  textStyle:{fontFamily:dashboardChartFont},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:items=>items[0].axisValue+': '+items[0].value+'件'},
+  grid:{left:112,right:48,top:22,bottom:30,containLabel:true},
+  xAxis:{type:'value',min:0,minInterval:1,name:'記事数',axisLabel:{color:'#766957',fontSize:11,fontFamily:dashboardChartFont},splitLine:{show:true,lineStyle:{color:'#eee8df',type:'dashed'}}},
+  yAxis:{type:'category',inverse:true,data:catPieData.map(item=>item.name),axisLabel:{color:'#5c5042',fontSize:11,fontFamily:dashboardChartFont,width:102,overflow:'truncate'}},
+  series:[{name:'コラム記事数',type:'bar',data:catPieData.map(item=>item.value),barMaxWidth:22,itemStyle:{color:'#b8893c',borderRadius:[0,5,5,0]},label:{show:true,position:'right',color:'#665846',fontFamily:dashboardChartFont,fontSize:10,formatter:'{c}件'}}]
 });
 
 const groups = {
@@ -4754,7 +4751,7 @@ chartDowHour.setOption({
 });
 
 // 神籤草子 曜日別
-// ニュース vs コラム 曜日比較
+// ニュースとコラムの曜日比較
 const chartDowCompare = createDashboardChart(document.getElementById('chart-dow-compare'));
 chartDowCompare.setOption({
   textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
