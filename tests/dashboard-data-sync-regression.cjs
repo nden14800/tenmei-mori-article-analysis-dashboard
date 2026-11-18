@@ -145,6 +145,28 @@ assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: ch
 assert(html.includes('calculateScatterPareto') && html.includes('calculateLorenzCurve') && html.includes('chart-title-body-scatter') && html.includes('chart-advanced-gap-scatter') && html.includes('chart-advanced-date-scatter') && html.includes('lorenzNews'), '複数の既存散布図へパレート線を統合し、ローレンツ曲線をデータから計算します');
 assert((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length >= 6, '3つの既存散布図へ媒体別のパレート線を追加します');
 assert.strictEqual((html.match(/name: ?'(?:ニュース|コラム)のパレート線'|name: ?'分類のパレート線'/g) || []).length, 11, '6つのグラフにパレート線を配置します');
+const paretoLegendCharts = [
+  ['chartMonthly.setOption({', ['ニュースのパレート線', 'コラムのパレート線']],
+  ['chartTagBubble.setOption({', ['分類のパレート線']],
+  ['chartScatter.setOption({', ['ニュースのパレート線', 'コラムのパレート線']],
+  ['chartTitleBodyScatter.setOption({', ['ニュースのパレート線', 'コラムのパレート線']],
+  ['setAdvancedOption(chartAdvancedDateScatter,', ['ニュースのパレート線', 'コラムのパレート線']],
+  ['setAdvancedOption(chartAdvancedGapScatter,', ['ニュースのパレート線', 'コラムのパレート線']]
+];
+for (const [chartStart, paretoNames] of paretoLegendCharts) {
+  const start = html.indexOf(chartStart);
+  assert(start >= 0, 'パレート対象グラフの設定が必要です: ' + chartStart);
+  const end = html.indexOf('\\n});', start);
+  assert(end > start, 'グラフ設定の終端が必要です: ' + chartStart);
+  const option = html.slice(start, end);
+  const legendMatch = option.match(/legend\\s*:\\s*\\{[^}]*data\\s*:\\s*\\[([^\\]]*)\\]/);
+  assert(legendMatch, 'パレート対象グラフには操作可能な凡例が必要です: ' + chartStart);
+  for (const name of paretoNames) {
+    assert(legendMatch[1].includes("'" + name + "'"), 'パレート線を凡例から個別に切り替えられる必要があります: ' + chartStart + ' / ' + name);
+    assert(option.includes("name: '" + name + "'") || option.includes("name:'" + name + "'"), '凡例に対応するパレート系列が必要です: ' + chartStart + ' / ' + name);
+  }
+}
+
 assert(html.includes('id="pareto-toggle-all"') && html.includes('function applyParetoVisibility'), '全グラフのパレート表示を一括で切り替える操作を用意します');
 assert(html.includes("type: visible ? 'legendSelect' : 'legendUnSelect'"), '凡例操作と連動してパレート線を全グラフで表示・非表示にします');
 assert(html.includes('pareto-chart-hidden') && html.includes("paretoChartCard?.classList.toggle('pareto-chart-hidden', !visible)"), '独立したパレート図も一括操作の対象にします');
