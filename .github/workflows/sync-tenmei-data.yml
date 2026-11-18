@@ -14,6 +14,7 @@ on:
     paths:
       - ".github/workflows/sync-tenmei-data.yml"
       - "scripts/sync-tenmei-data.mjs"
+      - "tests/dashboard-data-sync-regression.cjs"
 
 permissions:
   contents: write
