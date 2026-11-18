@@ -110,16 +110,26 @@ assert(!html.includes('chartDescriptionCopy'), '短文で長文説明を上書�
 assert(!html.includes('chart-desc-auto'), '短文用の空欄を残しません');
 assert(!html.includes('読み解きのポイント'), '説明欄ラベルを旧称へ統一します');
 
-const chartDescriptions = [...html.matchAll(/<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div>([\s\S]*?)<\/div>\s*<\/div>/g)];
+const chartDescriptions = [...html.matchAll(/<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><p class="chart-desc-copy">([\s\S]*?)<\/p><\/div>/g)];
 assert.strictEqual(chartDescriptions.length, 38, '38個すべてのグラフ説明を維持する必要があります');
 const chartNarrativeText = chartDescriptions
   .map((match) => match[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ''))
   .join('');
 const descriptionLengths = chartDescriptions.map((match) => Array.from(match[1].replace(/<[^>]+>/g, '').replace(/\s+/g, '')).length);
-assert(descriptionLengths.every((length) => length >= 110), 'すべてのグラフに十分な説明文が必要です');
-assert(descriptionLengths.filter((length) => length >= 320).length >= 30, '長文の考察を30件以上維持する必要があります');
-assert(Array.from(chartNarrativeText).length >= 15000, '全グラフの考察総文字数を維持する必要があります');
+assert(descriptionLengths.every((length) => length >= 340 && length <= 520), '全グラフの考察文を同じ文章量の範囲に保つ必要があります');
+assert(Array.from(chartNarrativeText).length >= 16000, '全グラフの考察総文字数を維持する必要があります');
 assert((html.match(/▍ 洞察・考察/g) || []).length === 38, '説明欄の見出しを全38件で統一する必要があります');
+
+const styleBlocks = [...html.matchAll(/<style\b/gi)];
+assert.strictEqual(styleBlocks.length, 1, 'スタイルシートは一つに統合する必要があります');
+assert(/\.charts-grid,.charts-grid-3,.advanced-charts-grid\{display:grid!important;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/.test(html), '全グラフのPCレイアウトを共通化する必要があります');
+assert(/\.charts-grid,.charts-grid-3,.advanced-charts-grid\{grid-template-columns:minmax\(0,1fr\)!important/.test(html), '全グラフのモバイルレイアウトを共通化する必要があります');
+assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(html), 'グラフ内の書体をサイトUIと統一する必要があります');
+assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
+assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
+const inlineScriptMatch = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].find((match) => match[2].includes('const newsData = ['));
+assert(inlineScriptMatch, '記事データを含むスクリプトが必要です');
+assert(!/\sstyle="/.test(html.slice(0, inlineScriptMatch.index)), '静的HTMLに個別のインラインスタイルを残しません');
 
 const summaryStart = html.indexOf('  <!-- MEGA SUMMARY -->');
 const summaryEnd = html.indexOf('  <!-- ARTICLE TABLES -->', summaryStart);
