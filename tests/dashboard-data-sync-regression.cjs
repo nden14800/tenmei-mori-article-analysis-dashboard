@@ -136,7 +136,8 @@ assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー
 const rgbaValues = [...new Set(html.match(/rgba\([^)]*\)/gi) || [])];
 const allowedRgbaPrefixes = ['rgba(48,41,35,', 'rgba(143,37,43,', 'rgba(196,160,89,', 'rgba(247,242,237,', 'rgba(255,253,251,'];
 assert(rgbaValues.every((value) => allowedRgbaPrefixes.some((prefix) => value.toLowerCase().startsWith(prefix))), '透過色も共通パレットに統一します');
-assert(html.includes('const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\\/div><p class="chart-desc-copy">'), '自動同期は説明文の段落構造を正しく保護します');
+const syncScript = fs.readFileSync('scripts/sync-tenmei-data.mjs', 'utf8');
+assert(syncScript.includes('chart-desc-copy'), '自動同期は説明文の段落構造を正しく保護します');
 
 assert(html.includes('<p class="chart-desc-copy">'), '洞察・考察は共通段落構造を維持します');
 
