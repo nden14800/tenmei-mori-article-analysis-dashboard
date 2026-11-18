@@ -6255,6 +6255,15 @@ function polishDashboardChartOptions() {
    const seed=preferred?palette.indexOf(preferred):hashIndex(key)%palette.length;
    let color=null;
    for(let step=0;step<palette.length;step++){const candidate=palette[(seed+step)%palette.length];if(!used.has(candidate)){color=candidate;break;}}
+   if(!color){
+    const toHex=value=>Math.round(value*255).toString(16).padStart(2,'0');
+    const hslHex=(h,s,l)=>{const a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return toHex(l-a*Math.max(Math.min(k-3,9-k,1),-1));};return '#'+f(0)+f(8)+f(4);};
+    for(let step=0;step<720&&!color;step++){
+     const hue=(seed*31+step*137.508)%360,saturation=.54+(step%3)*.06,lightness=.36+(Math.floor(step/3)%4)*.045;
+     const candidate=hslHex(hue,saturation,lightness);
+     if(!used.has(candidate))color=candidate;
+    }
+   }
    if(!color)color=palette[(seed+index)%palette.length];
    assigned.set(key,color);used.add(color);return color;
   };
