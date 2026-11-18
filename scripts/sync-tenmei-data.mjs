@@ -89,15 +89,16 @@ function resolveCssColor(value) {
   const m = raw.match(/^var\(--([a-z0-9-]+)\)$/);
   return m ? (cssVars[m[1]] || raw) : raw;
 }
+// 同じカテゴリでも記事ごとに色クラスが変わる場合がある。
+// 記事データ側の colorClass はそのまま保持し、カテゴリ集計図では最新記事の色を代表色にする。
 const catColors = {};
-for (const a of cols) {
+for (const a of [...cols].sort((left, right) => right.id - left.id)) {
   if (!a.category) continue;
   const style = columnStyles[a.colorClass];
   if (!style || !style.text) throw new Error('unknown site column style: ' + a.colorClass);
   const color = resolveCssColor(style.text);
   if (!/^#[0-9a-fA-F]{3,8}$/.test(color)) throw new Error('unresolved site column color: ' + a.colorClass + ' -> ' + color);
-  if (catColors[a.category] && catColors[a.category] !== color) throw new Error('site category uses multiple colors: ' + a.category);
-  catColors[a.category] = color;
+  if (!catColors[a.category]) catColors[a.category] = color;
 }
 const newsColorMap = Function('"use strict"; return (' + getObject(source, 'const NEWS_TAG_COLOR_CLASS_MAP = Object.freeze(') + ')')();
 const newsClassColors = {};
@@ -105,14 +106,14 @@ for (const [tagColor, colorClass] of Object.entries(newsColorMap)) {
   const match = source.match(new RegExp('\\.' + colorClass + '\\s*\\{[^}]*?color\\s*:\\s*(#[0-9a-fA-F]{3,8})', 'm'));
   if (match) newsClassColors[tagColor] = match[1];
 }
+// タグの色が履歴の途中で変更された場合も、最新記事の色を集計図の代表色として使う。
 const tagColors = {};
-for (const a of news) {
+for (const a of [...news].sort((left, right) => right.id - left.id)) {
   if (!a.tag) continue;
   const colorClass = newsColorMap[a.tagColor];
   const color = newsClassColors[a.tagColor];
   if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + a.tagColor);
-  if (tagColors[a.tag] && tagColors[a.tag] !== color) throw new Error('site tag uses multiple colors: ' + a.tag);
-  tagColors[a.tag] = color;
+  if (!tagColors[a.tag]) tagColors[a.tag] = color;
 }
 // 既存記事の文字数は、過去に本サイトの countArticleCharacters() と照合して確定した値を維持する。
 // 正規表現だけで再計算するとブラウザの DOM textContent と微妙にずれるため、既存値を再計算して上書きしない。
