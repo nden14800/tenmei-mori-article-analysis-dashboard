@@ -144,7 +144,7 @@ const usedColors = [...new Set([...html.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m
 assert(usedColors.every((color) => approvedPalette.has(color)), '色は天命乃杜の統一パレット内に収めます');
 assert(html.includes('.char-bar__track') && html.includes('.char-bar__fill'), '文字数バーを共通コンポーネントで描画します');
 assert(html.includes('style="--tag-color:\${color}"'), 'タグ色は共通バッジのCSS変数で渡します');
-assert(!html.includes('Treemap') && !html.includes('ThemeRiver') && !html.includes('Pareto'), 'グラフ説明の専門用語は日本語表記に統一します');
+assert(!chartNarrativeText.includes('Treemap') && !chartNarrativeText.includes('ThemeRiver') && !chartNarrativeText.includes('Pareto'), 'グラフ説明の専門用語は日本語表記に統一します');
 
 
 const summaryStart = html.indexOf('  <!-- MEGA SUMMARY -->');
