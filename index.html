@@ -1621,6 +1621,40 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
 .table-time{color:var(--tm-gold);font-size:.72rem}
 .summary-table-cell--rank{text-align:center;white-space:nowrap;color:var(--tm-muted)}
 .summary-table-cell--article-id{font-family:var(--font-ui);color:var(--tm-cedar)}
+
+  
+  /* Chart layout balance: lone charts and orphaned final cards use the full row. */
+  .charts-grid,
+  .charts-grid-3,
+  .advanced-charts-grid {
+    min-width: 0;
+  }
+  .charts-grid > .chart-card:only-child,
+  .charts-grid-3 > .chart-card:only-child,
+  .charts-grid > .chart-card.heatmap-card,
+  .charts-grid-3 > .chart-card.heatmap-card,
+  .charts-grid > .chart-card:last-child:nth-child(odd),
+  .charts-grid-3 > .chart-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1 !important;
+  }
+  /* The first advanced group has three full-width visualizations; let its final radar chart complete the row. */
+  .advanced-charts-grid:not(.advanced-charts-grid-extra) > .advanced-chart-card:last-child {
+    grid-column: 1 / -1 !important;
+  }
+  .chart-card > .chart-box,
+  .chart-card > .heatmap-scroll,
+  .advanced-chart-card > .chart-box-advanced {
+    width: 100%;
+    min-width: 0;
+  }
+  @media (max-width: 900px) {
+    .charts-grid > .chart-card,
+    .charts-grid-3 > .chart-card,
+    .advanced-charts-grid > .advanced-chart-card {
+      grid-column: 1 / -1 !important;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -1977,7 +2011,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       <div class="chart-box chart-box-advanced" id="chart-advanced-parallel"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy">並行座標は記事一件を一本の線として、記事ID・文字数・対象期間内の日数・媒体という異なる軸を横断して示します。一本の線を軸から軸へ追うことで、公開時期と文章量の組み合わせ、媒体ごとの分布、特定ID帯に偏った長文記事などを探せます。記事数が多いと線が重なり、密集部分が濃く見えるため、線の濃さをそのまま件数や確率と解釈しないことが重要です。IDは記事の識別番号であり、時間や品質を直接表す尺度ではありません。文字数と公開日を中心に見て、媒体軸で色分けされた線のまとまりを確認すると、全体の傾向と例外的な記事を区別しやすくなります。個々の記事を調べる場合は線に触れてツールチップのタイトル・公開日・文字数を確認し、他のグラフや記事一覧で内容を照合してください。 軸ごとに数値の範囲が異なるため、線の傾きや交差角度そのものに統計的な意味はありません。読み取る際は各軸の値を個別に追い、同じ記事の公開時期・文字数・媒体の組み合わせを確認してください。多数の線が重なると全体像が見えにくくなるので、ツールチップで個別記事を確認し、箱ひげ図や散布図で分布を補完するのが適切です。</p></div>
     </div>
-    <div class="chart-card advanced-chart-card">
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体別の特徴プロファイル（レーダーチャート）</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-radar"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy">レーダーチャートでは記事数・平均文字数・中央値・最大文字数・分類数・活動月数を、それぞれ二媒体の大きい方が100になる相対尺度へ変換しています。異なる単位を一枚に重ねることで、媒体ごとの特徴の輪郭を比較できますが、半径の長さは実数そのものではありません。たとえば記事数の軸で100でも、文字数の軸で100でも、意味する単位と実際の量は異なります。また、最大値は少数の長文記事に影響されやすく、分類数や活動月数は記録期間の長さにも左右されます。面積が大きい方を総合的に優れていると評価する図ではなく、どの指標で差があるかを発見するための要約です。各軸の実数はツールチップで確認し、記事数の差と記事長の差を分けて解釈してください。 相対値は二媒体の大きい方を100としているため、両媒体が同じ値ならどちらも100となり、絶対的な規模の違いは見えません。比較する二媒体が変われば尺度も変わる点に注意してください。各指標は記事数や文字数など異なる意味を持つため、レーダーの形を一つの総合点として扱わず、差が現れた軸を個別の集計表で確認することが重要です。</p></div>
