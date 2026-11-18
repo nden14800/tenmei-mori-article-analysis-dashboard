@@ -6353,7 +6353,7 @@ function polishDashboardChartOptions() {
     const sourceData=Array.isArray(legend.data)?legend.data:[...new Set(series.flatMap(item=>['pie','funnel'].includes(item.type)?(item.data||[]).map(datum=>datum.name):[item.name]).filter(Boolean))];
     const data=sourceData.map((entry,index)=>{
      if(typeof entry==='string'){
-      if(entry===''||entry==='\\n')return entry;
+      if(entry===''||entry==='\n')return entry;
       const color=resolveColor(entry,null,index);
       return {name:entry,itemStyle:{color,borderColor:color},lineStyle:{color}};
      }
