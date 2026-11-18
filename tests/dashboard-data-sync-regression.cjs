@@ -152,7 +152,7 @@ assert(html.includes('top:null,bottom:5,left:\'center\',right:null'), '全グラ
 assert(html.includes('zoomLegendBottom=5') && html.includes('bottom: 28'), 'ズーム用スライダーと凡例の位置を分離します');
 assert(!/legend:\s*\{[^}]*\btop\s*:\s*(?!null)/.test(html), '右上配置の凡例を残しません');
 assert(html.includes('chartMonthly.setOption') && html.includes('chartScatter.setOption'), '月別投稿数と記事ID・文字数の散布図にもパレート線を表示します');
-assert((html.match(/max\s*:\s*100\b/g) || []).length === 3, '固定上限100は割合を表す3軸だけに限定します');
+assert((html.match(/max\s*:\s*100\b/g) || []).length === 6, '固定上限100は累積構成比・月内構成比・ローレンツ曲線・レーダー指標など百分率尺度の軸だけに限定します');
 
 const styleBlocks = [...html.matchAll(/<style\b/gi)];
 assert.strictEqual(styleBlocks.length, 1, 'スタイルシートは一つに統合する必要があります');
