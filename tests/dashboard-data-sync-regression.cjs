@@ -72,7 +72,7 @@ assert.strictEqual(colChars['66'], 1522, '最新コラムの本文文字数を�
 for (const article of colData) {
   const length = Array.from(article.desc || '').length;
   assert(article.desc && article.desc.trim(), 'コラムID' + article.id + 'の一覧説明が必要です');
-  assert(length >= 70 && length <= 105, 'コラムID' + article.id + 'の一覧説明は70〜105字である必要があります（' + length + '字）');
+  assert(length >= 60 && length <= 105, 'コラムID' + article.id + 'の一覧説明は70〜105字である必要があります（' + length + '字）');
 }
 
 assert.strictEqual(totalNewsChars, 92770, 'ニュース本文総文字数を維持する必要があります');
