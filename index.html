@@ -454,13 +454,41 @@
   }
   .advanced-chart-card { min-width: 0; }
   .advanced-chart-wide { grid-column: 1 / -1; }
-  .chart-box-advanced { height: 360px; }
+.chart-box-advanced { height: 390px; }
+  .advanced-chart-card {
+    padding: 1.65rem;
+    border-radius: 12px;
+    border-color: #e8dcc7;
+    box-shadow: 0 8px 26px rgba(92,51,23,.055);
+    background: linear-gradient(180deg, #fff 0%, #fffdfa 100%);
+  }
+  .advanced-chart-card .chart-title {
+    color: #5c3317;
+    font-family: var(--font-main);
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: .055em;
+    padding-bottom: .8rem;
+    border-bottom: 1px solid #f0e7d6;
+  }
+  .advanced-chart-card .chart-desc {
+    font-size: .84rem;
+    line-height: 2;
+    padding: 1.25rem 1.4rem;
+    border-radius: 8px;
+    background: #fbf8f2;
+  }
+  .advanced-chart-card .chart-desc-title {
+    color: #8a641f;
+    font-size: .8rem;
+    letter-spacing: .1em;
+  }
   @media (max-width: 900px) {
     .advanced-charts-grid { grid-template-columns: 1fr; }
     .advanced-chart-wide { grid-column: auto; }
   }
   @media (max-width: 700px) {
-    .chart-box-advanced { height: 330px; }
+    .chart-box-advanced { height: 350px; }
     .advanced-charts-intro { font-size: 0.76rem; }
   }
 
@@ -1552,44 +1580,68 @@
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">媒体・分類別の記事構成 — Treemap</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-treemap"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>面積で記事数の規模を比較し、媒体全体から個別分類までを一画面で把握します。大きな分類だけでなく、小規模な分類も面積として残すため、構成の偏りと多様性を同時に確認できます。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>この図は記事本数を面積に置き換え、媒体→分類という階層を一度に俯瞰するためのものです。最も面積の大きい分類は収録記事の構成を強く左右しますが、面積が大きいこと自体は内容の質や重要度を意味しません。小さな分類も独立した領域として残るため、主要テーマに記事が集中しているのか、複数のテーマへ分散しているのかを比較できます。媒体ごとの親領域を先に見てから分類へ進むと、ニュースとコラムで分類の粒度や構成が異なる場合にも、同じ分類名を安易に同一視せずに済みます。面積の差が大きいと小分類は見つけにくくなるため、パンくずから階層を拡大し、全体と部分を往復して確認してください。分類数の多さだけで多様性を断定せず、各分類の記事数と合わせて読むことが重要です。</div>
     </div>
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">媒体・分類・記事長の階層 — Sunburst</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-sunburst"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>媒体から分類、記事長クラスへと階層を掘り下げます。分類ごとの記事本数だけでは見えない、短文・中程度・長文の構成差を比較できます。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>サンバーストは、媒体の内側に分類、その内側に記事長帯を置いた三層構造です。中心から外側へ読むことで、全体の記事数がどの媒体に分かれ、媒体内のどの分類が多く、さらに各分類の文章量がどの帯に集まるかを追跡できます。外周の小さな区画は少数記事の組み合わせを示すため、数件だけの例を一般的な傾向に拡大解釈しないよう注意が必要です。分類ごとの記事数が異なる場合は、外周の絶対的な幅だけでなく、同じ親分類の中でどの長さ帯が占める割合かを比較します。ニュースとコラムで記事の役割や記述形式が異なる可能性もあるため、媒体をまたいだ単純な優劣ではなく、各媒体の内部構成を読む用途に適しています。中心へ戻る操作を使い、全体比と内部比を切り替えて確認してください。</div>
     </div>
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体から分類、記事長への流れ — Sankey</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-sankey"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事が「どの媒体に属し、どの分類に入り、どの文字数帯に分布するか」を流量で表します。分類名の重複は媒体別の内部IDで区別し、異なる分類を誤って一つにまとめない設計です。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>サンキー図は、記事一件を媒体・分類・文字数帯の三段階へ割り当て、その件数を帯の太さで示します。媒体から分類へ向かう流れと、分類から文章量帯へ向かう流れを連続して読むことで、単なる分類ランキングでは分からない構成のつながりを把握できます。同じ分類名が複数媒体に存在しても内部ノードを分離しているため、異なる母集団が一つに合算されることはありません。太い帯は該当記事が多いことを示しますが、記事間の因果関係や編集上の意図を表すものではありません。細い帯にも独自のテーマや長文記事が含まれる可能性があるため、主要な流れだけで結論を出さず、ツールチップで件数を確認してください。分類の粒度が媒体ごとに異なる場合、流れの比較は分類体系の違いも反映するため、分類定義の見直しにも役立ちます。</div>
     </div>
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">媒体・主要分類別の文字数分布 — Boxplot</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-boxplot"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>平均値だけでなく中央値と四分位範囲を比較します。少数の極端に長い記事に平均が引っ張られていないか、分類ごとの記事長の安定性を確認できます。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>箱ひげ図は平均値だけでは隠れる記事長のばらつきを、最小値・第1四分位・中央値・第3四分位・最大値で比較します。箱の中央線が中央値、箱の高さが中央50%の広がりを表し、ひげは観測された最小値と最大値までを示します。平均が大きくても中央値が低い分類では、一部の長文記事が平均を押し上げている可能性があります。反対に箱が狭い分類は、記事長が比較的一定の範囲に集まっていると読めます。ただし、ここでは分類ごとの記事数が均等ではなく、上位分類を中心に比較しているため、少数サンプルの箱は不安定です。ニュース全体・コラム全体の差と、上位分類ごとの差を分けて読み、文字数の多さを内容の充実度や品質と同一視しないでください。</div>
     </div>
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">月別の媒体構成変化 — ThemeRiver</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-themeriver"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>月ごとの投稿量を流れとして表し、ニュースとコラムの構成比や増減の転換点を見つけやすくします。投稿がない月もゼロとして扱い、時間軸を飛ばしません。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>テーマリバーは月ごとの投稿本数を連続した帯として描き、時間の経過に伴う媒体構成の変化を見やすくします。帯の厚みはその月の件数に対応し、上下に積み重なる形状からニュースとコラムの比率がどの時期に変化したかを追えます。投稿がない月も時系列から省略せず、空白期間を含めて連続した月軸にしているため、更新の集中と停止を同じ視野で確認できます。全体の高さが大きい月は総投稿数が多く、帯の片方だけが厚くなる月は媒体構成に偏りがあることを示します。ただし、テーマリバーは正確な月別件数の読み取りよりも構成の流れを把握する図です。具体的な数値は既存の月別棒グラフやツールチップと照合し、帯の面積だけから厳密な差を推定しないでください。</div>
     </div>
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体と記事分類の関係ネットワーク — Graph</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-graph"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>媒体ノードと分類ノードを記事本数で結び、分類の広がりや媒体ごとの構成をネットワークとして可視化します。線の太さは実際の記事数に対応し、関係のない分類同士を推測で接続しません。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>このネットワーク図は、媒体ノードと分類ノードを記事件数のリンクで結んだ二部グラフです。線の太さは各媒体に属する分類の記事数に対応し、どの分類が片方の媒体に集中しているか、両方の媒体に現れるかを視覚的に確認できます。ノードの近さや配置はレイアウト計算の結果であり、意味上の類似度や因果関係を示すものではありません。分類名が同じでも媒体が異なるノードは別に扱い、件数の異なる分類を誤って統合しないようにしています。線が多い箇所は構成が複雑である可能性がありますが、リンク数そのものは記事本数の合計とは別の指標です。まず媒体ノードから太いリンクをたどり、次に小さなリンクを確認すると、主要な記事領域と少数テーマの両方を把握できます。分類体系の整理や媒体間の役割分担を検討する際の補助として利用してください。</div>
     </div>
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">記事単位の多変量比較 — Parallel Coordinates</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-parallel"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事ID・文字数・対象期間内の日付位置・媒体を同時に表示します。複数の軸を横断して線のまとまりを見ることで、特定時期や媒体に偏った記事長の傾向を探せます。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>並行座標は記事一件を一本の線として、記事ID・文字数・対象期間内の日数・媒体という異なる軸を横断して示します。一本の線を軸から軸へ追うことで、公開時期と文章量の組み合わせ、媒体ごとの分布、特定ID帯に偏った長文記事などを探せます。記事数が多いと線が重なり、密集部分が濃く見えるため、線の濃さをそのまま件数や確率と解釈しないことが重要です。IDは記事の識別番号であり、時間や品質を直接表す尺度ではありません。文字数と公開日を中心に見て、媒体軸で色分けされた線のまとまりを確認すると、全体の傾向と例外的な記事を区別しやすくなります。個々の記事を調べる場合は線に触れてツールチップのタイトル・公開日・文字数を確認し、他のグラフや記事一覧で内容を照合してください。</div>
     </div>
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">媒体別の特徴プロファイル — Radar</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-radar"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事数・平均文字数・中央値・最大文字数・分類数・活動月数を、それぞれ大きい媒体を100とする相対値にそろえて比較します。異なる単位の指標を一つの尺度で眺めるための補助図です。</div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>レーダーチャートでは記事数・平均文字数・中央値・最大文字数・分類数・活動月数を、それぞれ二媒体の大きい方が100になる相対尺度へ変換しています。異なる単位を一枚に重ねることで、媒体ごとの特徴の輪郭を比較できますが、半径の長さは実数そのものではありません。たとえば記事数の軸で100でも、文字数の軸で100でも、意味する単位と実際の量は異なります。また、最大値は少数の長文記事に影響されやすく、分類数や活動月数は記録期間の長さにも左右されます。面積が大きい方を総合的に優れていると評価する図ではなく、どの指標で差があるかを発見するための要約です。各軸の実数はツールチップで確認し、記事数の差と記事長の差を分けて解釈してください。</div>
     </div>
   </div>
+
+  <div class="advanced-charts-grid advanced-charts-grid-extra">
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">日付別投稿カレンダー — Calendar Heatmap</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-calendar"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>日ごとの記事本数を暦の配置に沿って示します。通常の時系列グラフでは日付の間隔を追う必要がありますが、カレンダーでは曜日と月の位置を保ったまま、公開が集中した日と長く空いた期間を直感的に比較できます。色の濃さはその日の収録記事数であり、執筆活動の量や公開準備の開始日を表すものではありません。祝日や曜日との関係を読む際も、公開日だけから投稿理由を推測しないでください。特定月のまとまりを見つけたら、日別ヒートマップや記事一覧で本数とタイトルを照合すると、単発の集中なのか複数日の連続なのかを確認できます。空白セルは記録上の投稿がない日であり、データ欠損と混同しないことが大切です。カレンダーは年間のリズムを把握し、詳細な本数はツールチップで確かめるための図です。</div>
+    </div>
+    <div class="chart-card advanced-chart-card">
+      <div class="chart-title">曜日別の媒体構成 — Polar Bar</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-polar"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>曜日を円周上に並べ、ニュースとコラムの投稿数を放射状の棒で比較します。隣り合う曜日の偏りや、媒体ごとに投稿が集まりやすい曜日を一目で見つけられる構成です。棒の長さは件数を示し、角度の位置は曜日を示します。円形に配置しているため、週の始まりと終わりが隣接して見える点が通常の棒グラフと異なります。特定曜日の棒が長くても、その曜日に投稿する運用ルールがあるとは限らず、収録期間や一括公開の影響を受けます。ニュースとコラムは別系列として積み上げずに並べて表示するため、同じ曜日の媒体差を比較できます。曜日別集計と合わせて確認し、件数が少ない曜日の小さな差を過大評価しないでください。</div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">分類別の記事数と累積構成比 — Pareto</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-pareto"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>分類を記事数の多い順に並べた棒グラフに、左から順に足し上げた累積構成比の折れ線を重ねます。少数の主要分類が全体のどの程度を占めるか、上位分類の後にどれほど裾野が広がるかを確認できます。これは構成比を整理するためのパレート形式であり、原因分析や重要度の順位付けではありません。ニュースとコラムで同名の分類があっても媒体別に分けて集計し、分類名の違いによる誤統合を避けています。上位に集中している場合は主要テーマが明確である一方、下位分類にも少数の独自記事が残っている可能性があります。累積線の傾きが緩やかになる箇所は分類の裾野を示す目安です。棒の実数と累積比率を併せて読み、上位だけで全体像を決めつけないでください。</div>
+    </div>
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
+      <div class="chart-title">記事単位の文字数分布 — Beeswarm Scatter</div>
+      <div class="chart-box chart-box-advanced" id="chart-advanced-beeswarm"></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事一件ずつを点として配置し、ニュースとコラムの文字数分布を個別の観測値として比較します。点を横方向へわずかにずらすことで同じ文字数に重なる記事を見分けやすくし、中央値付近への集中、長文側への裾の伸び、少数の極端値を把握できます。横方向の位置は媒体を識別するための配置であり、記事の属性値や順位を表していません。縦方向が文字数なので、点の高さを直接比較できます。記事数の多い媒体では点が密集しやすく、重なりは実際の件数を隠す場合があります。ツールチップから記事IDとタイトルを確認し、箱ひげ図で見た中央値や四分位範囲と照合すると、集団全体の傾向と個別記事の違いを往復できます。文字数の大小を品質評価に置き換えず、分布の形を読むために利用してください。</div>
+    </div>
+  </div>
+
 
   <!-- MEGA SUMMARY -->
   <div class="section-title">洞察・考察 — Comprehensive Analysis</div>
@@ -3872,10 +3924,12 @@ function articleDateTime(a) {
 
 // 最新の本サイトデータ規模では、拡大しても線・文字がぼやけないSVGレンダラーを使う。
 // SVGはベクター描画のため、固定のdevicePixelRatio指定を必要としない。
-function createDashboardChart(element) {
+function createDashboardChart(element, renderer = 'svg') {
+  if (!element) throw new Error('Chart container was not found.');
   return echarts.init(element, null, {
-    renderer: 'svg',
-    useDirtyRect: false
+    renderer,
+    useDirtyRect: false,
+    useCoarsePointer: true
   });
 }
 
@@ -4449,7 +4503,6 @@ chartCatLen.setOption({
 // ═══════════════════════════════════════════
 
 // 全グラフで共通に使う公式ECharts機能。数値確認・復元・PNG保存を一貫して提供する。
-const dashboardChartFont = "'Zen Old Mincho', 'Shippori Mincho', serif";
 // Tenmei Moriと同じ明朝・ゴシックの組み合わせ。Web Font読込完了後に全チャートを再描画する。
 document.fonts?.ready?.then(() => dashboardCharts.forEach(({ chart }) => chart.resize()));
 function createChartToolbox(label, options = {}) {
@@ -4656,6 +4709,7 @@ function addChartCapabilities(chart, label, options = {}) {
 }
 
 
+const dashboardChartFont = "'Zen Old Mincho', 'Shippori Mincho', serif";
 /* ═══════════════════════════════════════════════════════════════════════
    ADVANCED VIEWS — treemap / sunburst / sankey / boxplot / themeRiver /
    graph / parallel / radar. Every value is derived from allArticles.
@@ -4879,7 +4933,7 @@ advancedArticles.forEach(article => {
   edge.value++;
   graphNodes.find(node=>node.id===edgeId).value++;
 });
-const chartAdvancedGraph = createDashboardChart(document.getElementById('chart-advanced-graph'));
+const chartAdvancedGraph = createDashboardChart(document.getElementById('chart-advanced-graph'), 'canvas');
 chartAdvancedGraph.setOption({
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, formatter: p => p.dataType==='edge'
@@ -4896,7 +4950,7 @@ chartAdvancedGraph.setOption({
   }]
 });
 const parallelRows = advancedArticles.map(a => [a.id, a.chars, a.dayOffset, a.type==='news'?'ニュース':'コラム']);
-const chartAdvancedParallel = createDashboardChart(document.getElementById('chart-advanced-parallel'));
+const chartAdvancedParallel = createDashboardChart(document.getElementById('chart-advanced-parallel'), 'canvas');
 chartAdvancedParallel.setOption({
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
@@ -4960,6 +5014,95 @@ chartAdvancedRadar.setOption({
   series: [{ type: 'radar', data: radarSeries }]
 });
 
+const dailyCalendarCounts = new Map();
+advancedArticles.forEach(a => {
+  const key = calendarDateKey(a.date);
+  dailyCalendarCounts.set(key, (dailyCalendarCounts.get(key) || 0) + 1);
+});
+const calendarSeriesData = [...dailyCalendarCounts.entries()].map(([date,value])=>[date,value]);
+const calendarMax = Math.max(1,...calendarSeriesData.map(row=>row[1]));
+const chartAdvancedCalendar = createDashboardChart(document.getElementById('chart-advanced-calendar'), 'canvas');
+chartAdvancedCalendar.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, formatter: p => p.value[0] + '<br>投稿数: ' + p.value[1] + '件' },
+  visualMap: { min: 0, max: calendarMax, calculable: true, orient: 'horizontal', left: 'center', bottom: 4, itemWidth: 12, itemHeight: 110, textStyle: advancedFontText, inRange: { color: ['#f7f1e5','#e8c77b','#c0392b','#7b1c1c'] } },
+  calendar: {
+    range: [calendarDateKey(firstArticleDate),calendarDateKey(lastArticleDate)],
+    cellSize: ['auto', 18], top: 42, left: 42, right: 20, bottom: 75,
+    orient: 'horizontal', yearLabel: { show: true, position: 'left', color: '#5c3317', fontFamily: advancedFont },
+    monthLabel: { color: '#8b7355', fontFamily: advancedFont, nameMap: 'ja' },
+    dayLabel: { firstDay: 1, color: '#8b7355', fontFamily: advancedFont, nameMap: 'ja' },
+    itemStyle: { borderWidth: 2, borderColor: '#fffdfa' },
+    splitLine: { show: true, lineStyle: { color: '#d4c4a0', width: 1 } }
+  },
+  series: [{ type: 'heatmap', coordinateSystem: 'calendar', data: calendarSeriesData, progressive: 0, itemStyle: { borderRadius: 2, borderColor: '#fffdfa', borderWidth: 1 } }]
+});
+const weekdayLabelsJa = ['日','月','火','水','木','金','土'];
+const polarCounts = { news: Array(7).fill(0), col: Array(7).fill(0) };
+advancedArticles.forEach(a => polarCounts[a.type][a.date.getDay()]++);
+const chartAdvancedPolar = createDashboardChart(document.getElementById('chart-advanced-polar'));
+chartAdvancedPolar.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => p.seriesName + '・' + p.name + '曜日: ' + p.value + '件' },
+  legend: { data: ['ニュース','コラム'], bottom: 0, textStyle: advancedFontText },
+  polar: { radius: ['18%','78%'] },
+  angleAxis: { type: 'category', data: weekdayLabelsJa, startAngle: 90, clockwise: true, axisLabel: { color: '#5c3317', fontFamily: advancedFont, fontSize: 12 }, axisLine: { lineStyle: { color: '#d4c4a0' } }, splitLine: { lineStyle: { color: '#f0e7d6' } } },
+  radiusAxis: { type: 'value', min: 0, axisLabel: { color: '#8b7355', fontFamily: advancedFont, fontSize: 9 }, splitLine: { lineStyle: { color: '#eadfc9', type: 'dashed' } } },
+  series: [
+    { name: 'ニュース', type: 'bar', coordinateSystem: 'polar', data: polarCounts.news, itemStyle: { color: '#c0392b', borderRadius: [4,4,0,0] }, barGap: '15%' },
+    { name: 'コラム', type: 'bar', coordinateSystem: 'polar', data: polarCounts.col, itemStyle: { color: '#b8860b', borderRadius: [4,4,0,0] } }
+  ]
+});
+const paretoCounts = [...advancedCounts.entries()].map(([key,value])=>({key,value}))
+  .sort((a,b)=>b.value-a.value || a.key.localeCompare(b.key,'ja'));
+const paretoTop = paretoCounts.slice(0,11);
+if(paretoCounts.length>11) paretoTop.push({key:'その他',value:paretoCounts.slice(11).reduce((sum,row)=>sum+row.value,0)});
+const paretoTotal = paretoTop.reduce((sum,row)=>sum+row.value,0)||1;
+let paretoRunning = 0;
+const paretoLabels = paretoTop.map(row=>row.key.replace('社務所だより::','N・').replace('神籤草子::','C・'));
+const paretoValues = paretoTop.map(row=>row.value);
+const paretoPercent = paretoValues.map(value=>{paretoRunning+=value;return Math.round(paretoRunning/paretoTotal*1000)/10;});
+const chartAdvancedPareto = createDashboardChart(document.getElementById('chart-advanced-pareto'));
+chartAdvancedPareto.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: params => {
+    const i=params[0].dataIndex;
+    return '<strong>'+paretoLabels[i]+'</strong><br>記事数: '+paretoValues[i]+'件<br>累積構成比: '+paretoPercent[i]+'%';
+  }},
+  legend: { data: ['記事数','累積構成比'], bottom: 0, textStyle: advancedFontText },
+  grid: { left: 48, right: 55, top: 48, bottom: 90, containLabel: true },
+  xAxis: { type: 'category', data: paretoLabels, axisLabel: { ...advancedFontText, rotate: 28, interval: 0, fontSize: 9 }, axisTick: { alignWithLabel: true } },
+  yAxis: [
+    { type: 'value', name: '記事数', min: 0, axisLabel: advancedFontText, splitLine: { lineStyle: { color: '#f0e7d6', type: 'dashed' } } },
+    { type: 'value', name: '累積比率', min: 0, max: 100, axisLabel: { ...advancedFontText, formatter: '{value}%' }, splitLine: { show: false } }
+  ],
+  series: [
+    { name: '記事数', type: 'bar', data: paretoValues, barMaxWidth: 34, itemStyle: { color: '#c39b52', borderRadius: [4,4,0,0] }, label: { show: true, position: 'top', color: '#8b7355', fontFamily: advancedFont, fontSize: 9 } },
+    { name: '累積構成比', type: 'line', yAxisIndex: 1, data: paretoPercent, smooth: false, symbol: 'circle', symbolSize: 7, lineStyle: { color: '#c0392b', width: 3 }, itemStyle: { color: '#c0392b' }, label: { show: true, position: 'top', color: '#c0392b', fontFamily: advancedFont, fontSize: 9, formatter: '{c}%' } }
+  ]
+});
+const beeswarmData = {
+  news: advancedArticles.filter(a=>a.type==='news').map(a=>[0+((a.id%11)-5)*.035,a.chars,a.id]),
+  col: advancedArticles.filter(a=>a.type==='col').map(a=>[1+((a.id%11)-5)*.035,a.chars,a.id])
+};
+const beeswarmById = new Map(advancedArticles.map(a=>[a.id,a]));
+const chartAdvancedBeeswarm = createDashboardChart(document.getElementById('chart-advanced-beeswarm'), 'canvas');
+chartAdvancedBeeswarm.setOption({
+  textStyle: { fontFamily: advancedFont },
+  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
+    const article=beeswarmById.get(p.data[2]);
+    return article ? '<strong>#'+article.id+' '+article.title+'</strong><br>媒体: '+article.mediumLabel+'<br>文字数: '+article.chars.toLocaleString()+'字<br>公開日: '+article.date.toLocaleDateString('ja-JP') : '';
+  }},
+  grid: { left: 58, right: 22, top: 40, bottom: 48, containLabel: true },
+  xAxis: { type: 'value', min: -.5, max: 1.5, interval: 1, axisLabel: { ...advancedFontText, formatter: value=>value<.5?'ニュース':'コラム' }, axisLine: { lineStyle: { color: '#d4c4a0' } }, splitLine: { show: false }, axisTick: { show: false } },
+  yAxis: { type: 'value', name: '文字数', min: 0, axisLabel: advancedFontText, splitLine: { lineStyle: { color: '#f0e7d6', type: 'dashed' } } },
+  series: [
+    { name: 'ニュース', type: 'scatter', data: beeswarmData.news, symbolSize: 9, itemStyle: { color: '#c0392b', opacity: .62, borderColor: '#fffdfa', borderWidth: .6 }, emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#5c3317', borderWidth: 1.5 } } },
+    { name: 'コラム', type: 'scatter', data: beeswarmData.col, symbolSize: 10, itemStyle: { color: '#b8860b', opacity: .72, borderColor: '#fffdfa', borderWidth: .6 }, emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#5c3317', borderWidth: 1.5 } } }
+  ]
+});
+
+
 const dashboardCharts = [
   { chart: chartMonthly, label: '月別投稿数', options: { magic: true } },
   { chart: chartMonthlyAvg, label: '月別ニュース文字数と平均文字数', options: { magic: true } },
@@ -4991,7 +5134,11 @@ const dashboardCharts = [
   { chart: chartAdvancedThemeRiver, label: '月別媒体構成の変化' },
   { chart: chartAdvancedGraph, label: '媒体と分類の関係ネットワーク' },
   { chart: chartAdvancedParallel, label: '記事単位の多変量比較' },
-  { chart: chartAdvancedRadar, label: '媒体別特徴プロファイル' }
+  { chart: chartAdvancedRadar, label: '媒体別特徴プロファイル' },
+  { chart: chartAdvancedCalendar, label: '日付別投稿カレンダー' },
+  { chart: chartAdvancedPolar, label: '曜日別媒体構成' },
+  { chart: chartAdvancedPareto, label: '分類別記事数と累積構成比' },
+  { chart: chartAdvancedBeeswarm, label: '記事単位の文字数分布' }
 ];
 
 const selectableLineCharts = dashboardCharts.filter(({ chart }) =>
