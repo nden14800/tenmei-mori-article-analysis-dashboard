@@ -156,10 +156,10 @@ const paretoLegendCharts = [
 for (const [chartStart, paretoNames] of paretoLegendCharts) {
   const start = html.indexOf(chartStart);
   assert(start >= 0, 'パレート対象グラフの設定が必要です: ' + chartStart);
-  const end = html.indexOf('\\n});', start);
+  const end = html.indexOf('\n});', start);
   assert(end > start, 'グラフ設定の終端が必要です: ' + chartStart);
   const option = html.slice(start, end);
-  const legendMatch = option.match(/legend\\s*:\\s*\\{[^}]*data\\s*:\\s*\\[([^\\]]*)\\]/);
+  const legendMatch = option.match(/legend\s*:\s*\{[^}]*data\s*:\s*\[([^\]]*)\]/);
   assert(legendMatch, 'パレート対象グラフには操作可能な凡例が必要です: ' + chartStart);
   for (const name of paretoNames) {
     assert(legendMatch[1].includes("'" + name + "'"), 'パレート線を凡例から個別に切り替えられる必要があります: ' + chartStart + ' / ' + name);
