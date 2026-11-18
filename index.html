@@ -1318,6 +1318,51 @@
   .chart-render-fallback { min-height:220px; color:#7b1c1c; background:#fff7f4; border:1px solid #d9a39a; white-space:normal; overflow-wrap:anywhere; }
   @media (max-width:700px) { .chart-card,.advanced-chart-card{padding:1rem;} .chart-box,.chart-box-tall,.chart-box-advanced{height:420px !important;} .chart-title,.advanced-chart-card .chart-title{font-size:.9rem;} .chart-desc,.advanced-chart-card .chart-desc{padding:1rem;font-size:.82rem;} }
 </style>
+<style id="dashboard-chart-finish">
+  /* 天命乃杜の紅・金・墨色に合わせた共通チャート仕上げ。ECharts自体は変更しない。 */
+  .chart-card,.advanced-chart-card{
+    border:1px solid #e8dfd1;
+    border-radius:16px;
+    background:linear-gradient(155deg,#fffefa 0%,#fffaf2 100%);
+    box-shadow:0 8px 26px rgba(61,45,29,.055);
+    overflow:hidden;
+    transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+  }
+  .chart-card:hover,.advanced-chart-card:hover{
+    border-color:#d9c5a5;
+    box-shadow:0 13px 32px rgba(61,45,29,.085);
+    transform:translateY(-2px);
+  }
+  .chart-card .chart-title,.advanced-chart-card .chart-title{
+    color:#493b2d;
+    font-size:.94rem;
+    font-weight:750;
+    letter-spacing:.035em;
+    line-height:1.65;
+    padding:0 0 .85rem;
+    margin:0 0 .75rem;
+    border-bottom:1px solid #efe7dc;
+  }
+  .chart-card .chart-title::before,.advanced-chart-card .chart-title::before{
+    background:linear-gradient(180deg,#a9473e 0%,#bd9145 100%);
+    border-radius:4px;
+  }
+  .chart-box,.chart-box-tall,.chart-box-advanced{
+    border-radius:10px;
+  }
+  .chart-desc{
+    color:#746858;
+    background:linear-gradient(135deg,rgba(248,244,236,.88),rgba(255,253,248,.96));
+    border:1px solid #eee6da;
+    border-left:3px solid #bd9145;
+    border-radius:10px;
+    line-height:1.9;
+  }
+  @media(max-width:700px){
+    .chart-card,.advanced-chart-card{border-radius:12px;}
+    .chart-card .chart-title,.advanced-chart-card .chart-title{font-size:.9rem;}
+  }
+</style>
 </head>
 <body>
 
@@ -5158,9 +5203,38 @@ setAdvancedOption(chartAdvancedDateScatter,'chart-advanced-date-scatter',{
 const dailyMediumCounts = new Map();
 advancedArticles.forEach(a=>{const k=calendarDateKey(a.date);if(!dailyMediumCounts.has(k))dailyMediumCounts.set(k,{news:0,col:0});dailyMediumCounts.get(k)[a.type]++;});
 const rollingNews=[],rollingCol=[],rollingTotal=[];
-allTimelineDates.forEach((date,i)=>{let n=0,c=0;const start=Math.max(0,i-29);for(let j=start;j<=i;j++){const v=dailyMediumCounts.get(allTimelineDates[j]);if(v){n+=v.news;c+=v.col;}}const days=i-start+1;rollingNews.push(Math.round(n/days*100)/100);rollingCol.push(Math.round(c/days*100)/100);rollingTotal.push(Math.round((n+c)/days*100)/100);});
+allTimelineDates.forEach((date,i)=>{let n=0,c=0;const start=Math.max(0,i-29);for(let j=start;j<=i;j++){const v=dailyMediumCounts.get(calendarDateKey(allTimelineDates[j]));if(v){n+=v.news;c+=v.col;}}const days=i-start+1;rollingNews.push(Math.round(n/days*100)/100);rollingCol.push(Math.round(c/days*100)/100);rollingTotal.push(Math.round((n+c)/days*100)/100);});
 const chartAdvancedRolling=createAdvancedChart('chart-advanced-rolling','canvas');
-setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis'},legend:{data:['ニュース','コラム','合計'],bottom:4,textStyle:advancedFontText},grid:{left:76,right:30,top:52,bottom:90,containLabel:true},xAxis:{type:'category',data:date => date,boundaryGap:false,axisLabel:{...advancedFontText,fontSize:10,hideOverlap:true,formatter:v=>{const d=new Date(v+'T00:00:00');return(d.getMonth()+1)+'/'+d.getDate();}},axisTick:{show:false}},yAxis:{type:'value',min:0,name:'1日あたりの記事数',axisLabel:{...advancedFontText,fontSize:11},splitLine:{lineStyle:{color:'#f0e7d6',type:'dashed'}}},dataZoom:[{type:'inside'},{type:'slider',height:18,bottom:36,borderColor:'#e8dcc7',textStyle:advancedFontText}],series:[{name:'ニュース',type:'line',data:rollingNews,showSymbol:false,smooth:.22,lineStyle:{color:'#c0392b',width:2.6}},{name:'コラム',type:'line',data:rollingCol,showSymbol:false,smooth:.22,lineStyle:{color:'#b8860b',width:2.6}},{name:'合計',type:'line',data:rollingTotal,showSymbol:false,smooth:.22,lineStyle:{color:'#5c3317',width:3.4,type:'dashed'}}]});
+setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
+  animationDuration:650,
+  animationDurationUpdate:380,
+  textStyle:{fontFamily:advancedFont,color:'#665846'},
+  tooltip:{
+    ...advancedTooltip,trigger:'axis',axisPointer:{type:'line',lineStyle:{color:'#b99a6a',width:1.2,type:'dashed'}},
+    valueFormatter:value=>Number.isFinite(Number(value))?Number(value).toFixed(2)+' 本/日':'—'
+  },
+  legend:{data:['ニュース','コラム','合計'],top:8,right:18,itemWidth:12,itemHeight:8,itemGap:22,textStyle:{...advancedFontText,color:'#665846',fontSize:11}},
+  grid:{left:70,right:34,top:58,bottom:94,containLabel:true},
+  xAxis:{
+    type:'category',data:allTimelineDates.map(calendarDateKey),boundaryGap:false,
+    axisLabel:{...advancedFontText,color:'#887b68',fontSize:10,hideOverlap:true,margin:13,formatter:v=>{const d=new Date(v+'T00:00:00');return(d.getMonth()+1)+'/'+d.getDate();}},
+    axisLine:{lineStyle:{color:'#d9cdbb'}},axisTick:{show:false},splitLine:{show:false}
+  },
+  yAxis:{
+    type:'value',min:0,minInterval:.1,name:'1日あたりの記事数',nameTextStyle:{...advancedFontText,color:'#887b68',padding:[0,0,8,0]},
+    axisLabel:{...advancedFontText,color:'#887b68',fontSize:10},axisLine:{show:false},axisTick:{show:false},
+    splitLine:{lineStyle:{color:'#eee8df',type:'dashed',width:1}}
+  },
+  dataZoom:[
+    {type:'inside',filterMode:'none',zoomOnMouseWheel:true,moveOnMouseMove:true},
+    {type:'slider',height:16,bottom:34,borderColor:'transparent',backgroundColor:'#f3eee6',fillerColor:'rgba(169,71,62,.14)',handleStyle:{color:'#a9473e',borderColor:'#a9473e'},textStyle:{...advancedFontText,color:'#887b68',fontSize:9},dataBackground:{lineStyle:{color:'#cbbda8'},areaStyle:{color:'#e8dfd2'}},selectedDataBackground:{lineStyle:{color:'#a9473e'},areaStyle:{color:'rgba(169,71,62,.18)'}}}
+  ],
+  series:[
+    {name:'ニュース',type:'line',data:rollingNews,showSymbol:false,symbol:'circle',symbolSize:6,smooth:.24,connectNulls:false,lineStyle:{color:'#a9473e',width:2.8},itemStyle:{color:'#a9473e'},areaStyle:{color:'rgba(169,71,62,.045)'},emphasis:{focus:'series',scale:1.15,lineStyle:{width:3.8}}},
+    {name:'コラム',type:'line',data:rollingCol,showSymbol:false,symbol:'circle',symbolSize:6,smooth:.24,connectNulls:false,lineStyle:{color:'#bd9145',width:2.8},itemStyle:{color:'#bd9145'},areaStyle:{color:'rgba(189,145,69,.045)'},emphasis:{focus:'series',scale:1.15,lineStyle:{width:3.8}}},
+    {name:'合計',type:'line',data:rollingTotal,showSymbol:false,symbol:'circle',symbolSize:7,smooth:.2,connectNulls:false,lineStyle:{color:'#514236',width:3.8},itemStyle:{color:'#514236',borderColor:'#fffdf8',borderWidth:2},emphasis:{focus:'series',scale:1.2,lineStyle:{width:4.8}},z:5}
+  ]
+});
 
 const activePublicationDates=[...new Set(advancedArticles.map(a=>calendarDateKey(a.date)))].sort();
 const publicationGaps=[];
