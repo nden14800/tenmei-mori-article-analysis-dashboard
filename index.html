@@ -6242,6 +6242,10 @@ function polishDashboardChartOptions() {
  const font=dashboardChartFont;
  const palette=['#8f252b','#c4a059','#b65d32','#76504b','#7b654f','#a34768','#9b742e','#6f7548','#c18a68','#8d6b62','#a58a5c','#55443a'];
  const paletteSet=new Set(palette);
+ const numericValue=datum=>{const raw=datum&&typeof datum==='object'&&!Array.isArray(datum)?datum.value:datum;if(Array.isArray(raw)){const nums=raw.filter(value=>typeof value==='number'&&Number.isFinite(value));return nums.length?nums[nums.length-1]:null;}const value=Number(raw);return raw!==null&&raw!==''&&Number.isFinite(value)?value:null;};
+ const medianValue=datum=>{const raw=datum&&typeof datum==='object'&&!Array.isArray(datum)?datum.value:datum;if(!Array.isArray(raw))return numericValue(raw);const nums=raw.filter(value=>typeof value==='number'&&Number.isFinite(value)).sort((a,b)=>a-b);return nums.length?nums[Math.floor(nums.length/2)]:null;};
+ const valueColor=(value,min,max)=>{const stops=['#f3e8d9','#d5ad79','#b65d32','#8f252b'];if(!Number.isFinite(value))return stops[0];const t=max===min?.5:Math.max(0,Math.min(1,(value-min)/(max-min)));const scaled=t*(stops.length-1),index=Math.min(stops.length-2,Math.floor(scaled)),local=scaled-index;const channel=(hex,offset)=>parseInt(hex.slice(offset,offset+2),16);const toHex=n=>Math.round(n).toString(16).padStart(2,'0');return '#'+[1,3,5].map(offset=>toHex(channel(stops[index],offset)+(channel(stops[index+1],offset)-channel(stops[index],offset))*local)).join('');};
+ const extent=values=>{const valid=values.filter(value=>Number.isFinite(value));return valid.length?[Math.min(...valid),Math.max(...valid)]:[0,1];};
  const hashIndex=name=>{const value=String(name||'');let hash=2166136261;for(let i=0;i<value.length;i++)hash=Math.imul(hash^value.charCodeAt(i),16777619);return hash>>>0;};
  const createColorResolver=()=>{
   const used=new Set(),assigned=new Map();
@@ -6288,6 +6292,12 @@ function polishDashboardChartOptions() {
    if(!chart||chart.isDisposed?.())return;
    const current=chart.getOption()||{},series=current.series||[];
    const resolveColor=createColorResolver();
+   const barSeriesIndexes=series.map((item,index)=>item.type==='bar'?index:-1).filter(index=>index>=0);
+   const barExtent=extent(barSeriesIndexes.flatMap(index=>(series[index].data||[]).map(numericValue)));
+   const scatterSeriesIndexes=series.map((item,index)=>item.type==='scatter'?index:-1).filter(index=>index>=0);
+   const scatterExtent=extent(scatterSeriesIndexes.flatMap(index=>(series[index].data||[]).map(datum=>{const raw=datum&&typeof datum==='object'&&!Array.isArray(datum)?datum.value:datum;return Array.isArray(raw)?(Number.isFinite(raw[1])?raw[1]:numericValue(raw)):numericValue(raw);})));
+   const boxSeriesIndexes=series.map((item,index)=>item.type==='boxplot'?index:-1).filter(index=>index>=0);
+   const boxExtent=extent(boxSeriesIndexes.flatMap(index=>(series[index].data||[]).map(medianValue)));
    const integerForAxis=axisIndex=>{
     const relevant=series.filter(item=>(item.yAxisIndex||0)===axisIndex&&['bar','line'].includes(item.type));
     const values=relevant.flatMap(item=>(item.data||[]).flat(Infinity)).map(value=>Array.isArray(value)?value[value.length-1]:value).filter(value=>typeof value==='number'&&Number.isFinite(value));
@@ -6317,28 +6327,27 @@ function polishDashboardChartOptions() {
      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color})};
      if(item.symbolSize==null)output.symbolSize=6;
     }else if(item.type==='bar'){
-     const categoryAxis=[...(current.xAxis||[]),...(current.yAxis||[])].find(axis=>axis.type==='category'&&Array.isArray(axis.data));
-     const singleCategoricalSeries=series.filter(candidate=>candidate.type==='bar').length===1&&Array.isArray(item.data)&&item.data.length>1&&categoryAxis?.data?.length===item.data.length;
-     if(singleCategoricalSeries){
-      output.colorBy='data';
-      output.data=item.data.map((datum,j)=>{
-       const entry=datum&&typeof datum==='object'&&!Array.isArray(datum)?datum:{value:datum};
-       const categoryName=String(categoryAxis.data[j]??entry.name??('category-'+j));
-       const categoryColor=resolveColor('category:'+categoryName,entry.itemStyle?.color,j);
-       return {...entry,itemStyle:{...entry.itemStyle,color:categoryColor}};
-      });
-      const {color:ignoredSeriesColor,...barItemStyle}=item.itemStyle||{};
-      output.itemStyle={...barItemStyle,borderRadius:item.itemStyle?.borderRadius??[4,4,0,0]};
-     }else{
-      output.colorBy='series';
-      output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),borderRadius:item.itemStyle?.borderRadius??[4,4,0,0]};
-     }
+     output.colorBy='data';
+     output.data=(item.data||[]).map((datum,j)=>{
+      const entry=datum&&typeof datum==='object'&&!Array.isArray(datum)?datum:{value:datum};
+      const numeric=numericValue(entry);
+      return {...entry,itemStyle:{...entry.itemStyle,color:Number.isFinite(numeric)?valueColor(numeric,...barExtent):'#d8c8b7'}};
+     });
+     const {color:ignoredSeriesColor,...barItemStyle}=item.itemStyle||{};
+     output.itemStyle={...barItemStyle,borderRadius:item.itemStyle?.borderRadius??[4,4,0,0]};
      output.barMaxWidth=item.barMaxWidth||36;
     }else if(item.type==='scatter'){
-     output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color}),opacity:item.itemStyle?.opacity??.82};
+     const {color:ignoredScatterColor,...scatterItemStyle}=item.itemStyle||{};
+     output.itemStyle={...scatterItemStyle,opacity:item.itemStyle?.opacity??.82};
+     if(Array.isArray(item.data))output.data=item.data.map(datum=>{
+      const raw=datum&&typeof datum==='object'&&!Array.isArray(datum)?datum.value:datum;
+      const numeric=Array.isArray(raw)?(Number.isFinite(raw[1])?raw[1]:numericValue(raw)):numericValue(raw);
+      return datum&&typeof datum==='object'&&!Array.isArray(datum)?{...datum,itemStyle:{...datum.itemStyle,color:Number.isFinite(numeric)?valueColor(numeric,...scatterExtent):'#d8c8b7'}}:{value:datum,itemStyle:{color:Number.isFinite(numeric)?valueColor(numeric,...scatterExtent):'#d8c8b7'}};
+     });
     }else if(item.type==='boxplot'){
-     output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color,borderColor:color}),borderWidth:item.itemStyle?.borderWidth??2};
-     if(Array.isArray(item.data)){const dataColor=resolveColor;output.data=item.data.map((datum,j)=>({...datum,itemStyle:{...datum.itemStyle,color:dataColor(datum.name,datum.itemStyle?.color,j),borderColor:dataColor(datum.name,datum.itemStyle?.borderColor||datum.itemStyle?.color,j)}}));}
+     const {color:ignoredBoxColor,...boxItemStyle}=item.itemStyle||{};
+     output.itemStyle={...boxItemStyle,borderWidth:item.itemStyle?.borderWidth??2};
+     if(Array.isArray(item.data))output.data=item.data.map(datum=>{const numeric=medianValue(datum);const color=Number.isFinite(numeric)?valueColor(numeric,...boxExtent):'#d8c8b7';return {...(datum&&typeof datum==='object'&&!Array.isArray(datum)?datum:{value:datum}),itemStyle:{...(datum?.itemStyle||{}),color,borderColor:color}};});
     }else if(item.type==='radar'){
      if(Array.isArray(item.data)&&item.data.length){const dataColor=resolveColor;output.data=item.data.map((datum,j)=>{const next=dataColor(datum.name,datum.itemStyle?.color||datum.lineStyle?.color||datum.areaStyle?.color,j);return {...datum,itemStyle:{...datum.itemStyle,color:next},lineStyle:{...datum.lineStyle,color:next,width:datum.lineStyle?.width||2.4},areaStyle:{...datum.areaStyle,color:next,opacity:datum.areaStyle?.opacity??.14}};});}
      else{output.lineStyle={...item.lineStyle,...(typeof color==='function'?{}:{color}),width:item.lineStyle?.width||2.4};output.itemStyle={...item.itemStyle,...(typeof color==='function'?{}:{color})};output.areaStyle={...item.areaStyle,...(typeof color==='function'?{}:{color}),opacity:item.areaStyle?.opacity??.14};}
@@ -6370,11 +6379,11 @@ function polishDashboardChartOptions() {
     const data=sourceData.map((entry,index)=>{
      if(typeof entry==='string'){
       if(entry===''||entry==='\n')return entry;
-      const color=resolveColor(entry,null,index);
+      const isValueMappedBar=series.some(item=>item.type==='bar'&&item.name===entry);const color=isValueMappedBar?'#9b742e':resolveColor(entry,null,index);
       return {name:entry,itemStyle:{color,borderColor:color},lineStyle:{color}};
      }
      if(entry&&typeof entry==='object'&&entry.name!=null){
-      const color=resolveColor(entry.name,entry.itemStyle?.color,index);
+      const isValueMappedBar=series.some(item=>item.type==='bar'&&item.name===entry.name);const color=isValueMappedBar?'#9b742e':resolveColor(entry.name,entry.itemStyle?.color,index);
       return {...entry,itemStyle:{...entry.itemStyle,color,borderColor:color},lineStyle:{...entry.lineStyle,color}};
      }
      return entry;
