@@ -1319,48 +1319,90 @@
   @media (max-width:700px) { .chart-card,.advanced-chart-card{padding:1rem;} .chart-box,.chart-box-tall,.chart-box-advanced{height:420px !important;} .chart-title,.advanced-chart-card .chart-title{font-size:.9rem;} .chart-desc,.advanced-chart-card .chart-desc{padding:1rem;font-size:.82rem;} }
 </style>
 <style id="dashboard-chart-finish">
-  /* 天命乃杜の紅・金・墨色に合わせた共通チャート仕上げ。ECharts自体は変更しない。 */
+  /* TENMEI CHART SYSTEM — shrine-inspired editorial dashboard, shared by every ECharts view. */
+  :root{
+    --viz-news:#a63d36;--viz-col:#b8893c;--viz-ink:#514337;
+    --viz-sage:#718b7b;--viz-blue:#7188a4;--viz-plum:#8b7898;
+    --viz-paper:#fffdf8;--viz-line:#e9e1d5;--viz-muted:#786d5d;
+  }
   .chart-card,.advanced-chart-card{
-    border:1px solid #e8dfd1;
-    border-radius:16px;
-    background:linear-gradient(155deg,#fffefa 0%,#fffaf2 100%);
-    box-shadow:0 8px 26px rgba(61,45,29,.055);
+    position:relative;display:flex;flex-direction:column;min-width:0;
+    padding:clamp(1.05rem,1.55vw,1.55rem);
+    border:1px solid var(--viz-line);border-radius:18px;
+    background:linear-gradient(145deg,#fff 0%,#fffdf8 68%,#fbf5e9 100%);
+    box-shadow:0 2px 5px rgba(55,39,25,.025),0 14px 36px rgba(55,39,25,.065);
     overflow:hidden;
-    transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+    transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;
+  }
+  .chart-card::before,.advanced-chart-card::before{
+    content:'';position:absolute;top:0;left:1.45rem;right:1.45rem;height:2px;
+    background:linear-gradient(90deg,transparent,var(--viz-news) 18%,var(--viz-col) 78%,transparent);
+    opacity:.78;pointer-events:none;
   }
   .chart-card:hover,.advanced-chart-card:hover{
-    border-color:#d9c5a5;
-    box-shadow:0 13px 32px rgba(61,45,29,.085);
+    border-color:#d8c7aa;box-shadow:0 5px 10px rgba(55,39,25,.035),0 20px 44px rgba(55,39,25,.095);
     transform:translateY(-2px);
   }
   .chart-card .chart-title,.advanced-chart-card .chart-title{
-    color:#493b2d;
-    font-size:.94rem;
-    font-weight:750;
-    letter-spacing:.035em;
-    line-height:1.65;
-    padding:0 0 .85rem;
-    margin:0 0 .75rem;
-    border-bottom:1px solid #efe7dc;
+    display:flex;align-items:center;gap:.65rem;min-height:0;
+    margin:0 0 .55rem;padding:.1rem 0 .85rem;
+    color:#493b2d;font-family:var(--font-ui);font-size:.91rem;font-weight:700;
+    line-height:1.65;letter-spacing:.025em;border-bottom:1px solid #f0e9df;
   }
   .chart-card .chart-title::before,.advanced-chart-card .chart-title::before{
-    background:linear-gradient(180deg,#a9473e 0%,#bd9145 100%);
-    border-radius:4px;
+    content:'';display:block;flex:0 0 3px;width:3px;height:1.3em;
+    border-radius:4px;background:linear-gradient(180deg,var(--viz-news),var(--viz-col));
   }
   .chart-box,.chart-box-tall,.chart-box-advanced{
-    border-radius:10px;
+    display:block;width:100%;min-width:0;flex:0 0 auto;border-radius:12px;
+    background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,253,248,.25));
   }
-  .chart-desc{
-    color:#746858;
-    background:linear-gradient(135deg,rgba(248,244,236,.88),rgba(255,253,248,.96));
-    border:1px solid #eee6da;
-    border-left:3px solid #bd9145;
-    border-radius:10px;
-    line-height:1.9;
+  .chart-box{height:360px!important}
+  .chart-box-tall{height:420px!important}
+  .chart-box.zoomable-chart{height:390px!important}
+  .chart-box-tall.zoomable-chart{height:445px!important}
+  .advanced-charts-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    align-items:stretch;gap:1.35rem;margin-bottom:2.25rem;
+  }
+  .advanced-charts-grid .advanced-chart-card{grid-column:auto!important;padding:1.35rem}
+  .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1/-1!important}
+  .advanced-charts-grid .chart-box-advanced{height:360px!important}
+  .advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:430px!important}
+  .advanced-chart-card .chart-desc,.chart-card .chart-desc{
+    margin-top:1rem;padding:1.05rem 1.15rem;
+    color:#716657;font-family:var(--font-ui);font-size:.79rem;line-height:1.95;
+    background:linear-gradient(135deg,#faf7f0 0%,#fffdf9 100%);
+    border:1px solid #eee6da;border-left:3px solid #c19a55;border-radius:10px;
+  }
+  .chart-card .chart-desc-title,.advanced-chart-card .chart-desc-title{
+    display:flex;align-items:center;gap:.4rem;margin-bottom:.55rem;
+    color:#8a641f;font-family:var(--font-ui);font-size:.75rem;font-weight:700;letter-spacing:.08em;
+  }
+  .chart-card .chart-desc-title::before,.advanced-chart-card .chart-desc-title::before{
+    content:'';width:5px;height:5px;border-radius:50%;background:var(--viz-col);
+  }
+  .chart-render-fallback{border-radius:12px;border-color:#d9a39a;background:#fff8f5;color:#7b1c1c}
+  .heatmap-card .heatmap-scroll{border-radius:12px}
+  @media(max-width:900px){
+    .advanced-charts-grid{grid-template-columns:1fr;gap:1rem}
+    .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1!important}
   }
   @media(max-width:700px){
-    .chart-card,.advanced-chart-card{border-radius:12px;}
-    .chart-card .chart-title,.advanced-chart-card .chart-title{font-size:.9rem;}
+    .chart-card,.advanced-chart-card{padding:1rem;border-radius:13px}
+    .chart-card .chart-title,.advanced-chart-card .chart-title{font-size:.87rem}
+    .chart-box{height:320px!important}
+    .chart-box-tall{height:370px!important}
+    .chart-box.zoomable-chart{height:350px!important}
+    .chart-box-tall.zoomable-chart{height:390px!important}
+    .advanced-charts-grid .chart-box-advanced{height:330px!important}
+    .advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:380px!important}
+    .chart-card .chart-desc,.advanced-chart-card .chart-desc{padding:.9rem;font-size:.76rem;line-height:1.85}
+    .heatmap-chart{height:350px!important}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .chart-card,.advanced-chart-card{transition:none}
+    .chart-card:hover,.advanced-chart-card:hover{transform:none}
   }
 </style>
 </head>
@@ -1691,7 +1733,7 @@
   <div class="section-title">多角的分析 — Advanced Views</div>
   <p class="advanced-charts-intro">既存の時系列・分布グラフに加え、記事の構成、分類間の流れ、文字数のばらつき、媒体ごとの特徴を異なる視点から比較します。各図は収録済みの記事データから再計算しています。</p>
   <div class="advanced-charts-grid">
-    <div class="chart-card advanced-chart-card">
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体・分類別の記事構成 — Treemap</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-treemap"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>この図は記事本数を面積に置き換え、媒体→分類という階層を一度に俯瞰するためのものです。最も面積の大きい分類は収録記事の構成を強く左右しますが、面積が大きいこと自体は内容の質や重要度を意味しません。小さな分類も独立した領域として残るため、主要テーマに記事が集中しているのか、複数のテーマへ分散しているのかを比較できます。媒体ごとの親領域を先に見てから分類へ進むと、ニュースとコラムで分類の粒度や構成が異なる場合にも、同じ分類名を安易に同一視せずに済みます。面積の差が大きいと小分類は見つけにくくなるため、パンくずから階層を拡大し、全体と部分を往復して確認してください。分類数の多さだけで多様性を断定せず、各分類の記事数と合わせて読むことが重要です。 拡大後は分類の面積だけでなく、パンくずで一段上へ戻った際の親分類全体の比率も見比べると、局所的な偏りと媒体全体の構造を取り違えにくくなります。特に小分類は件数が少ないほど割合が大きく変動するため、構成上の存在を確認する用途にとどめ、安定した傾向かどうかは時系列や記事一覧でも確かめてください。</div>
@@ -1742,12 +1784,12 @@
       <div class="chart-box chart-box-advanced chart-box-compact" id="chart-advanced-lengthband"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事を500字未満、500〜999字、1,000〜1,999字、2,000〜3,999字、4,000字以上の五つの帯に分け、ニュースとコラムの本数を並列棒で比較します。各帯の棒は同じゼロ基準から始まるため、媒体ごとの件数差を積み上げ図より直接読み取りやすくなります。全体の構成比だけでなく、どの文字数帯に記事が集まっているか、長文帯がどちらの媒体に多いかを確認できます。ただし、区分の境界は分析上の便宜的な設定であり、記事の難易度や完成度を示す基準ではありません。記事数の多い媒体は複数の帯で件数も増えやすいため、構成比を比べたい場合は各媒体の総記事数も確認してください。記事長ヒストグラムやECDFと組み合わせれば、区分の中にある細かな分布や中央値付近の違いも補えます。境界値の近くにある記事はわずかな文字数差で別の帯に移るため、分類の差を過度に意味づけず、個別の文字数も必要に応じて確認してください。件数の比較と割合の比較は別の問いです。媒体ごとの記事総数が異なる場合は、各棒を媒体内の総数で割った割合も併せて考え、母数の違いによる見かけの差に注意してください。</div>
     </div>
-    <div class="chart-card advanced-chart-card">
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">公開日と記事文字数の関係 — Publication Timeline Scatter</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-date-scatter"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>横軸に公開日、縦軸に文字数を置き、記事一件を一つの点として表示します。時系列に沿って記事の長さがどう分布しているかを追えるため、特定期間に長文記事が集中したか、短い告知がまとまって公開されたかを視覚的に探せます。色はニュースとコラムの媒体区分で、点に触れると記事タイトル、公開日、文字数を確認できます。日付が同じ記事は同じ横位置に並ぶため、重なりが発生する場合があります。点の密集は同じ時期・文字数帯に複数記事があることを示しますが、投稿の理由や制作工程を説明するものではありません。日付軸の間隔は実際の経過日数に対応し、記事ID順とは異なる視点で時系列を確認できます。既存のIDと文字数の散布図、日別投稿タイムライン、箱ひげ図と照合し、時期による違いと媒体ごとの分布を切り分けてください。文字数の変化だけから内容の質や情報の正確さを判断しないことも大切です。同日公開の点が重なるときはツールチップや記事一覧で複数件を確かめ、点の一つだけを代表例として扱わないでください。</div>
     </div>
-    <div class="chart-card advanced-chart-card">
+    <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">30日移動平均による投稿ペース</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-rolling"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>公開日のある全記事を日付順に集計し、直近30日間の一日平均投稿数をニュース・コラム・合計に分けて表示します。日々の投稿本数は曜日や単発の集中によって上下するため、日別グラフだけでは中長期の増減を読み取りにくい場合があります。移動平均は短期的な揺れをならし、投稿ペースが緩やかに増えているか、落ち着いているかを把握するための指標です。期間の最初の29日間は、存在する日数だけで平均を計算するため、30日分がそろった区間とは条件が異なります。線の交差は媒体間の相対的な投稿ペースの変化を示しますが、記事の重要度や品質を示すものではありません。日別投稿タイムラインや週別投稿数と照合し、平均線の変化が一時的な山谷によるものか、継続的な傾向かを確認してください。ズーム操作で期間を絞り、特定の時期を詳しく調べることもできます。日別の実数を隠すことで滑らかに見える反面、単発の大量投稿は平均値に薄められます。平均線だけを見て投稿の実態を判断せず、必要に応じて元の日別データへ戻ってください。</div>
@@ -5203,7 +5245,9 @@ setAdvancedOption(chartAdvancedDateScatter,'chart-advanced-date-scatter',{
 const dailyMediumCounts = new Map();
 advancedArticles.forEach(a=>{const k=calendarDateKey(a.date);if(!dailyMediumCounts.has(k))dailyMediumCounts.set(k,{news:0,col:0});dailyMediumCounts.get(k)[a.type]++;});
 const rollingNews=[],rollingCol=[],rollingTotal=[];
-allTimelineDates.forEach((date,i)=>{let n=0,c=0;const start=Math.max(0,i-29);for(let j=start;j<=i;j++){const v=dailyMediumCounts.get(calendarDateKey(allTimelineDates[j]));if(v){n+=v.news;c+=v.col;}}const days=i-start+1;rollingNews.push(Math.round(n/days*100)/100);rollingCol.push(Math.round(c/days*100)/100);rollingTotal.push(Math.round((n+c)/days*100)/100);});
+const timelineDateKeys=allTimelineDates.map(value=>typeof value==='string'?value:calendarDateKey(value));
+if(timelineDateKeys.some(key=>!/^\d{4}-\d{2}-\d{2}$/.test(key)))throw new Error('投稿タイムラインの日付キーが不正です');
+timelineDateKeys.forEach((dateKey,i)=>{let n=0,c=0;const start=Math.max(0,i-29);for(let j=start;j<=i;j++){const v=dailyMediumCounts.get(timelineDateKeys[j]);if(v){n+=v.news;c+=v.col;}}const days=i-start+1;rollingNews.push(Math.round(n/days*100)/100);rollingCol.push(Math.round(c/days*100)/100);rollingTotal.push(Math.round((n+c)/days*100)/100);});
 const chartAdvancedRolling=createAdvancedChart('chart-advanced-rolling','canvas');
 setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
   animationDuration:650,
@@ -5216,7 +5260,7 @@ setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
   legend:{data:['ニュース','コラム','合計'],top:8,right:18,itemWidth:12,itemHeight:8,itemGap:22,textStyle:{...advancedFontText,color:'#665846',fontSize:11}},
   grid:{left:70,right:34,top:58,bottom:94,containLabel:true},
   xAxis:{
-    type:'category',data:allTimelineDates.map(calendarDateKey),boundaryGap:false,
+    type:'category',data:timelineDateKeys,boundaryGap:false,
     axisLabel:{...advancedFontText,color:'#887b68',fontSize:10,hideOverlap:true,margin:13,formatter:v=>{const d=new Date(v+'T00:00:00');return(d.getMonth()+1)+'/'+d.getDate();}},
     axisLine:{lineStyle:{color:'#d9cdbb'}},axisTick:{show:false},splitLine:{show:false}
   },
@@ -5303,11 +5347,15 @@ const dashboardCharts = [
 // 全グラフ共通の視覚調整。ライブラリ・バージョン・描画エンジンは変更しない。
 function polishDashboardChartOptions() {
   const font = dashboardChartFont;
-  const axisStyle = () => ({
-    axisLine: { lineStyle: { color: '#d9cdbb', width: 1 } },
-    axisTick: { lineStyle: { color: '#d9cdbb' } },
-    axisLabel: { color: '#766957', fontFamily: font, fontSize: 11, margin: 11 },
-    splitLine: { lineStyle: { color: '#eee8df', type: 'dashed', width: 1 } }
+  const palette = {
+    news: '#a63d36', col: '#b8893c', ink: '#514337',
+    sage: '#718b7b', blue: '#7188a4', plum: '#8b7898', clay: '#c17a56'
+  };
+  const axisStyle = axis => ({
+    axisLine: { ...axis.axisLine, lineStyle: { ...axis.axisLine?.lineStyle, color: '#d8cbbb', width: 1 } },
+    axisTick: { ...axis.axisTick, lineStyle: { ...axis.axisTick?.lineStyle, color: '#d8cbbb' } },
+    axisLabel: { ...axis.axisLabel, color: '#766957', fontFamily: font, fontSize: axis.axisLabel?.fontSize || 11, margin: axis.axisLabel?.margin || 10 },
+    splitLine: { ...axis.splitLine, lineStyle: { ...axis.splitLine?.lineStyle, color: '#eee8df', type: 'dashed', width: 1 } }
   });
   dashboardCharts.forEach(({ chart }) => {
     try {
@@ -5315,20 +5363,23 @@ function polishDashboardChartOptions() {
       const current = chart.getOption() || {};
       const patch = {
         backgroundColor: 'transparent',
-        color: ['#a9473e', '#bd9145', '#647f78', '#7187a6', '#927aa2', '#c17a56'],
+        color: [palette.news, palette.col, palette.sage, palette.blue, palette.plum, palette.clay, palette.ink],
+        animationDuration: 560,
+        animationDurationUpdate: 360,
         textStyle: { fontFamily: font, color: '#5c5042' },
         tooltip: {
-          backgroundColor: 'rgba(35, 27, 20, .96)',
+          backgroundColor: 'rgba(35, 27, 20, .97)',
           borderColor: '#c5a56d',
           borderWidth: 1,
-          padding: [10, 13],
+          padding: [11, 14],
           textStyle: { fontFamily: font, color: '#fffaf1', fontSize: 12 },
-          extraCssText: 'border-radius:9px;box-shadow:0 8px 24px rgba(25,18,12,.18);'
-        }
+          extraCssText: 'border-radius:11px;box-shadow:0 12px 32px rgba(25,18,12,.22);'
+        },
+        axisPointer: { lineStyle: { color: '#b99a6a', width: 1, type: 'dashed' }, crossStyle: { color: '#b99a6a' } }
       };
       if (current.legend?.length) patch.legend = current.legend.map(() => ({
         textStyle: { fontFamily: font, color: '#665846', fontSize: 11 },
-        itemWidth: 12, itemHeight: 8, itemGap: 18
+        itemWidth: 12, itemHeight: 8, itemGap: 20, pageTextStyle: { color: '#665846', fontFamily: font }
       }));
       if (current.xAxis?.length) patch.xAxis = current.xAxis.map(axisStyle);
       if (current.yAxis?.length) patch.yAxis = current.yAxis.map(axisStyle);
@@ -5336,8 +5387,21 @@ function polishDashboardChartOptions() {
       if (current.parallelAxis?.length) patch.parallelAxis = current.parallelAxis.map(() => ({
         nameTextStyle: { fontFamily: font, color: '#665846', fontSize: 11 },
         axisLabel: { color: '#766957', fontFamily: font, fontSize: 10 },
-        axisLine: { lineStyle: { color: '#d9cdbb' } }
+        axisLine: { lineStyle: { color: '#d8cbbb' } }
       }));
+      if (current.grid?.length) patch.grid = current.grid.map(grid => ({
+        ...grid, containLabel: grid.containLabel !== false,
+        backgroundColor: 'transparent', borderColor: 'transparent'
+      }));
+      if (current.series?.length) patch.series = current.series.map(series => {
+        const name = String(series.name || '');
+        const mediumColor = /ニュース|社務所だより/.test(name) ? palette.news
+          : /コラム|神籤草子/.test(name) ? palette.col : null;
+        if (!mediumColor) return {};
+        const result = { itemStyle: { color: mediumColor } };
+        if (series.type === 'line') result.lineStyle = { color: mediumColor };
+        return result;
+      });
       chart.setOption(patch);
     } catch (error) {
       console.warn('[Dashboard chart styling skipped]', chart.getDom?.()?.id, error);
