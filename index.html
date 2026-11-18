@@ -1246,6 +1246,15 @@
   #mega-summary-content{border-radius:18px!important;background:linear-gradient(135deg,#fffdfa,#fff 70%)!important;box-shadow:0 12px 28px rgba(68,34,28,.06)}
   @media(max-width:760px){header{width:calc(100% - 1.25rem);margin:.65rem auto 1.35rem;padding:1.35rem 1.15rem 1.2rem;border-radius:22px}.header-kamon{width:58px;height:58px}.header-meta{display:flex;width:fit-content;max-width:100%;margin-right:0;border-radius:12px}.container{padding-inline:.75rem}.chart-card,.insight-box{border-radius:14px}}
 
+  /* Shared readable presentation for every chart */
+  .charts-grid, .charts-grid-3 { grid-template-columns:minmax(0,1fr) !important; }
+  .charts-grid > .chart-card, .charts-grid-3 > .chart-card { grid-column:1/-1; }
+  .chart-card, .advanced-chart-card { min-width:0; padding:1.65rem; border:1px solid #e8dcc7; border-radius:12px; box-shadow:0 8px 26px rgba(92,51,23,.055); background:linear-gradient(180deg,#fff 0%,#fffdfa 100%); }
+  .chart-title, .advanced-chart-card .chart-title { min-height:0; color:#5c3317; font-family:var(--font-main); font-size:.95rem; font-weight:700; line-height:1.65; letter-spacing:.055em; padding-bottom:.8rem; border-bottom:1px solid #f0e7d6; }
+  .chart-desc, .advanced-chart-card .chart-desc { max-width:100%; font-size:.84rem; line-height:2; padding:1.25rem 1.4rem; border-radius:8px; background:#fbf8f2; }
+  .chart-box, .chart-box-tall, .chart-box-advanced { height:460px !important; }
+  .chart-render-fallback { min-height:220px; color:#7b1c1c; background:#fff7f4; border:1px solid #d9a39a; white-space:normal; overflow-wrap:anywhere; }
+  @media (max-width:700px) { .chart-card,.advanced-chart-card{padding:1rem;} .chart-box,.chart-box-tall,.chart-box-advanced{height:420px !important;} .chart-title,.advanced-chart-card .chart-title{font-size:.9rem;} .chart-desc,.advanced-chart-card .chart-desc{padding:1rem;font-size:.82rem;} }
 </style>
 </head>
 <body>
@@ -1400,11 +1409,7 @@
       <div class="chart-box" id="chart-tag-bubble"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-auto" data-insight-index="5"></div>タグ別のバブルチャートでは、件数と平均文字数は一致しない。件数は「新機能・改善」9本、「機能改善」「新機能」各8本、「不具合修正」6本、「お知らせ」5本。平均文字数では「新機能・改善」が3,200字、「新機能」が1,073字など、少数タグの長文が上側に現れる。バブルの大きさは件数と平均の組み合わせであり、実装規模を示すものではない。この図は、分類ごとの規模と説明量を同時に見るためのもので、バブルの位置と大きさを混同しないことが大切である。件数の多いタグが必ず長文になるわけではなく、少数タグの平均値は一つの長文に強く引っ張られる。特に「新機能・改善」は9本で平均3,200字と、件数だけでなく説明の厚みも目立つ。タグは記事の整理ラベルであり、開発工数や機能の重要度を直接測る尺度ではない。バブルは件数・平均文字数・集計上の規模を同時に示す。タグは主題ラベルであり工数分類ではない。平均3,200字の「新機能・改善」は説明量が大きいが、技術的難易度までは読み取れない。</div>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">記事長クラス分布（ショート / ミドル / ロング）</div>
-      <div class="chart-box" id="chart-length-pie"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-auto" data-insight-index="6"></div>全156記事（ニュース90本＋コラム66本）を500字未満・500〜999字・1,000字以上に分類すると、ショート31本（19.9%）、ミドル81本（51.9%）、ロング44本（28.2%）。10月25日のコラムID66（1,543字）もロングに加わり、ミドルが引き続き最多となっている。ミドルが全体の過半数を占めるため、通常の記録は500〜999字帯に最も多く集まっている。一方、ロングも44本あり、全体の約3割を占めるため、長い説明記事は例外的な少数ではない。新たに加わったID66も1,543字でロングに分類され、コラムの知識解説がこの層に加わった。区分の境界は集計上の便宜であり、499字と500字の内容価値が大きく異なるという意味ではない。ミドル81本は約51.9%、ロング44本は約28.2%、ショート31本は約19.9%。区分は便宜的な境界であり、長さだけで記事の品質や有用性を評価することはできない。</div>
-    </div>
+    
   </div>
 
   <!-- CHARTS ROW 2 -->
@@ -1460,11 +1465,7 @@
       <div class="chart-box" id="chart-hours"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-auto" data-insight-index="14"></div>ニュース90本の投稿時刻では、16〜19時台が36本で全体の40.0%を占める。17時台と18時台が各11本で最多。投稿時刻は公開タイミングの集計であり、実際の執筆時間や作業時間を示すものではない。16〜19時台の36本はニュース投稿全体の4割にあたり、公開が夕方から夜にかけて比較的集中していることを示す。17時台と18時台が各11本で最多だが、これは公開時刻の記録に限った集計である。予約投稿や公開前の執筆・確認作業の時間はデータに含まれないため、投稿時刻から作業者の生活リズムや開発時間を推測することはできない。16〜19時台の36本は公開時刻の記録であり、執筆・編集時間とは限らない。時間帯の山を生活習慣や生産性の証拠として扱わず、公開タイミングの分布として読む。</div>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">曜日別投稿数（ニュース）</div>
-      <div class="chart-box" id="chart-dow"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-auto" data-insight-index="15"></div>ニュース90本の曜日分布では、土曜日が22本で最多、日曜日が17本。月曜・水曜・金曜は各12本、火曜9本、木曜6本。曜日別件数は公開日の分布であり、曜日と開発作業量の因果関係を示さない。土曜日22本と日曜日17本を合わせると39本で、ニュース全体の約43.3%に相当する。週末に公開された記事が多いという分布は確認できるが、曜日ごとの母数や公開の運用ルールを別途確認しない限り、週末に開発作業が集中しているとは結論づけられない。月曜・水曜・金曜が各12本で並ぶことからも、特定の一曜日だけに投稿が限定されているわけではない。土曜22本・日曜17本で週末合計39本、ニュース全体の約43.3%。月・水・金も各12本あり、週末だけに集中しているわけではない。曜日別件数は作業量や記事品質を表さない。</div>
-    </div>
+    
     <div class="chart-card">
       <div class="chart-title">曜日×時間帯 投稿頻度ヒートマップ</div>
       <div class="chart-box" id="chart-dow-hour-heatmap"></div>
@@ -1474,11 +1475,7 @@
 
   <!-- 神籤草子 行動パターン -->
   <div class="charts-grid">
-    <div class="chart-card">
-      <div class="chart-title">曜日別投稿数（神籤草子）</div>
-      <div class="chart-box" id="chart-col-dow"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-auto" data-insight-index="17"></div>神籤草子66本の曜日分布は、火曜日17本が最多、土曜日14本、日曜日・金曜日が各11本、月曜日6本、木曜日5本、水曜日2本。10月25日（日）のID66が加わり、日曜日は11本となった。火曜日17本はコラム全体の約25.8%にあたり、曜日分布の中で明確な山となっている。1月6日の一斉公開がこの件数を押し上げているため、火曜日に毎週一定数が公開されるという意味ではない。日曜日はID66の追加で11本となり、金曜日と同数になった。曜日別の違いは公開履歴の特徴を示すもので、テーマ選定や読者反応との因果関係を判断するには別のデータが必要である。火曜日17本はコラム全体の約25.8%だが、1月6日の一斉公開の影響を含む。定期公開日だったと判断するには週ごとの継続性が必要。ID66の追加で日曜日は11本となった。</div>
-    </div>
+    
     <div class="chart-card">
       <div class="chart-title">曜日別投稿数 比較（ニュース vs 神籤草子）</div>
       <div class="chart-box" id="chart-dow-compare"></div>
@@ -1592,11 +1589,7 @@
       <div class="chart-box chart-box-advanced" id="chart-advanced-treemap"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>この図は記事本数を面積に置き換え、媒体→分類という階層を一度に俯瞰するためのものです。最も面積の大きい分類は収録記事の構成を強く左右しますが、面積が大きいこと自体は内容の質や重要度を意味しません。小さな分類も独立した領域として残るため、主要テーマに記事が集中しているのか、複数のテーマへ分散しているのかを比較できます。媒体ごとの親領域を先に見てから分類へ進むと、ニュースとコラムで分類の粒度や構成が異なる場合にも、同じ分類名を安易に同一視せずに済みます。面積の差が大きいと小分類は見つけにくくなるため、パンくずから階層を拡大し、全体と部分を往復して確認してください。分類数の多さだけで多様性を断定せず、各分類の記事数と合わせて読むことが重要です。 拡大後は分類の面積だけでなく、パンくずで一段上へ戻った際の親分類全体の比率も見比べると、局所的な偏りと媒体全体の構造を取り違えにくくなります。特に小分類は件数が少ないほど割合が大きく変動するため、構成上の存在を確認する用途にとどめ、安定した傾向かどうかは時系列や記事一覧でも確かめてください。</div>
     </div>
-    <div class="chart-card advanced-chart-card">
-      <div class="chart-title">媒体・分類・記事長の階層 — Sunburst</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-sunburst"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>サンバーストは、媒体の内側に分類、その内側に記事長帯を置いた三層構造です。中心から外側へ読むことで、全体の記事数がどの媒体に分かれ、媒体内のどの分類が多く、さらに各分類の文章量がどの帯に集まるかを追跡できます。外周の小さな区画は少数記事の組み合わせを示すため、数件だけの例を一般的な傾向に拡大解釈しないよう注意が必要です。分類ごとの記事数が異なる場合は、外周の絶対的な幅だけでなく、同じ親分類の中でどの長さ帯が占める割合かを比較します。ニュースとコラムで記事の役割や記述形式が異なる可能性もあるため、媒体をまたいだ単純な優劣ではなく、各媒体の内部構成を読む用途に適しています。中心へ戻る操作を使い、全体比と内部比を切り替えて確認してください。 記事長帯はあらかじめ定めた文字数区分であり、文章の難易度や情報量を直接測定するものではありません。分類ごとの件数が異なる場合は、外周の区画サイズを媒体間で直接比べるのではなく、同じ親分類の内部での割合を比較してください。分類体系の違いが結果に反映される点も踏まえ、他の分布図と組み合わせて読むことが大切です。</div>
-    </div>
+    
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体から分類、記事長への流れ — Sankey</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-sankey"></div>
@@ -1612,11 +1605,7 @@
       <div class="chart-box chart-box-advanced" id="chart-advanced-themeriver"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>テーマリバーは月ごとの投稿本数を連続した帯として描き、時間の経過に伴う媒体構成の変化を見やすくします。帯の厚みはその月の件数に対応し、上下に積み重なる形状からニュースとコラムの比率がどの時期に変化したかを追えます。投稿がない月も時系列から省略せず、空白期間を含めて連続した月軸にしているため、更新の集中と停止を同じ視野で確認できます。全体の高さが大きい月は総投稿数が多く、帯の片方だけが厚くなる月は媒体構成に偏りがあることを示します。ただし、テーマリバーは正確な月別件数の読み取りよりも構成の流れを把握する図です。具体的な数値は既存の月別棒グラフやツールチップと照合し、帯の面積だけから厳密な差を推定しないでください。 この表示は月単位に集約しているため、同じ月の中で何日に投稿が集中したかまでは表しません。月内の公開集中を調べる場合は日別カレンダーへ、期間全体の量を比較する場合は月別棒グラフへ移動してください。月の区切りをまたぐ記事は公開日の月に一度だけ計上され、投稿のない月もゼロとして時間軸に残しています。</div>
     </div>
-    <div class="chart-card advanced-chart-card advanced-chart-wide">
-      <div class="chart-title">媒体と記事分類の関係ネットワーク — Graph</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-graph"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>このネットワーク図は、媒体ノードと分類ノードを記事件数のリンクで結んだ二部グラフです。線の太さは各媒体に属する分類の記事数に対応し、どの分類が片方の媒体に集中しているか、両方の媒体に現れるかを視覚的に確認できます。ノードの近さや配置はレイアウト計算の結果であり、意味上の類似度や因果関係を示すものではありません。分類名が同じでも媒体が異なるノードは別に扱い、件数の異なる分類を誤って統合しないようにしています。線が多い箇所は構成が複雑である可能性がありますが、リンク数そのものは記事本数の合計とは別の指標です。まず媒体ノードから太いリンクをたどり、次に小さなリンクを確認すると、主要な記事領域と少数テーマの両方を把握できます。分類体系の整理や媒体間の役割分担を検討する際の補助として利用してください。 この図で意味を持つのはノード間を結ぶリンクとその件数であり、ノードの座標や距離はレイアウト上の都合です。近くに配置された分類が内容的に似ているとは限りません。また、媒体別に分離した同名分類は比較のための別ノードです。実際のタイトルやタグを確認しながら、分類の重複や命名揺れがないかを点検する補助として使ってください。</div>
-    </div>
+    
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">記事単位の多変量比較 — Parallel Coordinates</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-parallel"></div>
@@ -1637,18 +1626,10 @@
       <div class="chart-box chart-box-advanced" id="chart-advanced-pareto"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>分類を記事数の多い順に並べた棒グラフに、左から順に足し上げた累積構成比の折れ線を重ねます。少数の主要分類が全体のどの程度を占めるか、上位分類の後にどれほど裾野が広がるかを確認できます。これは構成比を整理するためのパレート形式であり、原因分析や重要度の順位付けではありません。ニュースとコラムで同名の分類があっても媒体別に分けて集計し、分類名の違いによる誤統合を避けています。上位に集中している場合は主要テーマが明確である一方、下位分類にも少数の独自記事が残っている可能性があります。累積線の傾きが緩やかになる箇所は分類の裾野を示す目安です。棒の実数と累積比率を併せて読み、上位だけで全体像を決めつけないでください。 上位分類を一定数表示し、それ以外は「その他」にまとめているため、右端の棒は複数分類の合計です。累積構成比は表示された順に記事数を足し上げた全体比で、最後は100%に到達します。上位の集中度を確認した後は、その他に含まれる分類を元のタグ・カテゴリ別グラフで確認してください。パレートの形は整理の目安であり、少数分類を削除すべきという判断を意味しません。</div>
     </div>
-    <div class="chart-card advanced-chart-card advanced-chart-wide">
-      <div class="chart-title">記事単位の文字数分布 — Beeswarm Scatter</div>
-      <div class="chart-box chart-box-advanced" id="chart-advanced-beeswarm"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>記事一件ずつを点として配置し、ニュースとコラムの文字数分布を個別の観測値として比較します。点を横方向へわずかにずらすことで同じ文字数に重なる記事を見分けやすくし、中央値付近への集中、長文側への裾の伸び、少数の極端値を把握できます。横方向の位置は媒体を識別するための配置であり、記事の属性値や順位を表していません。縦方向が文字数なので、点の高さを直接比較できます。記事数の多い媒体では点が密集しやすく、重なりは実際の件数を隠す場合があります。ツールチップから記事IDとタイトルを確認し、箱ひげ図で見た中央値や四分位範囲と照合すると、集団全体の傾向と個別記事の違いを往復できます。文字数の大小を品質評価に置き換えず、分布の形を読むために利用してください。 横方向の小さなずらしは同じ文字数の点が重ならないようにするための表示上の工夫で、実際の値ではありません。点の縦位置だけが文字数を表し、左右の位置はニュースとコラムの区別に使っています。点が密集する範囲は似た文字数の記事が多いことを示しますが、重なりが完全になくなるわけではありません。全体のばらつきは箱ひげ図、個々の記事の識別はツールチップで確認してください。</div>
-    </div>
+    
 
 
-    <div class="chart-card advanced-chart-card">
-      <div class="chart-title">媒体別・記事文字数の累積分布 — ECDF</div>
-      <div class="chart-box chart-box-advanced chart-box-compact" id="chart-advanced-ecdf"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div>経験累積分布（ECDF）は、横軸の文字数以下の記事が全体の何パーセントを占めるかを示します。線が急に上がる範囲には記事が多く集まり、線が緩やかに伸びる範囲には比較的少数の長文記事が分布します。同じ文字数位置で二媒体の線を比べると、その文字数以下に収まる記事の割合を比較でき、平均値だけでは分かりにくい分布全体の違いを把握できます。たとえば50%の高さに達する位置は中央値の目安です。記事数が異なる媒体も割合へ正規化しているため、線の高さは件数そのものではありません。最大値付近の小さな差は少数記事の影響を受けやすく、文字数の長さを品質や有用性と同一視することもできません。箱ひげ図で中央値・四分位範囲を確認し、個別記事のタイトルは散布図や記事一覧で照合してください。平均値ではなく分布の形を比較したい場合に適した図です。線が右へ長く伸びる場合は少数の長文記事が裾を形成している可能性があります。全体の割合と個別の文字数を分けて読み、分布の差をそのまま編集方針の良し悪しへ結びつけないでください。</div>
-    </div>
+    
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">媒体別の記事長クラス比較 — Grouped Bar</div>
       <div class="chart-box chart-box-advanced chart-box-compact" id="chart-advanced-lengthband"></div>
@@ -3974,12 +3955,30 @@ function articleDateTime(a) {
 // 最新の本サイトデータ規模では、拡大しても線・文字がぼやけないSVGレンダラーを使う。
 // SVGはベクター描画のため、固定のdevicePixelRatio指定を必要としない。
 function createDashboardChart(element, renderer = 'svg') {
-  if (!element) throw new Error('Chart container was not found.');
-  return echarts.init(element, null, {
-    renderer,
-    useDirtyRect: false,
-    useCoarsePointer: true
-  });
+  const chartId = element?.id || '(unknown chart)';
+  const showFailure = error => {
+    console.error('[Dashboard chart failed]', chartId, error);
+    if (element) {
+      element.dataset.chartState = 'error';
+      const detail = String(error?.message || error || 'Unknown error').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+      element.innerHTML = '<div class="chart-render-fallback"><strong>' + chartId + '</strong><br>描画できませんでした。ほかのグラフは引き続き利用できます。<br><small>' + detail + '</small></div>';
+    }
+  };
+  const fallback = { setOption(){}, getOption(){return {series:[]};}, resize(){}, dispatchAction(){}, on(){}, getDom(){return element;} };
+  if (!element) { console.error('[Dashboard chart failed] Missing container.'); return fallback; }
+  try {
+    const instance = echarts.init(element, null, { renderer, useDirtyRect:false, useCoarsePointer:true });
+    return new Proxy(instance, {
+      get(target, property) {
+        if (property === 'setOption') return (...args) => {
+          try { const result=target.setOption(...args); element.dataset.chartState='ready'; return result; }
+          catch(error) { showFailure(error); return undefined; }
+        };
+        const value=Reflect.get(target,property,target);
+        return typeof value==='function' ? value.bind(target) : value;
+      }
+    });
+  } catch(error) { showFailure(error); return fallback; }
 }
 
 const chartMonthly = createDashboardChart(document.getElementById('chart-monthly'));
@@ -4141,20 +4140,6 @@ chartTagBubble.setOption({
 });
 
 // 新規：記事長クラス分布
-const chartLengthPie = createDashboardChart(document.getElementById('chart-length-pie'));
-chartLengthPie.setOption({
-  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-  tooltip: { trigger: 'item', formatter: '{b}: {c}件 ({d}%)', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
-  legend: { bottom: 0, textStyle: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
-  series: [{
-    type: 'pie', radius: ['40%', '70%'], center: ['50%', '45%'],
-    data: lengthPieData,
-    itemStyle: { borderColor: '#faf6ef', borderWidth: 2 },
-    label: { color: '#5c3317', fontSize: 11, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-    color: ['#95a5a6', '#f39c12', '#c0392b']
-  }]
-});
-
 const tagCount = {};
 newsData.forEach(a => { tagCount[a.tag] = (tagCount[a.tag] || 0) + 1; });
 const mainTags = {};
@@ -4338,21 +4323,6 @@ chartHours.setOption({
   }]
 });
 
-const chartDow = createDashboardChart(document.getElementById('chart-dow'));
-chartDow.setOption({
-  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
-  grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
-  series: [{
-    type: 'bar', data: dowCounts, barMaxWidth: 30,
-    itemStyle: { color: (p) => ['#8e44ad','#2980b9','#27ae60','#7f8c8d','#e67e22','#c0392b','#b8860b'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-    labelLayout: { hideOverlap: true }
-  }]
-});
-
 // 新規：曜日×時間帯 ヒートマップ
 const chartDowHour = createDashboardChart(document.getElementById('chart-dow-hour-heatmap'));
 chartDowHour.setOption({
@@ -4366,21 +4336,6 @@ chartDowHour.setOption({
 });
 
 // 神籤草子 曜日別
-const chartColDow = createDashboardChart(document.getElementById('chart-col-dow'));
-chartColDow.setOption({
-  textStyle: { fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#1a1008dd', textStyle: { color: '#f5e6c8', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" } },
-  grid: { left: '5%', right: '5%', bottom: '12%', top: '8%', containLabel: true },
-  xAxis: { type: 'category', data: dowLabels, axisLabel: { color: '#8b7355', fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif", fontSize: 13 }, axisLine: { lineStyle: { color: '#d4c4a0' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#8b7355', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" }, splitLine: { lineStyle: { color: '#f5e6c8', type: 'dashed' } } },
-  series: [{
-    type: 'bar', data: colDowCounts, barMaxWidth: 30,
-    itemStyle: { color: (p) => ['#b8860b','#c5a028','#d4b845','#a0782a','#e8c45a','#b8860b','#8b6914'][p.dataIndex] },
-    label: { show: true, position: 'top', color: '#5c3317', fontSize: 10, fontFamily: "'Zen Old Mincho', 'Shippori Mincho', serif" },
-    labelLayout: { hideOverlap: true }
-  }]
-});
-
 // ニュース vs コラム 曜日比較
 const chartDowCompare = createDashboardChart(document.getElementById('chart-dow-compare'));
 chartDowCompare.setOption({
@@ -4764,7 +4719,7 @@ function createAdvancedChart(id, renderer = 'svg') {
   try { return createDashboardChart(element, renderer); }
   catch (error) {
     console.error('[Advanced chart init failed]', id, error);
-    if (element) element.innerHTML = '<div class="chart-render-fallback">このグラフを初期化できませんでした。ほかのグラフは引き続き表示します。</div>';
+    if (element) { element.dataset.chartState='error'; element.innerHTML='<div class="chart-render-fallback"><strong>'+id+'</strong><br>初期化エラー: '+String(error?.message||error)+'</div>'; }
     return { setOption() {}, getOption() { return { series: [] }; }, resize() {}, getDom() { return element; } };
   }
 }
@@ -4773,7 +4728,7 @@ function setAdvancedOption(chart, id, option) {
   catch (error) {
     console.error('[Advanced chart render failed]', id, error);
     const element = document.getElementById(id);
-    if (element) element.innerHTML = '<div class="chart-render-fallback">描画設定を確認中です。このグラフ以外の分析は利用できます。</div>';
+    if (element) { element.dataset.chartState='error'; element.innerHTML='<div class="chart-render-fallback"><strong>'+id+'</strong><br>描画エラー: '+String(error?.message||error)+'</div>'; }
   }
 }
 /* ═══════════════════════════════════════════════════════════════════════
@@ -4851,23 +4806,6 @@ setAdvancedOption(chartAdvancedTreemap, 'chart-advanced-treemap', {
       { itemStyle: { borderColor: '#fffdfa', borderWidth: 3, gapWidth: 3 }, upperLabel: { show: true } },
       { colorSaturation: [0.35,0.72], itemStyle: { borderColor: '#fffdfa', borderWidth: 2, gapWidth: 2 } },
       { colorSaturation: [0.25,0.65], itemStyle: { borderColor: '#fffdfa', borderWidth: 1, gapWidth: 1 } }
-    ]
-  }]
-});
-const chartAdvancedSunburst = createAdvancedChart('chart-advanced-sunburst');
-setAdvancedOption(chartAdvancedSunburst, 'chart-advanced-sunburst', {
-  textStyle: { fontFamily: advancedFont },
-  tooltip: { ...advancedTooltip, formatter: p => '<strong>' + p.name + '</strong><br>記事数: ' + Number(p.value || 0).toLocaleString() + '件' },
-  series: [{
-    type: 'sunburst', data: advancedHierarchy, radius: ['12%','88%'], sort: 'desc',
-    emphasis: { focus: 'ancestor' },
-    label: { rotate: 'radial', minAngle: 7, fontFamily: advancedFont, fontSize: 10, color: '#fffdfa' },
-    itemStyle: { borderColor: '#fffdfa', borderWidth: 2 },
-    levels: [
-      {},
-      { r0: '12%', r: '38%', label: { rotate: 0, fontSize: 12, fontWeight: 700 } },
-      { r0: '38%', r: '65%', label: { fontSize: 10 } },
-      { r0: '65%', r: '88%', label: { fontSize: 9 } }
     ]
   }]
 });
@@ -4986,43 +4924,6 @@ setAdvancedOption(chartAdvancedThemeRiver, 'chart-advanced-themeriver', {
     label: { show: false }, itemStyle: { opacity: .86 }
   }]
 });
-const graphNodes = [
-  { id: 'medium:news', name: '社務所だより', category: 0, symbolSize: 54, itemStyle: { color: '#c0392b' }, label: { show: true, color: '#fffdfa', fontFamily: advancedFont, fontSize: 11 } },
-  { id: 'medium:col', name: '神籤草子', category: 0, symbolSize: 54, itemStyle: { color: '#b8860b' }, label: { show: true, color: '#fffdfa', fontFamily: advancedFont, fontSize: 11 } }
-];
-const graphLinks = [];
-const graphCategorySeen = new Set();
-advancedArticles.forEach(article => {
-  const id = article.type + ':' + article.classification;
-  if (!graphCategorySeen.has(id)) {
-    graphCategorySeen.add(id);
-    graphNodes.push({ id, name: article.classification, category: 1, symbolSize: 18, value: 0, itemStyle: { color: article.type==='news'?'#d98275':'#d4ad54' }, label: { show: true, color: '#5c3317', fontFamily: advancedFont, fontSize: 9 } });
-  }
-  const edgeId = id;
-  let edge = graphLinks.find(link=>link.target===edgeId);
-  if (!edge) {
-    edge = { source: article.type==='news'?'medium:news':'medium:col', target: edgeId, value: 0, lineStyle: { color: article.type==='news'?'#c0392b':'#b8860b' } };
-    graphLinks.push(edge);
-  }
-  edge.value++;
-  graphNodes.find(node=>node.id===edgeId).value++;
-});
-const chartAdvancedGraph = createAdvancedChart('chart-advanced-graph', 'canvas');
-setAdvancedOption(chartAdvancedGraph, 'chart-advanced-graph', {
-  textStyle: { fontFamily: advancedFont },
-  tooltip: { ...advancedTooltip, formatter: p => p.dataType==='edge'
-    ? p.data.source + ' → ' + p.data.target + '<br>記事数: ' + p.data.value + '件'
-    : '<strong>' + p.name + '</strong>' + (p.value ? '<br>記事数: ' + p.value + '件' : '') },
-  legend: [{ data: ['媒体','分類'], top: 4, textStyle: advancedFontText }],
-  series: [{
-    type: 'graph', layout: 'force', data: graphNodes, links: graphLinks,
-    categories: [{ name: '媒体' },{ name: '分類' }],
-    roam: true, draggable: true, gravity: .08, repulsion: 260, edgeLength: [70,170],
-    label: { show: true, position: 'right', fontFamily: advancedFont, fontSize: 10, color: '#5c3317' },
-    lineStyle: { opacity: .55, curveness: .08 },
-    emphasis: { focus: 'adjacency', lineStyle: { width: 4 } }
-  }]
-});
 const parallelRows = advancedArticles.map(a => [a.id, a.chars, a.dayOffset, a.type==='news'?'ニュース':'コラム']);
 const chartAdvancedParallel = createAdvancedChart('chart-advanced-parallel', 'canvas');
 setAdvancedOption(chartAdvancedParallel, 'chart-advanced-parallel', {
@@ -5117,51 +5018,6 @@ setAdvancedOption(chartAdvancedPareto, 'chart-advanced-pareto', {
     { name: '累積構成比', type: 'line', yAxisIndex: 1, data: paretoPercent, smooth: false, symbol: 'circle', symbolSize: 7, lineStyle: { color: '#c0392b', width: 3 }, itemStyle: { color: '#c0392b' }, label: { show: true, position: 'top', color: '#c0392b', fontFamily: advancedFont, fontSize: 9, formatter: '{c}%' } }
   ]
 });
-const beeswarmData = {
-  news: advancedArticles.filter(a=>a.type==='news').map(a=>[0+((a.id%11)-5)*.035,a.chars,a.id]),
-  col: advancedArticles.filter(a=>a.type==='col').map(a=>[1+((a.id%11)-5)*.035,a.chars,a.id])
-};
-const beeswarmById = new Map(advancedArticles.map(a=>[a.type+':'+a.id,a]));
-const chartAdvancedBeeswarm = createAdvancedChart('chart-advanced-beeswarm', 'canvas');
-setAdvancedOption(chartAdvancedBeeswarm, 'chart-advanced-beeswarm', {
-  textStyle: { fontFamily: advancedFont },
-  tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
-    const article=beeswarmById.get((p.seriesName==='ニュース'?'news':'col')+':'+p.data[2]);
-    return article ? '<strong>#'+article.id+' '+article.title+'</strong><br>媒体: '+article.mediumLabel+'<br>文字数: '+article.chars.toLocaleString()+'字<br>公開日: '+article.date.toLocaleDateString('ja-JP') : '';
-  }},
-  grid: { left: 76, right: 30, top: 58, bottom: 62, containLabel: true },
-  xAxis: { type: 'value', min: -.5, max: 1.5, interval: 1, axisLabel: { ...advancedFontText, fontSize: 12, margin: 16, formatter: value=>value<.5?'ニュース':'コラム' }, axisLine: { lineStyle: { color: '#d4c4a0' } }, splitLine: { show: false }, axisTick: { show: false } },
-  yAxis: { type: 'value', name: '文字数', min: 0, axisLabel: advancedFontText, splitLine: { lineStyle: { color: '#f0e7d6', type: 'dashed' } } },
-  series: [
-    { name: 'ニュース', type: 'scatter', data: beeswarmData.news, symbolSize: 12, itemStyle: { color: '#c0392b', opacity: .62, borderColor: '#fffdfa', borderWidth: .6 }, emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#5c3317', borderWidth: 1.5 } } },
-    { name: 'コラム', type: 'scatter', data: beeswarmData.col, symbolSize: 12, itemStyle: { color: '#b8860b', opacity: .72, borderColor: '#fffdfa', borderWidth: .6 }, emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#5c3317', borderWidth: 1.5 } } }
-  ]
-});
-
-
-
-// ── Additional analytical views: derived from the complete article records ──
-function buildEcdf(type){
-  const values=advancedArticles.filter(a=>a.type===type).map(a=>a.chars).filter(Number.isFinite).sort((a,b)=>a-b);
-  if(!values.length)return [];
-  const points=[];let i=0;
-  while(i<values.length){const value=values[i];while(i<values.length&&values[i]===value)i++;points.push([value,Math.round(i/values.length*1000)/10]);}
-  return points;
-}
-const ecdfNews=buildEcdf('news'),ecdfCol=buildEcdf('col');
-const chartAdvancedEcdf=createAdvancedChart('chart-advanced-ecdf');
-setAdvancedOption(chartAdvancedEcdf,'chart-advanced-ecdf',{
-  textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',axisPointer:{type:'line'}},
-  legend:{data:['社務所だより','神籤草子'],bottom:5,textStyle:advancedFontText},
-  grid:{left:72,right:35,top:52,bottom:74,containLabel:true},
-  xAxis:{type:'value',name:'記事文字数',nameLocation:'middle',nameGap:42,min:0,axisLabel:{...advancedFontText,fontSize:11,formatter:v=>Number(v).toLocaleString()},splitLine:{show:false}},
-  yAxis:{type:'value',name:'累積割合',min:0,max:100,axisLabel:{...advancedFontText,fontSize:11,formatter:'{value}%'},splitLine:{lineStyle:{color:'#f0e7d6',type:'dashed'}}},
-  series:[
-    {name:'社務所だより',type:'line',data:ecdfNews,showSymbol:false,step:'end',lineStyle:{color:'#c0392b',width:3},itemStyle:{color:'#c0392b'}},
-    {name:'神籤草子',type:'line',data:ecdfCol,showSymbol:false,step:'end',lineStyle:{color:'#b8860b',width:3},itemStyle:{color:'#b8860b'}}
-  ]
-});
-
 const lengthBandCounts={
   news:advancedLengthBands.map(b=>advancedArticles.filter(a=>a.type==='news'&&a.lengthBand===b).length),
   col:advancedLengthBands.map(b=>advancedArticles.filter(a=>a.type==='col'&&a.lengthBand===b).length)
@@ -5234,7 +5090,6 @@ const dashboardCharts = [
   { chart: chartWeekly, label: '週別投稿数', options: { zoom: true, magic: true } },
   { chart: chartWeeklyChars, label: '週別ニュース総文字数', options: { zoom: true, magic: true } },
   { chart: chartTagBubble, label: 'カテゴリ別記事数と平均文字数', options: { brush: true } },
-  { chart: chartLengthPie, label: '記事長クラス分布' },
   { chart: chartNewsTags, label: 'ニュースタグ分布' },
   { chart: chartColCats, label: 'コラムカテゴリ分布' },
   { chart: chartGrouped, label: 'ニュース属性分類の記事数' },
@@ -5243,25 +5098,19 @@ const dashboardCharts = [
   { chart: chartCumulative, label: '累積記事数', options: { zoom: true } },
   { chart: chartCumChars, label: '累積総文字数', options: { zoom: true } },
   { chart: chartHours, label: 'ニュース投稿時刻の分布' },
-  { chart: chartDow, label: 'ニュース曜日別投稿数' },
   { chart: chartDowHour, label: '曜日と時間帯の投稿分布' },
-  { chart: chartColDow, label: 'コラム曜日別投稿数' },
   { chart: chartDowCompare, label: 'ニュースとコラムの曜日別比較' },
   { chart: chartHist, label: '記事長ヒストグラム' },
   { chart: chartScatter, label: '記事IDと文字数の関係', options: { brush: true } },
   { chart: chartTagLen, label: 'ニュースタグ別平均文字数' },
   { chart: chartCatLen, label: 'コラムカテゴリ別平均文字数' },
   { chart: chartAdvancedTreemap, label: '媒体・分類別記事構成' },
-  { chart: chartAdvancedSunburst, label: '媒体・分類・記事長の階層' },
   { chart: chartAdvancedSankey, label: '媒体から分類・記事長への流れ' },
   { chart: chartAdvancedBoxplot, label: '媒体・分類別文字数分布' },
   { chart: chartAdvancedThemeRiver, label: '月別媒体構成の変化' },
-  { chart: chartAdvancedGraph, label: '媒体と分類の関係ネットワーク' },
   { chart: chartAdvancedParallel, label: '記事単位の多変量比較' },
   { chart: chartAdvancedRadar, label: '媒体別特徴プロファイル' },
   { chart: chartAdvancedPareto, label: '分類別記事数と累積構成比' },
-  { chart: chartAdvancedBeeswarm, label: '記事単位の文字数分布' },
-  { chart: chartAdvancedEcdf, label: '媒体別・記事文字数の累積分布' },
   { chart: chartAdvancedLengthBand, label: '媒体別の記事長クラス比較' },
   { chart: chartAdvancedDateScatter, label: '公開日と記事文字数の関係' },
   { chart: chartAdvancedRolling, label: '30日移動平均による投稿ペース' },
