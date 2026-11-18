@@ -2049,7 +2049,11 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     </div>
   </div>
 
+  
   <div class="charts-grid">
+    <div class="chart-card"><div class="chart-title">曜日別の平均本文文字数（ニュースとコラム）</div><div class="chart-box" id="chart-weekday-average-chars"></div></div>
+  </div>
+<div class="charts-grid">
     <div class="chart-card">
       <div class="chart-title">タグ別・平均文字数（社務所だより）</div>
       <div class="chart-box-tall" id="chart-tag-len"></div>
@@ -2163,7 +2167,9 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       <div class="chart-box chart-box-advanced" id="chart-advanced-rolling"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 公開日のある全記事を日付順に集計し、直近30日間の一日平均投稿数をニュース・コラム・合計に分けて表示します。<br><strong class="chart-insight-label">主な傾向</strong> 30日移動平均の最大値は合計約2.67本/日で、最終観測日の2026年10月25日は0.20本/日です。 日々の投稿本数は曜日や単発の集中によって上下するため、日別グラフだけでは中長期の増減を読み取りにくい場合があります。移動平均は短期的な揺れをならし、投稿ペースが緩やかに増えているか、落ち着いているかを把握するための指標です。期間の最初の29日間は、存在する日数だけで平均を計算するため、30日分がそろった区間とは条件が異なります。線の交差は媒体間の相対的な投稿ペースの変化を示しますが、記事の重要度や品質を示すものではありません。日別投稿タイムラインや週別投稿数と照合し、平均線の変化が一時的な山谷によるものか、継続的な傾向かを確認してください。ズーム操作で期間を絞り、特定の時期を詳しく調べることもできます。<br><strong class="chart-insight-label">解釈上の注意</strong> 日別の実数を隠すことで滑らかに見える反面、単発の大量投稿は平均値に薄められます。平均線だけを見て投稿の実態を判断せず、必要に応じて元の日別データへ戻ってください。</p></div>
     </div>
-    <div class="chart-card advanced-chart-card">
+    
+    <div class="chart-card advanced-chart-card advanced-chart-wide"><div class="chart-title">30日移動平均の本文文字数</div><div class="chart-box chart-box-advanced" id="chart-advanced-rolling-chars"></div></div>
+<div class="chart-card advanced-chart-card">
       <div class="chart-title">投稿活動日の間隔分布</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-gap"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 連続する投稿活動日どうしの間に何日空いたかを数え、間隔の範囲ごとに集計します。<br><strong class="chart-insight-label">主な傾向</strong> 同一媒体内の公開日差は中央値がニュース・コラムとも1日で、最長間隔はニュース58日、コラム57日です。 同じ日に複数記事が公開されても活動日は一日として扱うため、記事単位の公開間隔ではなく、投稿があった日から次の投稿があった日までの空白日数を示します。1日間隔が多い場合は活動日が連続しやすく、8日以上の区間が多い場合は投稿のない期間が比較的長く発生していることを意味します。ただし、これは公開記録上の間隔であり、執筆・編集・準備が行われていない期間を意味しません。記録開始日や終了日より前後の未収録期間は分布に含まれず、集計対象は観測された活動日間の区間だけです。日別ヒートマップ、週別投稿数、30日移動平均と組み合わせると、投稿間隔が不規則なのか、特定時期にまとまっているのかを確認できます。区間数は記事数ではないため、件数を混同しないでください。<br><strong class="chart-insight-label">解釈上の注意</strong> ここでは一日の中の複数投稿を一つにまとめているので、同日に何本公開されたかは読み取れません。間隔の長い区分が多くても、その理由や制作状況までは示さない点に注意してください。</p></div>
@@ -2173,7 +2179,9 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       <div class="chart-box chart-box-advanced" id="chart-advanced-median"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 各月に公開された記事の文字数を媒体別に並べ、中央に位置する値である中央値を表示します。<br><strong class="chart-insight-label">主な傾向</strong> 月別中央値は2026年6月にニュース3,677字・コラム1,311字、1月はニュース562字・コラム625字でした。 平均値は非常に長い記事の影響を受けやすい一方、中央値は典型的な記事の長さを把握する際に役立ちます。ニュースとコラムを同じ月で比較することで、片方の媒体だけ長文記事が増えた月や、通常の長さが変化した時期を見つけやすくなります。記事がない月は0字ではなく欠測として表示し、線をつなぎません。記事数が少ない月は一件の長短で中央値が大きく動く可能性があるため、月別投稿本数も必ず確認してください。既存の月別ニュース平均文字数、箱ひげ図、経験累積分布（ECDF）と合わせると、平均と中央値の差や、分布全体の変化を読み分けられます。中央値は記事の品質や読みやすさを評価するスコアではなく、文字数分布の中心を表す統計量です。<br><strong class="chart-insight-label">解釈上の注意</strong> 偶数件の月は中央二件の平均を中央値として計算しています。平均値との差が大きい場合は、長文・短文の少数記事が分布を引っ張っている可能性があるため、ヒストグラムや記事一覧で実際の分布も確かめてください。</p></div>
     </div>
-    <div class="chart-card advanced-chart-card">
+    
+    <div class="chart-card advanced-chart-card"><div class="chart-title">月別本文文字数の第3四分位（上位25%の境界）</div><div class="chart-box chart-box-advanced" id="chart-advanced-upper-quartile"></div></div>
+<div class="chart-card advanced-chart-card">
       <div class="chart-title">月別の分類バリエーション数</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-breadth"></div>
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><p class="chart-desc-copy"><strong class="chart-insight-label">指標の概要</strong> 各月に登場した異なる分類名の数を、ニュースとコラムに分けて数えます。<br><strong class="chart-insight-label">主な傾向</strong> 2026年1月はニュース39種類・コラム13種類の分類が登場し、6月はニュース2種類・コラム5種類でした。 記事本数ではなく、その月にどれだけ多くの分類へ投稿が広がったかを表すため、月別投稿数とは異なる視点でテーマの広がりを確認できます。たとえば投稿本数が増えていても分類数が変わらなければ、既存テーマへの投稿が増えた可能性があります。逆に記事数が少ない月でも分類数が多ければ、複数のテーマを少数ずつ扱った可能性があります。ただし、分類名の表記ゆれや未分類の扱いによって数値が変わることがあり、分類の細かさ自体も媒体ごとに異なる場合があります。分類数が多いことを、そのまま内容の多様性や質の高さと同一視しないでください。媒体・分類別記事構成のツリーマップ、分類別記事数のパレート図、月別投稿数と照合すると、分類の広がりと各分類への集中度を分けて考察できます。各月の値はその月に一度でも現れた分類名を一つとして数えたユニーク数です。<br><strong class="chart-insight-label">解釈上の注意</strong> 同じ分類の記事が何本あっても分類数は増えないため、投稿本数とは異なる動きをします。分類ルールや名称が途中で変更された場合は、見かけ上の増減が生じる可能性もあります。</p></div>
@@ -5040,6 +5048,14 @@ chartScatter.setOption({
 });
 
 // 51種類のタグを1画面に詰め込まず、上位14件を初期表示にして縦方向のデータズームで全件を探索できるようにする。
+const weekdayAverageLabels=['日曜','月曜','火曜','水曜','木曜','金曜','土曜'];
+const weekdayCharGroups={news:Array.from({length:7},()=>[]),col:Array.from({length:7},()=>[])};
+allArticles.forEach(article=>{const parts=String(article.date||'').split(/[/-]/).map(Number);if(parts.length!==3||!parts.every(Number.isFinite))return;const day=new Date(parts[0],parts[1]-1,parts[2]).getDay();if(weekdayCharGroups[article.type])weekdayCharGroups[article.type][day].push(Number(article.chars)||0);});
+const weekdayAverageRows=type=>weekdayCharGroups[type].map(rows=>({value:rows.length?Math.round(rows.reduce((sum,v)=>sum+v,0)/rows.length):null,count:rows.length}));
+const chartWeekdayAverageChars=createDashboardChart(document.getElementById('chart-weekday-average-chars'));
+chartWeekdayAverageChars.setOption({textStyle:{fontFamily:"'Zen Kaku Gothic New',sans-serif"},tooltip:{trigger:'axis',axisPointer:{type:'shadow'},backgroundColor:'#1a1a1add',textStyle:{color:'#f5f4f0',fontFamily:"'Zen Kaku Gothic New',sans-serif",fontSize:11},formatter:params=>'<strong>'+params[0].axisValueLabel+'</strong><br>'+params.map(item=>{const row=item.data||{};return item.marker+item.seriesName+': '+(row.value==null?'該当なし':Number(row.value).toLocaleString()+'字')+'（'+row.count+'件）';}).join('<br>')},legend:{data:['社務所だより','神籤草子'],bottom:0,textStyle:{color:'#555555',fontFamily:"'Zen Kaku Gothic New',sans-serif",fontSize:11}},grid:{left:78,right:28,top:46,bottom:70,containLabel:true},xAxis:{type:'category',data:weekdayAverageLabels,axisLabel:{color:'#555555',fontFamily:"'Zen Kaku Gothic New',sans-serif",fontSize:11,interval:0,hideOverlap:true},axisLine:{lineStyle:{color:'#e2e2e2'}}},yAxis:{type:'value',min:0,name:'平均本文文字数',nameTextStyle:{color:'#555555',fontSize:10},axisLabel:{color:'#555555',fontSize:10,fontFamily:"'Zen Kaku Gothic New',sans-serif",formatter:v=>Number(v).toLocaleString()+'字'},splitLine:{lineStyle:{color:'#e2e2e2',type:'dashed'}}},series:[{name:'社務所だより',type:'bar',data:weekdayAverageRows('news'),barMaxWidth:34,itemStyle:{color:'#8f252b',borderRadius:[4,4,0,0]},label:{show:true,position:'top',color:'#8f252b',fontFamily:"'Zen Kaku Gothic New',sans-serif",fontSize:9,formatter:p=>p.value==null?'':Number(p.value).toLocaleString()}},{name:'神籤草子',type:'bar',data:weekdayAverageRows('col'),barMaxWidth:34,itemStyle:{color:'#c4a059',borderRadius:[4,4,0,0]},label:{show:true,position:'top',color:'#9a742e',fontFamily:"'Zen Kaku Gothic New',sans-serif",fontSize:9,formatter:p=>p.value==null?'':Number(p.value).toLocaleString()}}]});
+
+
 const tagChartVisibleCount = 14;
 const tagChartZoomStart = Math.max(0, 100 - (tagChartVisibleCount / tagAvg.length * 100));
 const chartTagLen = createDashboardChart(document.getElementById('chart-tag-len'));
@@ -5906,6 +5922,11 @@ setAdvancedOption(chartAdvancedRolling,'chart-advanced-rolling',{
 });
 
 const activePublicationDates=[...new Set(advancedArticles.map(a=>calendarDateKey(a.date)))].sort();
+const maxRollingCharDay=Math.max(...advancedArticles.map(a=>a.dayOffset)),rollingCharSeries={news:[],col:[]};
+for(let day=0;day<=maxRollingCharDay;day++){for(const type of ['news','col']){const rows=advancedArticles.filter(a=>a.type===type&&a.dayOffset<=day&&a.dayOffset>=day-29);const avg=rows.length?Math.round(rows.reduce((sum,a)=>sum+a.chars,0)/rows.length):null;rollingCharSeries[type].push([firstArticleDate.getTime()+day*86400000,avg]);}}
+const chartAdvancedRollingChars=createAdvancedChart('chart-advanced-rolling-chars','canvas');
+setAdvancedOption(chartAdvancedRollingChars,'chart-advanced-rolling-chars',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',axisPointer:{type:'cross'},formatter:items=>{const d=new Date(items[0].axisValue);return '<strong>'+d.toLocaleDateString('ja-JP')+'</strong><br>'+items.map(item=>item.marker+item.seriesName+': '+(item.value[1]==null?'該当なし':Number(item.value[1]).toLocaleString()+'字')).join('<br>');}},legend:{data:['ニュース・平均本文文字数','コラム・平均本文文字数'],bottom:5,textStyle:advancedFontText},grid:{left:82,right:30,top:52,bottom:78,containLabel:true},xAxis:{type:'time',name:'対象日の直近30日間',axisLabel:{...advancedFontText,fontSize:10,hideOverlap:true,formatter:v=>{const d=new Date(v);return (d.getMonth()+1)+'/'+d.getDate();}},splitLine:{lineStyle:{color:'#e2e2e2',type:'dashed'}}},yAxis:{type:'value',min:0,name:'平均本文文字数',axisLabel:{...advancedFontText,fontSize:11,formatter:v=>Number(v).toLocaleString()+'字'},splitLine:{lineStyle:{color:'#e2e2e2',type:'dashed'}}},series:[{name:'ニュース・平均本文文字数',type:'line',data:rollingCharSeries.news,showSymbol:false,connectNulls:false,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'}},{name:'コラム・平均本文文字数',type:'line',data:rollingCharSeries.col,showSymbol:false,connectNulls:false,lineStyle:{color:'#c4a059',width:2.8},itemStyle:{color:'#c4a059'}}]});
+
 const publicationGaps=[];
 for(let i=1;i<activePublicationDates.length;i++){const p=activePublicationDates[i-1].split('-').map(Number),n=activePublicationDates[i].split('-').map(Number);publicationGaps.push((Date.UTC(n[0],n[1]-1,n[2])-Date.UTC(p[0],p[1]-1,p[2]))/86400000);}
 const gapBands=['1日','2日','3〜4日','5〜7日','8〜14日','15日以上'],gapCounts=[0,0,0,0,0,0];
@@ -5918,6 +5939,10 @@ const monthlyMedianNews=sortedMonths.map(m=>medianOf(advancedArticles.filter(a=>
 const monthlyMedianCol=sortedMonths.map(m=>medianOf(advancedArticles.filter(a=>a.type==='col'&&a.month===m).map(a=>a.chars)));
 const chartAdvancedMedian=createAdvancedChart('chart-advanced-median');
 setAdvancedOption(chartAdvancedMedian,'chart-advanced-median',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',formatter:p=>p.map(x=>x.seriesName+': '+(x.value==null?'該当なし':Number(x.value).toLocaleString()+'字')).join('<br>')},legend:{data:['ニュース中央値','コラム中央値'],bottom:4,textStyle:advancedFontText},grid:{left:76,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'文字数（中央値）',axisLabel:{...advancedFontText,fontSize:11,formatter:v=>Number(v).toLocaleString()},splitLine:{lineStyle:{color:'#f7f2ed',type:'dashed'}}},series:[{name:'ニュース中央値',type:'line',data:monthlyMedianNews,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'}},{name:'コラム中央値',type:'line',data:monthlyMedianCol,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#c4a059',width:2.8},itemStyle:{color:'#c4a059'}}]});
+
+const monthlyUpperQuartile=type=>sortedMonths.map(month=>{const values=advancedArticles.filter(a=>a.type===type&&a.month===month).map(a=>a.chars).filter(Number.isFinite).sort((x,y)=>x-y);return values.length>=4?Math.round(advancedQuantile(values,.75)):null;});
+const chartAdvancedUpperQuartile=createAdvancedChart('chart-advanced-upper-quartile');
+setAdvancedOption(chartAdvancedUpperQuartile,'chart-advanced-upper-quartile',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',formatter:items=>items.map(item=>item.seriesName+': '+(item.value==null?'対象4件未満':Number(item.value).toLocaleString()+'字')).join('<br>')},legend:{data:['ニュース・第3四分位','コラム・第3四分位'],bottom:4,textStyle:advancedFontText},grid:{left:82,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'本文文字数・第3四分位',axisLabel:{...advancedFontText,fontSize:11,formatter:v=>Number(v).toLocaleString()+'字'},splitLine:{lineStyle:{color:'#e2e2e2',type:'dashed'}}},series:[{name:'ニュース・第3四分位',type:'line',data:monthlyUpperQuartile('news'),connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'}},{name:'コラム・第3四分位',type:'line',data:monthlyUpperQuartile('col'),connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#c4a059',width:2.8},itemStyle:{color:'#c4a059'}}]});
 
 const monthlyBreadth={news:[],col:[]};
 sortedMonths.forEach(m=>{for(const type of ['news','col'])monthlyBreadth[type].push(new Set(advancedArticles.filter(a=>a.type===type&&a.month===m).map(a=>a.classification).filter(Boolean)).size);});
