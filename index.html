@@ -5120,40 +5120,6 @@ chartCatLen.setOption({
 //  TITLE & PUBLICATION DETAIL CHARTS
 // ═══════════════════════════════════════════
 
-/* ── Monthly × weekday publication heatmap. ── */
-const weekdayLabels=['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'];
-const weekdayMonthCounts=Array.from({length:7},()=>Array(sortedMonths.length).fill(0));
-advancedArticles.forEach(a=>{const m=sortedMonths.indexOf(a.month);if(m>=0)weekdayMonthCounts[a.date.getDay()][m]++;});
-const weekdayMonthHeatData=[];
-weekdayMonthCounts.forEach((months,weekday)=>months.forEach((count,month)=>weekdayMonthHeatData.push([month,weekday,count])));
-const weekdayMonthMax=Math.max(1,...weekdayMonthHeatData.map(v=>v[2]));
-const chartAdvancedWeekdayMonthHeatmap=createAdvancedChart('chart-advanced-weekday-month-heatmap');
-setAdvancedOption(chartAdvancedWeekdayMonthHeatmap,'chart-advanced-weekday-month-heatmap',{
- textStyle:{fontFamily:advancedFont},
- tooltip:{...advancedTooltip,trigger:'item',formatter:p=>p.data?'<strong>'+sortedMonths[p.data[0]]+'</strong><br>'+weekdayLabels[p.data[1]]+'<br>公開記事: '+p.data[2]+'件':''},
- grid:{left:86,right:42,top:28,bottom:86,containLabel:true},
- xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:10,rotate:28,interval:0,hideOverlap:true}},
- yAxis:{type:'category',data:weekdayLabels,axisLabel:{...advancedFontText,fontSize:11},splitArea:{show:true}},
- visualMap:{min:0,max:weekdayMonthMax,calculable:true,orient:'horizontal',left:'center',bottom:8,inRange:{color:['#f7f2ed','#d5b16b','#8f252b']},textStyle:advancedFontText},
- series:[{type:'heatmap',data:weekdayMonthHeatData,emphasis:{itemStyle:{borderColor:'#55443a',borderWidth:1.5}},label:{show:true,formatter:p=>p.data[2]||'',color:'#55443a',fontSize:9}}]
-});
-/* ── Monthly median title length. ── */
-const titleMonthlyMedian=type=>sortedMonths.map(month=>{
- const v=advancedArticles.filter(a=>a.type===type&&a.month===month).map(a=>Array.from(String(a.title||'')).length).filter(Number.isFinite).sort((a,b)=>a-b);
- return v.length?advancedQuantile(v,.5):null;
-});
-const chartAdvancedTitleMonthlyMedian=createAdvancedChart('chart-advanced-title-monthly-median');
-setAdvancedOption(chartAdvancedTitleMonthlyMedian,'chart-advanced-title-monthly-median',{
- textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis'},
- legend:{data:['社務所だより','神籤草子'],bottom:5,textStyle:advancedFontText},
- grid:{left:72,right:30,top:42,bottom:88,containLabel:true},
- xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:10,rotate:28,interval:0,hideOverlap:true}},
- yAxis:{type:'value',min:0,name:'タイトル文字数（中央値）',axisLabel:{...advancedFontText,formatter:v=>v+'字'},splitLine:{lineStyle:{color:'#e7ded7',type:'dashed'}}},
- series:[
-  {name:'社務所だより',type:'line',data:titleMonthlyMedian('news'),connectNulls:false,smooth:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'}},
-  {name:'神籤草子',type:'line',data:titleMonthlyMedian('col'),connectNulls:false,smooth:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'}}
- ]
-});
 function calculateScatterPareto(rows,getX,getY){
  const sorted=rows.slice().sort((a,b)=>getX(a)-getX(b)||getY(b)-getY(a));
  const out=[];let best=-Infinity;
@@ -5788,6 +5754,40 @@ setAdvancedOption(chartAdvancedLengthBand,'chart-advanced-lengthband',{
   ]
 });
 
+/* ── Monthly × weekday publication heatmap. ── */
+const weekdayLabels=['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'];
+const weekdayMonthCounts=Array.from({length:7},()=>Array(sortedMonths.length).fill(0));
+advancedArticles.forEach(a=>{const m=sortedMonths.indexOf(a.month);if(m>=0)weekdayMonthCounts[a.date.getDay()][m]++;});
+const weekdayMonthHeatData=[];
+weekdayMonthCounts.forEach((months,weekday)=>months.forEach((count,month)=>weekdayMonthHeatData.push([month,weekday,count])));
+const weekdayMonthMax=Math.max(1,...weekdayMonthHeatData.map(v=>v[2]));
+const chartAdvancedWeekdayMonthHeatmap=createAdvancedChart('chart-advanced-weekday-month-heatmap');
+setAdvancedOption(chartAdvancedWeekdayMonthHeatmap,'chart-advanced-weekday-month-heatmap',{
+ textStyle:{fontFamily:advancedFont},
+ tooltip:{...advancedTooltip,trigger:'item',formatter:p=>p.data?'<strong>'+sortedMonths[p.data[0]]+'</strong><br>'+weekdayLabels[p.data[1]]+'<br>公開記事: '+p.data[2]+'件':''},
+ grid:{left:86,right:42,top:28,bottom:86,containLabel:true},
+ xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:10,rotate:28,interval:0,hideOverlap:true}},
+ yAxis:{type:'category',data:weekdayLabels,axisLabel:{...advancedFontText,fontSize:11},splitArea:{show:true}},
+ visualMap:{min:0,max:weekdayMonthMax,calculable:true,orient:'horizontal',left:'center',bottom:8,inRange:{color:['#f7f2ed','#d5b16b','#8f252b']},textStyle:advancedFontText},
+ series:[{type:'heatmap',data:weekdayMonthHeatData,emphasis:{itemStyle:{borderColor:'#55443a',borderWidth:1.5}},label:{show:true,formatter:p=>p.data[2]||'',color:'#55443a',fontSize:9}}]
+});
+/* ── Monthly median title length. ── */
+const titleMonthlyMedian=type=>sortedMonths.map(month=>{
+ const v=advancedArticles.filter(a=>a.type===type&&a.month===month).map(a=>Array.from(String(a.title||'')).length).filter(Number.isFinite).sort((a,b)=>a-b);
+ return v.length?advancedQuantile(v,.5):null;
+});
+const chartAdvancedTitleMonthlyMedian=createAdvancedChart('chart-advanced-title-monthly-median');
+setAdvancedOption(chartAdvancedTitleMonthlyMedian,'chart-advanced-title-monthly-median',{
+ textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis'},
+ legend:{data:['社務所だより','神籤草子'],bottom:5,textStyle:advancedFontText},
+ grid:{left:72,right:30,top:42,bottom:88,containLabel:true},
+ xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:10,rotate:28,interval:0,hideOverlap:true}},
+ yAxis:{type:'value',min:0,name:'タイトル文字数（中央値）',axisLabel:{...advancedFontText,formatter:v=>v+'字'},splitLine:{lineStyle:{color:'#e7ded7',type:'dashed'}}},
+ series:[
+  {name:'社務所だより',type:'line',data:titleMonthlyMedian('news'),connectNulls:false,smooth:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#8f252b',width:2.6},itemStyle:{color:'#8f252b'}},
+  {name:'神籤草子',type:'line',data:titleMonthlyMedian('col'),connectNulls:false,smooth:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#c4a059',width:2.6},itemStyle:{color:'#c4a059'}}
+ ]
+});
 const chartAdvancedDateScatter=createAdvancedChart('chart-advanced-date-scatter','canvas');
 setAdvancedOption(chartAdvancedDateScatter,'chart-advanced-date-scatter',{
   textStyle:{fontFamily:advancedFont},
