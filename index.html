@@ -1318,7 +1318,97 @@
   .chart-render-fallback { min-height:220px; color:#7b1c1c; background:#fff7f4; border:1px solid #d9a39a; white-space:normal; overflow-wrap:anywhere; }
   @media (max-width:700px) { .chart-card,.advanced-chart-card{padding:1rem;} .chart-box,.chart-box-tall,.chart-box-advanced{height:420px !important;} .chart-title,.advanced-chart-card .chart-title{font-size:.9rem;} .chart-desc,.advanced-chart-card .chart-desc{padding:1rem;font-size:.82rem;} }
 
-  /* TENMEI MORI — unified editorial design system (final cascade, all page sections). */
+</style>
+<style id="dashboard-chart-finish">
+  /* TENMEI CHART SYSTEM — shrine-inspired editorial dashboard, shared by every ECharts view. */
+  :root{
+    --viz-news:#a63d36;--viz-col:#b8893c;--viz-ink:#514337;
+    --viz-sage:#718b7b;--viz-blue:#7188a4;--viz-plum:#8b7898;
+    --viz-paper:#fffdf8;--viz-line:#e9e1d5;--viz-muted:#786d5d;
+  }
+  .chart-card,.advanced-chart-card{
+    position:relative;display:flex;flex-direction:column;min-width:0;
+    padding:clamp(1.05rem,1.55vw,1.55rem);
+    border:1px solid var(--viz-line);border-radius:18px;
+    background:linear-gradient(145deg,#fff 0%,#fffdf8 68%,#fbf5e9 100%);
+    box-shadow:0 2px 5px rgba(55,39,25,.025),0 14px 36px rgba(55,39,25,.065);
+    overflow:hidden;
+    transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;
+  }
+  .chart-card::before,.advanced-chart-card::before{
+    content:'';position:absolute;top:0;left:1.45rem;right:1.45rem;height:2px;
+    background:linear-gradient(90deg,transparent,var(--viz-news) 18%,var(--viz-col) 78%,transparent);
+    opacity:.78;pointer-events:none;
+  }
+  .chart-card:hover,.advanced-chart-card:hover{
+    border-color:#d8c7aa;box-shadow:0 5px 10px rgba(55,39,25,.035),0 20px 44px rgba(55,39,25,.095);
+    transform:translateY(-2px);
+  }
+  .chart-card .chart-title,.advanced-chart-card .chart-title{
+    display:flex;align-items:center;gap:.65rem;min-height:0;
+    margin:0 0 .55rem;padding:.1rem 0 .85rem;
+    color:#493b2d;font-family:var(--font-ui);font-size:.91rem;font-weight:700;
+    line-height:1.65;letter-spacing:.025em;border-bottom:1px solid #f0e9df;
+  }
+  .chart-card .chart-title::before,.advanced-chart-card .chart-title::before{
+    content:'';display:block;flex:0 0 3px;width:3px;height:1.3em;
+    border-radius:4px;background:linear-gradient(180deg,var(--viz-news),var(--viz-col));
+  }
+  .chart-box,.chart-box-tall,.chart-box-advanced{
+    display:block;width:100%;min-width:0;flex:0 0 auto;border-radius:12px;
+    background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,253,248,.25));
+  }
+  .chart-box{height:360px!important}
+  .chart-box-tall{height:420px!important}
+  .chart-box.zoomable-chart{height:390px!important}
+  .chart-box-tall.zoomable-chart{height:445px!important}
+  .advanced-charts-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    align-items:stretch;gap:1.35rem;margin-bottom:2.25rem;
+  }
+  .advanced-charts-grid .advanced-chart-card{grid-column:auto!important;padding:1.35rem}
+  .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1/-1!important}
+  .advanced-charts-grid .chart-box-advanced{height:360px!important}
+  .advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:430px!important}
+  .advanced-chart-card .chart-desc,.chart-card .chart-desc{
+    margin-top:1rem;padding:1.05rem 1.15rem;
+    color:#716657;font-family:var(--font-ui);font-size:.79rem;line-height:1.95;
+    background:linear-gradient(135deg,#faf7f0 0%,#fffdf9 100%);
+    border:1px solid #eee6da;border-left:3px solid #c19a55;border-radius:10px;
+  }
+  .chart-card .chart-desc-title,.advanced-chart-card .chart-desc-title{
+    display:flex;align-items:center;gap:.4rem;margin-bottom:.55rem;
+    color:#8a641f;font-family:var(--font-ui);font-size:.75rem;font-weight:700;letter-spacing:.08em;
+  }
+  .chart-card .chart-desc-title::before,.advanced-chart-card .chart-desc-title::before{
+    content:'';width:5px;height:5px;border-radius:50%;background:var(--viz-col);
+  }
+  .chart-render-fallback{border-radius:12px;border-color:#d9a39a;background:#fff8f5;color:#7b1c1c}
+  .heatmap-card .heatmap-scroll{border-radius:12px}
+  @media(max-width:900px){
+    .advanced-charts-grid{grid-template-columns:1fr;gap:1rem}
+    .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1!important}
+  }
+  @media(max-width:700px){
+    .chart-card,.advanced-chart-card{padding:1rem;border-radius:13px}
+    .chart-card .chart-title,.advanced-chart-card .chart-title{font-size:.87rem}
+    .chart-box{height:320px!important}
+    .chart-box-tall{height:370px!important}
+    .chart-box.zoomable-chart{height:350px!important}
+    .chart-box-tall.zoomable-chart{height:390px!important}
+    .advanced-charts-grid .chart-box-advanced{height:330px!important}
+    .advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:380px!important}
+    .chart-card .chart-desc,.advanced-chart-card .chart-desc{padding:.9rem;font-size:.76rem;line-height:1.85}
+    .heatmap-chart{height:350px!important}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .chart-card,.advanced-chart-card{transition:none}
+    .chart-card:hover,.advanced-chart-card:hover{transform:none}
+  }
+</style>
+
+<style id="tenmei-unified-final">
+/* TENMEI MORI — unified editorial design system (final cascade, all page sections). */
   :root{
     --tm-ink:#1a1008;--tm-paper:#faf6ef;--tm-white:#fffdf8;
     --tm-red:#7b1c1c;--tm-vermilion:#a63d36;--tm-gold:#b8893c;
@@ -1537,93 +1627,6 @@
   .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1/-1}
   @media(max-width:900px){
     .advanced-charts-grid .advanced-chart-card,.advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1}
-  }
-</style>
-<style id="dashboard-chart-finish">
-  /* TENMEI CHART SYSTEM — shrine-inspired editorial dashboard, shared by every ECharts view. */
-  :root{
-    --viz-news:#a63d36;--viz-col:#b8893c;--viz-ink:#514337;
-    --viz-sage:#718b7b;--viz-blue:#7188a4;--viz-plum:#8b7898;
-    --viz-paper:#fffdf8;--viz-line:#e9e1d5;--viz-muted:#786d5d;
-  }
-  .chart-card,.advanced-chart-card{
-    position:relative;display:flex;flex-direction:column;min-width:0;
-    padding:clamp(1.05rem,1.55vw,1.55rem);
-    border:1px solid var(--viz-line);border-radius:18px;
-    background:linear-gradient(145deg,#fff 0%,#fffdf8 68%,#fbf5e9 100%);
-    box-shadow:0 2px 5px rgba(55,39,25,.025),0 14px 36px rgba(55,39,25,.065);
-    overflow:hidden;
-    transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;
-  }
-  .chart-card::before,.advanced-chart-card::before{
-    content:'';position:absolute;top:0;left:1.45rem;right:1.45rem;height:2px;
-    background:linear-gradient(90deg,transparent,var(--viz-news) 18%,var(--viz-col) 78%,transparent);
-    opacity:.78;pointer-events:none;
-  }
-  .chart-card:hover,.advanced-chart-card:hover{
-    border-color:#d8c7aa;box-shadow:0 5px 10px rgba(55,39,25,.035),0 20px 44px rgba(55,39,25,.095);
-    transform:translateY(-2px);
-  }
-  .chart-card .chart-title,.advanced-chart-card .chart-title{
-    display:flex;align-items:center;gap:.65rem;min-height:0;
-    margin:0 0 .55rem;padding:.1rem 0 .85rem;
-    color:#493b2d;font-family:var(--font-ui);font-size:.91rem;font-weight:700;
-    line-height:1.65;letter-spacing:.025em;border-bottom:1px solid #f0e9df;
-  }
-  .chart-card .chart-title::before,.advanced-chart-card .chart-title::before{
-    content:'';display:block;flex:0 0 3px;width:3px;height:1.3em;
-    border-radius:4px;background:linear-gradient(180deg,var(--viz-news),var(--viz-col));
-  }
-  .chart-box,.chart-box-tall,.chart-box-advanced{
-    display:block;width:100%;min-width:0;flex:0 0 auto;border-radius:12px;
-    background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,253,248,.25));
-  }
-  .chart-box{height:360px!important}
-  .chart-box-tall{height:420px!important}
-  .chart-box.zoomable-chart{height:390px!important}
-  .chart-box-tall.zoomable-chart{height:445px!important}
-  .advanced-charts-grid{
-    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-    align-items:stretch;gap:1.35rem;margin-bottom:2.25rem;
-  }
-  .advanced-charts-grid .advanced-chart-card{grid-column:auto!important;padding:1.35rem}
-  .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1/-1!important}
-  .advanced-charts-grid .chart-box-advanced{height:360px!important}
-  .advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:430px!important}
-  .advanced-chart-card .chart-desc,.chart-card .chart-desc{
-    margin-top:1rem;padding:1.05rem 1.15rem;
-    color:#716657;font-family:var(--font-ui);font-size:.79rem;line-height:1.95;
-    background:linear-gradient(135deg,#faf7f0 0%,#fffdf9 100%);
-    border:1px solid #eee6da;border-left:3px solid #c19a55;border-radius:10px;
-  }
-  .chart-card .chart-desc-title,.advanced-chart-card .chart-desc-title{
-    display:flex;align-items:center;gap:.4rem;margin-bottom:.55rem;
-    color:#8a641f;font-family:var(--font-ui);font-size:.75rem;font-weight:700;letter-spacing:.08em;
-  }
-  .chart-card .chart-desc-title::before,.advanced-chart-card .chart-desc-title::before{
-    content:'';width:5px;height:5px;border-radius:50%;background:var(--viz-col);
-  }
-  .chart-render-fallback{border-radius:12px;border-color:#d9a39a;background:#fff8f5;color:#7b1c1c}
-  .heatmap-card .heatmap-scroll{border-radius:12px}
-  @media(max-width:900px){
-    .advanced-charts-grid{grid-template-columns:1fr;gap:1rem}
-    .advanced-charts-grid .advanced-chart-card.advanced-chart-wide{grid-column:1!important}
-  }
-  @media(max-width:700px){
-    .chart-card,.advanced-chart-card{padding:1rem;border-radius:13px}
-    .chart-card .chart-title,.advanced-chart-card .chart-title{font-size:.87rem}
-    .chart-box{height:320px!important}
-    .chart-box-tall{height:370px!important}
-    .chart-box.zoomable-chart{height:350px!important}
-    .chart-box-tall.zoomable-chart{height:390px!important}
-    .advanced-charts-grid .chart-box-advanced{height:330px!important}
-    .advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:380px!important}
-    .chart-card .chart-desc,.advanced-chart-card .chart-desc{padding:.9rem;font-size:.76rem;line-height:1.85}
-    .heatmap-chart{height:350px!important}
-  }
-  @media(prefers-reduced-motion:reduce){
-    .chart-card,.advanced-chart-card{transition:none}
-    .chart-card:hover,.advanced-chart-card:hover{transform:none}
   }
 </style>
 </head>
