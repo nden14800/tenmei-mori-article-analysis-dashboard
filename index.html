@@ -1797,7 +1797,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
         <button class="line-style-button" type="button" data-line-style="smooth" aria-pressed="false">滑らか</button>
         <button class="line-style-button" type="button" data-line-style="step" aria-pressed="false">階段状</button>
       </div>
-      <button class="chart-reset-button" id="pareto-toggle-all" type="button" aria-pressed="true">Paretoを全て非表示</button>
+      <button class="chart-reset-button" id="pareto-toggle-all" type="button" aria-pressed="true">パレートをすべて非表示</button>
       <button class="chart-reset-button" id="chart-reset-all" type="button">全グラフを初期表示に戻す</button>
       <span class="chart-action-status" id="chart-action-status" role="status" aria-live="polite"></span>
     </div>
@@ -6286,14 +6286,14 @@ function applyParetoVisibility(visible, announce = true) {
   if (visible && chartAdvancedPareto && !chartAdvancedPareto.isDisposed?.()) chartAdvancedPareto.resize();
   paretoVisible = visible;
   if (paretoToggleButton) {
-    paretoToggleButton.textContent = visible ? 'Paretoを全て非表示' : 'Paretoを全て表示';
+    paretoToggleButton.textContent = visible ? 'パレートをすべて非表示' : 'パレートをすべて表示';
     paretoToggleButton.setAttribute('aria-pressed', String(visible));
   }
   try { localStorage.setItem('tenmei-dashboard-pareto-visible', String(visible)); } catch (_) {}
   if (announce) {
     document.getElementById('chart-action-status').textContent =
-      visible ? '全グラフのParetoフロンティアとPareto図を表示しました。'
-              : '全グラフのParetoフロンティアとPareto図を非表示にしました。';
+      visible ? '全グラフのパレートフロンティアとパレート図を表示しました。'
+              : '全グラフのパレートフロンティアとパレート図を非表示にしました。';
   }
 }
 paretoToggleButton?.addEventListener('click', () => applyParetoVisibility(!paretoVisible));
