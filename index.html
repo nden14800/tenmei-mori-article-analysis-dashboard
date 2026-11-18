@@ -452,6 +452,11 @@
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
+  .chart-render-fallback {
+    display: grid; place-items: center; min-height: 180px; padding: 1.5rem;
+    color: #8b7355; background: #fbf8f2; border: 1px dashed #d4c4a0;
+    font-family: var(--font-main); font-size: .82rem; line-height: 1.8; text-align: center;
+  }
   .advanced-chart-card { min-width: 0; }
   .advanced-chart-wide { grid-column: 1 / -1; }
 .chart-box-advanced { height: 390px; }
@@ -4710,6 +4715,23 @@ function addChartCapabilities(chart, label, options = {}) {
 
 
 const dashboardChartFont = "'Zen Old Mincho', 'Shippori Mincho', serif";
+function createAdvancedChart(id, renderer = 'svg') {
+  const element = document.getElementById(id);
+  try { return createDashboardChart(element, renderer); }
+  catch (error) {
+    console.error('[Advanced chart init failed]', id, error);
+    if (element) element.innerHTML = '<div class="chart-render-fallback">このグラフを初期化できませんでした。ほかのグラフは引き続き表示します。</div>';
+    return { setOption() {}, getOption() { return { series: [] }; }, resize() {}, getDom() { return element; } };
+  }
+}
+function setAdvancedOption(chart, id, option) {
+  try { chart.setOption(option); }
+  catch (error) {
+    console.error('[Advanced chart render failed]', id, error);
+    const element = document.getElementById(id);
+    if (element) element.innerHTML = '<div class="chart-render-fallback">描画設定を確認中です。このグラフ以外の分析は利用できます。</div>';
+  }
+}
 /* ═══════════════════════════════════════════════════════════════════════
    ADVANCED VIEWS — treemap / sunburst / sankey / boxplot / themeRiver /
    graph / parallel / radar. Every value is derived from allArticles.
@@ -4767,8 +4789,8 @@ const advancedHierarchy = ['社務所だより','神籤草子'].map(name => ({
   itemStyle: { color: advancedMediumColors[name] },
   children: advancedClassificationChildren(name)
 }));
-const chartAdvancedTreemap = createDashboardChart(document.getElementById('chart-advanced-treemap'));
-chartAdvancedTreemap.setOption({
+const chartAdvancedTreemap = createAdvancedChart('chart-advanced-treemap');
+setAdvancedOption(chartAdvancedTreemap, 'chart-advanced-treemap', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, formatter: p => {
     const value = p.value || 0;
@@ -4788,8 +4810,8 @@ chartAdvancedTreemap.setOption({
     ]
   }]
 });
-const chartAdvancedSunburst = createDashboardChart(document.getElementById('chart-advanced-sunburst'));
-chartAdvancedSunburst.setOption({
+const chartAdvancedSunburst = createAdvancedChart('chart-advanced-sunburst');
+setAdvancedOption(chartAdvancedSunburst, 'chart-advanced-sunburst', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, formatter: p => '<strong>' + p.name + '</strong><br>記事数: ' + Number(p.value || 0).toLocaleString() + '件' },
   series: [{
@@ -4832,8 +4854,8 @@ function addSankeyNode(name, label, depth, color) {
     });
   });
 });
-const chartAdvancedSankey = createDashboardChart(document.getElementById('chart-advanced-sankey'));
-chartAdvancedSankey.setOption({
+const chartAdvancedSankey = createAdvancedChart('chart-advanced-sankey');
+setAdvancedOption(chartAdvancedSankey, 'chart-advanced-sankey', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
     if (p.dataType === 'edge') return p.data.source.replace(/^medium:/,'').replace(/^class:[^:]+:/,'') + ' → ' + p.data.target.replace(/^class:[^:]+:/,'').replace(/^length:/,'') + '<br>記事数: ' + p.data.value + '件';
@@ -4875,8 +4897,8 @@ const boxGroups = [
     return { label: classification + (medium==='社務所だより'?'（N）':'（C）'), rows: advancedArticles.filter(a=>a.mediumLabel===medium && a.classification===classification), color: advancedMediumColors[medium] };
   })
 ];
-const chartAdvancedBoxplot = createDashboardChart(document.getElementById('chart-advanced-boxplot'));
-chartAdvancedBoxplot.setOption({
+const chartAdvancedBoxplot = createAdvancedChart('chart-advanced-boxplot');
+setAdvancedOption(chartAdvancedBoxplot, 'chart-advanced-boxplot', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
     const v = Array.isArray(p.data) ? p.data : p.data.value;
@@ -4901,8 +4923,8 @@ sortedMonths.forEach((month, index) => {
     themeRiverData.push([themeRiverMonths[index], value, medium]);
   });
 });
-const chartAdvancedThemeRiver = createDashboardChart(document.getElementById('chart-advanced-themeriver'));
-chartAdvancedThemeRiver.setOption({
+const chartAdvancedThemeRiver = createAdvancedChart('chart-advanced-themeriver');
+setAdvancedOption(chartAdvancedThemeRiver, 'chart-advanced-themeriver', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'axis' },
   legend: { data: ['社務所だより','神籤草子'], bottom: 0, textStyle: advancedFontText },
@@ -4941,8 +4963,8 @@ advancedArticles.forEach(article => {
   edge.value++;
   graphNodes.find(node=>node.id===edgeId).value++;
 });
-const chartAdvancedGraph = createDashboardChart(document.getElementById('chart-advanced-graph'), 'canvas');
-chartAdvancedGraph.setOption({
+const chartAdvancedGraph = createAdvancedChart('chart-advanced-graph', 'canvas');
+setAdvancedOption(chartAdvancedGraph, 'chart-advanced-graph', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, formatter: p => p.dataType==='edge'
     ? p.data.source + ' → ' + p.data.target + '<br>記事数: ' + p.data.value + '件'
@@ -4958,8 +4980,8 @@ chartAdvancedGraph.setOption({
   }]
 });
 const parallelRows = advancedArticles.map(a => [a.id, a.chars, a.dayOffset, a.type==='news'?'ニュース':'コラム']);
-const chartAdvancedParallel = createDashboardChart(document.getElementById('chart-advanced-parallel'), 'canvas');
-chartAdvancedParallel.setOption({
+const chartAdvancedParallel = createAdvancedChart('chart-advanced-parallel', 'canvas');
+setAdvancedOption(chartAdvancedParallel, 'chart-advanced-parallel', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
     const row = p.data;
@@ -5003,8 +5025,8 @@ const radarSeries = [
   { name: '社務所だより', value: metricKeys.map((key,i)=>Math.round(newsMetrics[key]/metricMaxima[i]*100)), itemStyle: { color: '#c0392b' }, lineStyle: { color: '#c0392b', width: 2 }, areaStyle: { color: 'rgba(192,57,43,.15)' } },
   { name: '神籤草子', value: metricKeys.map((key,i)=>Math.round(colMetrics[key]/metricMaxima[i]*100)), itemStyle: { color: '#b8860b' }, lineStyle: { color: '#b8860b', width: 2 }, areaStyle: { color: 'rgba(184,134,11,.15)' } }
 ];
-const chartAdvancedRadar = createDashboardChart(document.getElementById('chart-advanced-radar'));
-chartAdvancedRadar.setOption({
+const chartAdvancedRadar = createAdvancedChart('chart-advanced-radar');
+setAdvancedOption(chartAdvancedRadar, 'chart-advanced-radar', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
     const metric = p.data.name==='社務所だより'?newsMetrics:colMetrics;
@@ -5029,8 +5051,8 @@ advancedArticles.forEach(a => {
 });
 const calendarSeriesData = [...dailyCalendarCounts.entries()].map(([date,value])=>[date,value]);
 const calendarMax = Math.max(1,...calendarSeriesData.map(row=>row[1]));
-const chartAdvancedCalendar = createDashboardChart(document.getElementById('chart-advanced-calendar'), 'canvas');
-chartAdvancedCalendar.setOption({
+const chartAdvancedCalendar = createAdvancedChart('chart-advanced-calendar', 'canvas');
+setAdvancedOption(chartAdvancedCalendar, 'chart-advanced-calendar', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, formatter: p => p.value[0] + '<br>投稿数: ' + p.value[1] + '件' },
   visualMap: { min: 0, max: calendarMax, calculable: true, orient: 'horizontal', left: 'center', bottom: 4, itemWidth: 12, itemHeight: 110, textStyle: advancedFontText, inRange: { color: ['#f7f1e5','#e8c77b','#c0392b','#7b1c1c'] } },
@@ -5048,8 +5070,8 @@ chartAdvancedCalendar.setOption({
 const weekdayLabelsJa = ['日','月','火','水','木','金','土'];
 const polarCounts = { news: Array(7).fill(0), col: Array(7).fill(0) };
 advancedArticles.forEach(a => polarCounts[a.type][a.date.getDay()]++);
-const chartAdvancedPolar = createDashboardChart(document.getElementById('chart-advanced-polar'));
-chartAdvancedPolar.setOption({
+const chartAdvancedPolar = createAdvancedChart('chart-advanced-polar');
+setAdvancedOption(chartAdvancedPolar, 'chart-advanced-polar', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => p.seriesName + '・' + p.name + '曜日: ' + p.value + '件' },
   legend: { data: ['ニュース','コラム'], bottom: 0, textStyle: advancedFontText },
@@ -5070,8 +5092,8 @@ let paretoRunning = 0;
 const paretoLabels = paretoTop.map(row=>row.key.replace('社務所だより::','N・').replace('神籤草子::','C・'));
 const paretoValues = paretoTop.map(row=>row.value);
 const paretoPercent = paretoValues.map(value=>{paretoRunning+=value;return Math.round(paretoRunning/paretoTotal*1000)/10;});
-const chartAdvancedPareto = createDashboardChart(document.getElementById('chart-advanced-pareto'));
-chartAdvancedPareto.setOption({
+const chartAdvancedPareto = createAdvancedChart('chart-advanced-pareto');
+setAdvancedOption(chartAdvancedPareto, 'chart-advanced-pareto', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: params => {
     const i=params[0].dataIndex;
@@ -5094,8 +5116,8 @@ const beeswarmData = {
   col: advancedArticles.filter(a=>a.type==='col').map(a=>[1+((a.id%11)-5)*.035,a.chars,a.id])
 };
 const beeswarmById = new Map(advancedArticles.map(a=>[a.type+':'+a.id,a]));
-const chartAdvancedBeeswarm = createDashboardChart(document.getElementById('chart-advanced-beeswarm'), 'canvas');
-chartAdvancedBeeswarm.setOption({
+const chartAdvancedBeeswarm = createAdvancedChart('chart-advanced-beeswarm', 'canvas');
+setAdvancedOption(chartAdvancedBeeswarm, 'chart-advanced-beeswarm', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
     const article=beeswarmById.get((p.seriesName==='ニュース'?'news':'col')+':'+p.data[2]);
