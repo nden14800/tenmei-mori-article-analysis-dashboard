@@ -1773,6 +1773,83 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
   }
   .chart-desc-copy br { display: none; }
 
+
+/* Source-aligned Tenmei custom choice UI; copied from tenmei-mori main/index.html Blob. */
+.tenmei-choice.dashboard-tenmei-choice{--tenmei-control-accent:var(--tm-red);--card-border:var(--tm-border);--input-bg:var(--tm-paper);--text-main:var(--tm-ink);--text-sub:var(--tm-muted);--card-bg:var(--tm-paper);}
+.csv-export-row .tenmei-choice{flex:1 1 220px;min-width:0;}
+    .tenmei-choice,
+    .tenmei-date {
+        --tenmei-control-accent: var(--accent-red);
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        min-width: 0;
+    }
+    .tenmei-choice:focus-within,
+    .tenmei-date:focus-within { z-index: 80; }
+    .tenmei-choice[data-open="true"],
+    .tenmei-date[data-open="true"] { z-index: 240 !important; }
+    .tenmei-choice[data-open="true"] .tenmei-choice__popover,
+    .tenmei-date[data-open="true"] .tenmei-date__popover {
+        z-index: 241 !important;
+        pointer-events: auto;
+    }
+    .tenmei-choice__trigger,
+    .tenmei-date__trigger {
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr) 20px;
+        align-items: center;
+        width: 100%;
+        min-height: 44px;
+        padding: 7px 11px;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        background: var(--input-bg);
+        color: var(--text-main);
+        font-family: 'Zen Kaku Gothic New', 'Zen Old Mincho', sans-serif;
+        font-size: 0.88rem;
+        line-height: 1.35;
+        text-align: left;
+        cursor: pointer;
+        box-sizing: border-box;
+        transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+    }
+    .tenmei-choice__trigger,
+    .tenmei-date__trigger,
+    .tenmei-choice__option,
+    .tenmei-date__day,
+    .tenmei-date__nav,
+    .tenmei-date__utility { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .tenmei-choice__trigger:hover,
+    .tenmei-date__trigger:hover { border-color: color-mix(in srgb, var(--tenmei-control-accent) 52%, var(--card-border)); }
+    .tenmei-choice__trigger:focus-visible,
+    .tenmei-date__trigger:focus-visible,
+    .tenmei-choice__option:focus-visible,
+    .tenmei-date__day:focus-visible,
+    .tenmei-date__nav:focus-visible,
+    .tenmei-date__utility:focus-visible { outline: 0; border-color: var(--tenmei-control-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tenmei-control-accent) 20%, transparent); }
+    .tenmei-choice[data-open="true"] .tenmei-choice__trigger,
+    .tenmei-date[data-open="true"] .tenmei-date__trigger { border-color: var(--tenmei-control-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tenmei-control-accent) 16%, transparent); }
+    .tenmei-choice__icon,
+    .tenmei-date__icon {
+        display: grid;
+        width: 20px;
+        height: 20px;
+        place-items: center;
+        border-radius: 0;
+        background: transparent;
+        color: var(--tenmei-control-accent);
+        font-size: 0.72rem;
+    }
+    .tenmei-choice__value,
+    .tenmei-date__value { min-width: 0; padding: 0 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+    .tenmei-date__value.is-placeholder { color: var(--text-sub); font-weight: 500; }
+    .tenmei-choice__chevron,
+    .tenmei-date__chevron { justify-self: end; color: var(--text-sub); font-size: 0.8rem; transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1), color 180ms cubic-bezier(0.23, 1, 0.32, 1); }
+    .tenmei-choice[data-open="true"] .tenmei-choice__chevron,
+    .tenmei-date[data-open="true"] .tenmei-date__chevron { color: var(--tenmei-control-accent); transform: rotate(180deg); }
+    .tenmei-choice__popover,
+
 </style>
 </head>
 <body>
@@ -1816,11 +1893,9 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
         <label for="csv-export-type">CSVデータ</label>
         <div class="csv-export-row">
           <input type="hidden" id="csv-export-type" value="articles">
-          <div class="dashboard-select csv-dashboard-select" data-select-id="csv-export-type" data-placeholder="全記事データ">
-            <button type="button" class="dashboard-select-trigger" aria-haspopup="listbox" aria-expanded="false">
-              <span class="dashboard-select-value">全記事データ（157件）</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
-            </button>
-            <div class="dashboard-select-menu" role="listbox"></div>
+          <div class="tenmei-choice dashboard-tenmei-choice csv-tenmei-choice" data-control-kind="choice" data-control-id="csv-export-type" data-control-label="CSVデータを選ぶ" data-options='[{"value":"articles","label":"全記事データ（157件）"}]'>
+            <button type="button" class="tenmei-choice__trigger" id="csv-export-type-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="csv-export-type-options" aria-label="CSVデータを選ぶ"><span class="tenmei-choice__icon" aria-hidden="true"><i class="bi bi-file-earmark-spreadsheet"></i></span><span class="tenmei-choice__value"></span><i class="bi bi-chevron-down tenmei-choice__chevron" aria-hidden="true"></i></button>
+            <div class="tenmei-choice__popover" id="csv-export-type-popover" hidden><div class="tenmei-choice__options" id="csv-export-type-options" role="listbox" aria-label="CSVデータを選ぶ"></div></div>
           </div>
           <button class="export-button csv-export-button" id="export-csv-data" type="button"><i class="bi bi-filetype-csv" aria-hidden="true"></i>CSVを保存</button>
         </div>
@@ -1926,7 +2001,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card">
       <div class="chart-title">分類別の記事数と平均文字数（バブルチャート）</div>
       <div class="chart-box" id="chart-tag-bubble"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> タグ別のバブルチャートでは、件数と平均文字数は一致しない。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 件数は「新機能・改善」9本、「機能改善」「新機能」各8本、「不具合修正」6本、「お知らせ」5本。平均文字数では「新機能・改善」が3,200字、「新機能」が1,073字など、少数タグの長文が上側に現れる。バブルの大きさは件数と平均の組み合わせであり、実装規模を示すものではない。この図は、分類ごとの規模と説明量を同時に見るためのもので、バブルの位置と大きさを混同しないことが大切である。件数の多いタグが必ず長文になるわけではなく、少数タグの平均値は一つの長文に強く引っ張られる。特に「新機能・改善」は9本で平均3,200字と、件数だけでなく説明の厚みも目立つ。タグは記事の整理ラベルであり、開発工数や機能の重要度を直接測る尺度ではない。バブルは件数・平均文字数・集計上の規模を同時に示す。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> タグは主題ラベルであり工数分類ではない。平均3,200字の「新機能・改善」は説明量が大きいが、技術的難易度までは読み取れない。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> タグ別のバブルチャートでは、件数と平均文字数は一致しない。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 件数は「新機能・改善」10本、「機能改善」「新機能」各8本、「不具合修正」6本、「お知らせ」5本。平均文字数では「新機能・改善」が3,200字、「新機能」が1,073字など、少数タグの長文が上側に現れる。バブルの大きさは件数と平均の組み合わせであり、実装規模を示すものではない。この図は、分類ごとの規模と説明量を同時に見るためのもので、バブルの位置と大きさを混同しないことが大切である。件数の多いタグが必ず長文になるわけではなく、少数タグの平均値は一つの長文に強く引っ張られる。特に「新機能・改善」は9本で平均3,451字と、件数だけでなく説明の厚みも目立つ。タグは記事の整理ラベルであり、開発工数や機能の重要度を直接測る尺度ではない。バブルは件数・平均文字数・集計上の規模を同時に示す。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> タグは主題ラベルであり工数分類ではない。平均3,451字の「新機能・改善」は説明量が大きいが、技術的難易度までは読み取れない。</p></div></div>
     </div>
     
   </div>
@@ -1936,7 +2011,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card">
       <div class="chart-title">ニュースタグ分布（主要カテゴリ）</div>
       <div class="chart-box chart-box-tall" id="chart-news-tags"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> ニュース91本のタグ分布は52種類。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 最多は「新機能・改善」9本、「機能改善」「新機能」各8本、「不具合修正」6本、「お知らせ」5本。40種類のタグは1記事だけに付与されており、少数タグは個別の更新内容を示す細分類として扱うのが適切。52種類というタグの広がりに対し、41種類が1記事のみという構成は、分類が大分類だけでなく個別の更新内容まで細かく表現していることを示す。頻出タグは横断的な傾向を読むのに向き、単発タグは特定の記事の主題を探すために役立つ。したがって、タグ分布を比較する際は最多タグだけで全体を代表させず、少数タグの存在も含めて分類体系の細かさとして理解する必要がある。52タグ中40タグが1記事のみで、分類は細かく分かれている。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 頻出タグは横断比較に向き、単発タグは個別の出来事を示す。集約ルールが変われば過去の比較値も変わる。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> ニュース91本のタグ分布は52種類。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 最多は「新機能・改善」10本、「機能改善」「新機能」各8本、「不具合修正」6本、「お知らせ」5本。41種類のタグは1記事だけに付与されており、少数タグは個別の更新内容を示す細分類として扱うのが適切。52種類というタグの広がりに対し、41種類が1記事のみという構成は、分類が大分類だけでなく個別の更新内容まで細かく表現していることを示す。頻出タグは横断的な傾向を読むのに向き、単発タグは特定の記事の主題を探すために役立つ。したがって、タグ分布を比較する際は最多タグだけで全体を代表させず、少数タグの存在も含めて分類体系の細かさとして理解する必要がある。52タグ中41タグが1記事のみで、分類は細かく分かれている。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 頻出タグは横断比較に向き、単発タグは個別の出来事を示す。集約ルールが変われば過去の比較値も変わる。</p></div></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">コラムカテゴリ分布</div>
@@ -2122,7 +2197,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">媒体・主要分類別の文字数分布（箱ひげ図）</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-boxplot"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 箱ひげ図は平均値だけでは隠れる記事長のばらつきを、最小値・第1四分位・中央値・第3四分位・最大値で比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 媒体全体の中央値はニュース695字、コラム779字で、中央50％の範囲はニュース459〜1,126字、コラム600〜1,191字である。 箱の中央線が中央値、箱の高さが中央50%の広がりを表し、ひげは観測された最小値と最大値までを示す。平均が大きくても中央値が低い分類では、一部の長文記事が平均を押し上げている可能性がある。反対に箱が狭い分類は、記事長が比較的一定の範囲に集まっていると読める。ただし、ここでは分類ごとの記事数が均等ではなく、上位分類を中心に比較しているため、少数サンプルの箱は不安定である。ニュース全体・コラム全体の差と、上位分類ごとの差を分けて読み、文字数の多さを内容の充実度や品質と同一視しないことが重要である。 ひげを外れ値判定の境界として使っているわけではなく、ここでは観測された最小値と最大値を示している。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 一般的な箱ひげ図の1.5倍四分位範囲による外れ値表現とは異なるため、極端な記事を統計的な外れ値と断定せず、個別データとして確認する必要がある。サンプル数が少ない分類は中央値や四分位点も変わりやすくなる。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 箱ひげ図は平均値だけでは隠れる記事長のばらつきを、最小値・第1四分位・中央値・第3四分位・最大値で比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 媒体全体の中央値はニュース699字、コラム779字で、中央50％の範囲はニュース464〜1,179字、コラム600〜1,191字である。 箱の中央線が中央値、箱の高さが中央50%の広がりを表し、ひげは観測された最小値と最大値までを示す。平均が大きくても中央値が低い分類では、一部の長文記事が平均を押し上げている可能性がある。反対に箱が狭い分類は、記事長が比較的一定の範囲に集まっていると読める。ただし、ここでは分類ごとの記事数が均等ではなく、上位分類を中心に比較しているため、少数サンプルの箱は不安定である。ニュース全体・コラム全体の差と、上位分類ごとの差を分けて読み、文字数の多さを内容の充実度や品質と同一視しないことが重要である。 ひげを外れ値判定の境界として使っているわけではなく、ここでは観測された最小値と最大値を示している。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 一般的な箱ひげ図の1.5倍四分位範囲による外れ値表現とは異なるため、極端な記事を統計的な外れ値と断定せず、個別データとして確認する必要がある。サンプル数が少ない分類は中央値や四分位点も変わりやすくなる。</p></div></div>
     </div>
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">月別の媒体構成変化（テーマリバー）</div>
@@ -2138,7 +2213,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体別の特徴プロファイル（レーダーチャート）</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-radar"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> レーダーチャートでは記事数・平均文字数・中央値・最大文字数・分類数・活動月数を、それぞれ二媒体の大きい方が100になる相対尺度へ変換している。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 記事数はニュース91本・コラム66本、平均文字数は1,082字・897字、中央値は695字・779字で、指標によって媒体間の大小関係が入れ替わりる。 異なる単位を一枚に重ねることで、媒体ごとの特徴の輪郭を比較できるが、半径の長さは実数そのものではない。たとえば記事数の軸で100でも、文字数の軸で100でも、意味する単位と実際の量は異なる。また、最大値は少数の長文記事に影響されやすく、分類数や活動月数は記録期間の長さにも左右される。面積が大きい方を総合的に優れていると評価する図ではなく、どの指標で差があるかを発見するための要約である。各軸の実数はツールチップで確認し、記事数の差と記事長の差を分けて解釈する必要がある。 相対値は二媒体の大きい方を100としているため、両媒体が同じ値ならどちらも100となり、絶対的な規模の違いは見えない。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 比較する二媒体が変われば尺度も変わる点に注意する必要がある。各指標は記事数や文字数など異なる意味を持つため、レーダーの形を一つの総合点として扱わず、差が現れた軸を個別の集計表で確認することが重要である。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> レーダーチャートでは記事数・平均文字数・中央値・最大文字数・分類数・活動月数を、それぞれ二媒体の大きい方が100になる相対尺度へ変換している。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 記事数はニュース91本・コラム66本、平均文字数は1,082字・897字、中央値は699字・779字で、指標によって媒体間の大小関係が入れ替わりる。 異なる単位を一枚に重ねることで、媒体ごとの特徴の輪郭を比較できるが、半径の長さは実数そのものではない。たとえば記事数の軸で100でも、文字数の軸で100でも、意味する単位と実際の量は異なる。また、最大値は少数の長文記事に影響されやすく、分類数や活動月数は記録期間の長さにも左右される。面積が大きい方を総合的に優れていると評価する図ではなく、どの指標で差があるかを発見するための要約である。各軸の実数はツールチップで確認し、記事数の差と記事長の差を分けて解釈する必要がある。 相対値は二媒体の大きい方を100としているため、両媒体が同じ値ならどちらも100となり、絶対的な規模の違いは見えない。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 比較する二媒体が変われば尺度も変わる点に注意する必要がある。各指標は記事数や文字数など異なる意味を持つため、レーダーの形を一つの総合点として扱わず、差が現れた軸を個別の集計表で確認することが重要である。</p></div></div>
     </div>
   </div>
 
@@ -2148,7 +2223,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">分類別の記事数と累積構成比（パレート図）</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-pareto"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 分類を記事数の多い順に並べた棒グラフに、左から順に足し上げた累積構成比の折れ線を重ねる。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ニュースの最多タグは「新機能・改善」9本、コラムの最多カテゴリは「クイズ」11本である。分類別の上位と裾野を同時に確認できる。 少数の主要分類が全体のどの程度を占めるか、上位分類の後にどれほど裾野が広がるかを確認できる。これは構成比を整理するためのパレート形式であり、原因分析や重要度の順位付けではない。ニュースとコラムで同名の分類があっても媒体別に分けて集計し、分類名の違いによる誤統合を避けている。上位に集中している場合は主要テーマが明確である一方、下位分類にも少数の独自記事が残っている可能性がある。累積線の傾きが緩やかになる箇所は分類の裾野を示す目安である。棒の実数と累積比率を併せて読み、上位だけで全体像を決めつけないことが重要である。 上位分類を一定数表示し、それ以外は「その他」にまとめているため、右端の棒は複数分類の合計である。累積構成比は表示された順に記事数を足し上げた全体比で、最後は100%に到達する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 上位の集中度を確認した後は、その他に含まれる分類を元のタグ・カテゴリ別グラフで確認する必要がある。パレートの形は整理の目安であり、少数分類を削除すべきという判断を意味しない。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 分類を記事数の多い順に並べた棒グラフに、左から順に足し上げた累積構成比の折れ線を重ねる。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ニュースの最多タグは「新機能・改善」10本、コラムの最多カテゴリは「クイズ」11本である。分類別の上位と裾野を同時に確認できる。 少数の主要分類が全体のどの程度を占めるか、上位分類の後にどれほど裾野が広がるかを確認できる。これは構成比を整理するためのパレート形式であり、原因分析や重要度の順位付けではない。ニュースとコラムで同名の分類があっても媒体別に分けて集計し、分類名の違いによる誤統合を避けている。上位に集中している場合は主要テーマが明確である一方、下位分類にも少数の独自記事が残っている可能性がある。累積線の傾きが緩やかになる箇所は分類の裾野を示す目安である。棒の実数と累積比率を併せて読み、上位だけで全体像を決めつけないことが重要である。 上位分類を一定数表示し、それ以外は「その他」にまとめているため、右端の棒は複数分類の合計である。累積構成比は表示された順に記事数を足し上げた全体比で、最後は100%に到達する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 上位の集中度を確認した後は、その他に含まれる分類を元のタグ・カテゴリ別グラフで確認する必要がある。パレートの形は整理の目安であり、少数分類を削除すべきという判断を意味しない。</p></div></div>
     </div>
     
 
@@ -2157,12 +2232,12 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">媒体別の記事長クラス比較（グループ棒グラフ）</div>
       <div class="chart-box chart-box-advanced chart-box-compact" id="chart-advanced-lengthband"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 記事を500字未満、500〜999字、1,000〜1,999字、2,000〜3,999字、4,000字以上の五つの帯に分け、ニュースとコラムの本数を並列棒で比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 500〜999字帯がニュース41本・コラム40本で両媒体とも最多である。4,000字以上はニュース3本、コラム0本となっている。 各帯の棒は同じゼロ基準から始まるため、媒体ごとの件数差を積み上げ図より直接読み取りやすくなる。全体の構成比だけでなく、どの文字数帯に記事が集まっているか、長文帯がどちらの媒体に多いかを確認できる。ただし、区分の境界は分析上の便宜的な設定であり、記事の難易度や完成度を示す基準ではない。記事数の多い媒体は複数の帯で件数も増えやすいため、構成比を比べたい場合は各媒体の総記事数も確認する必要がある。記事長ヒストグラムや経験累積分布（ECDF）と組み合わせれば、区分の中にある細かな分布や中央値付近の違いも補える。境界値の近くにある記事はわずかな文字数差で別の帯に移るため、分類の差を過度に意味づけず、個別の文字数も必要に応じて確認する必要がある。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 件数の比較と割合の比較は別の問いである。媒体ごとの記事総数が異なる場合は、各棒を媒体内の総数で割った割合も併せて考え、母数の違いによる見かけの差に注意する必要がある。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 記事を500字未満、500〜999字、1,000〜1,999字、2,000〜3,999字、4,000字以上の五つの帯に分け、ニュースとコラムの本数を並列棒で比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 500〜999字帯がニュース41本・コラム40本で両媒体とも最多である。4,000字以上はニュース4本、コラム0本となっている。 各帯の棒は同じゼロ基準から始まるため、媒体ごとの件数差を積み上げ図より直接読み取りやすくなる。全体の構成比だけでなく、どの文字数帯に記事が集まっているか、長文帯がどちらの媒体に多いかを確認できる。ただし、区分の境界は分析上の便宜的な設定であり、記事の難易度や完成度を示す基準ではない。記事数の多い媒体は複数の帯で件数も増えやすいため、構成比を比べたい場合は各媒体の総記事数も確認する必要がある。記事長ヒストグラムや経験累積分布（ECDF）と組み合わせれば、区分の中にある細かな分布や中央値付近の違いも補える。境界値の近くにある記事はわずかな文字数差で別の帯に移るため、分類の差を過度に意味づけず、個別の文字数も必要に応じて確認する必要がある。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 件数の比較と割合の比較は別の問いである。媒体ごとの記事総数が異なる場合は、各棒を媒体内の総数で割った割合も併せて考え、母数の違いによる見かけの差に注意する必要がある。</p></div></div>
     </div>
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">公開日と記事文字数の関係（時系列散布図）</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-date-scatter"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 横軸に公開日、縦軸に文字数を置き、記事一件を一つの点として表示す。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ニュースの最長記事はID80の4,903字、コラムの最長記事はID65の2,110字である。最大値の現れる時期も媒体ごとに異なる。 時系列に沿って記事の長さがどう分布しているかを追えるため、特定期間に長文記事が集中したか、短い告知がまとまって公開されたかを視覚的に探せる。色はニュースとコラムの媒体区分で、点に触れると記事タイトル、公開日、文字数を確認できる。日付が同じ記事は同じ横位置に並ぶため、重なりが発生する場合がある。重ねたパレート線は、より新しい公開日と長い本文量を同時に満たす記事の境界を示す。点の密集は同じ時期・文字数帯に複数記事があることを示すが、投稿の理由や制作工程を説明するものではない。日付軸の間隔は実際の経過日数に対応し、記事ID順とは異なる視点で時系列を確認できる。既存のIDと文字数の散布図、日別投稿タイムライン、箱ひげ図と照合し、時期による違いと媒体ごとの分布を切り分ける必要がある。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 文字数の変化だけから内容の質や情報の正確さを判断しないことも大切である。同日公開の点が重なるときはツールチップや記事一覧で複数件を確かめ、点の一つだけを代表例として扱わないことが重要である。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 横軸に公開日、縦軸に文字数を置き、記事一件を一つの点として表示す。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ニュースの最長記事はID91の5,713字、コラムの最長記事はID65の2,110字である。最大値の現れる時期も媒体ごとに異なる。 時系列に沿って記事の長さがどう分布しているかを追えるため、特定期間に長文記事が集中したか、短い告知がまとまって公開されたかを視覚的に探せる。色はニュースとコラムの媒体区分で、点に触れると記事タイトル、公開日、文字数を確認できる。日付が同じ記事は同じ横位置に並ぶため、重なりが発生する場合がある。重ねたパレート線は、より新しい公開日と長い本文量を同時に満たす記事の境界を示す。点の密集は同じ時期・文字数帯に複数記事があることを示すが、投稿の理由や制作工程を説明するものではない。日付軸の間隔は実際の経過日数に対応し、記事ID順とは異なる視点で時系列を確認できる。既存のIDと文字数の散布図、日別投稿タイムライン、箱ひげ図と照合し、時期による違いと媒体ごとの分布を切り分ける必要がある。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 文字数の変化だけから内容の質や情報の正確さを判断しないことも大切である。同日公開の点が重なるときはツールチップや記事一覧で複数件を確かめ、点の一つだけを代表例として扱わないことが重要である。</p></div></div>
     </div>
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">30日移動平均による投稿ペース</div>
@@ -2182,7 +2257,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 各月に公開された記事の文字数を媒体別に並べ、中央に位置する値である中央値を表示す。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 月別中央値は2026年6月にニュース3,677字・コラム1,311字、1月はニュース562字・コラム625字であった。 平均値は非常に長い記事の影響を受けやすい一方、中央値は典型的な記事の長さを把握する際に役立ちる。ニュースとコラムを同じ月で比較することで、片方の媒体だけ長文記事が増えた月や、通常の長さが変化した時期を見つけやすくなる。記事がない月は0字ではなく欠測として表示し、線をつなぎない。記事数が少ない月は一件の長短で中央値が大きく動く可能性があるため、月別投稿本数も必ず確認する必要がある。既存の月別ニュース平均文字数、箱ひげ図、経験累積分布（ECDF）と合わせると、平均と中央値の差や、分布全体の変化を読み分けられる。中央値は記事の品質や読みやすさを評価するスコアではなく、文字数分布の中心を表す統計量である。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 偶数件の月は中央二件の平均を中央値として計算している。平均値との差が大きい場合は、長文・短文の少数記事が分布を引っ張っている可能性があるため、ヒストグラムや記事一覧で実際の分布も確かめる必要がある。</p></div></div>
     </div>
     
-    <div class="chart-card advanced-chart-card"><div class="chart-title">月別本文文字数の第3四分位（上位25%の境界）</div><div class="chart-box chart-box-advanced" id="chart-advanced-upper-quartile"></div><div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 月ごと・媒体ごとに本文文字数を小さい順に並べ、75パーセンタイルに当たる第3四分位を示す。値より長い側におよそ上位25%の記事が位置する境界であり、平均や最大文字数とは異なる。記事が4本未満の月は値を表示せず、記事数が一定以上ある月だけを比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ニュースは1月826字、2月777字から、5月1,828字、7月2,1,004字へ上昇した。コラムは1月735字、2月806字、5月1,268字、6月1,407字、7月1,191字で推移する。ニュースの7月は4本、コラムの7月も4本で、どちらも表示対象の最小件数に当たる。5月はニュース9本・コラム5本、6月はコラム5本が対象である。平均だけでは見えにくい長文側の境界を比べると、ニュースでは春から夏にかけて上位側の記事長が伸びた一方、コラムは6月を境に7月にやや下がったことが分かる。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 第3四分位は上位25%の境界であり、上位記事の平均や最長記事を表すものではない。月内の記事数が少ない場合は値が変わりやすく、4本の月は特に慎重な比較が必要である。また、記事が4本未満の月は欠測として線が途切れる。月別中央値や記事数と併せて読むことで、記事全体の中心と長文側の変化を区別できる。</p></div></div></div>
+    <div class="chart-card advanced-chart-card"><div class="chart-title">月別本文文字数の第3四分位（上位25%の境界）</div><div class="chart-box chart-box-advanced" id="chart-advanced-upper-quartile"></div><div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 月ごと・媒体ごとに本文文字数を小さい順に並べ、75パーセンタイルに当たる第3四分位を示す。値より長い側におよそ上位25%の記事が位置する境界であり、平均や最大文字数とは異なる。記事が4本未満の月は値を表示せず、記事数が一定以上ある月だけを比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ニュースは1月826字、2月777字から、5月1,828字、7月2,974字へ上昇した。コラムは1月735字、2月806字、5月1,268字、6月1,407字、7月1,191字で推移する。ニュースの7月は4本、コラムの7月も4本で、どちらも表示対象の最小件数に当たる。5月はニュース9本・コラム5本、6月はコラム5本が対象である。平均だけでは見えにくい長文側の境界を比べると、ニュースでは春から夏にかけて上位側の記事長が伸びた一方、コラムは6月を境に7月にやや下がったことが分かる。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 第3四分位は上位25%の境界であり、上位記事の平均や最長記事を表すものではない。月内の記事数が少ない場合は値が変わりやすく、4本の月は特に慎重な比較が必要である。また、記事が4本未満の月は欠測として線が途切れる。月別中央値や記事数と併せて読むことで、記事全体の中心と長文側の変化を区別できる。</p></div></div></div>
 <div class="chart-card advanced-chart-card">
       <div class="chart-title">月別の分類バリエーション数</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-breadth"></div>
@@ -2201,7 +2276,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">記事文字数の経験累積分布（ECDF）</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-ecdf"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 記事を文字数の小さい順に並べ、横軸に文字数、縦軸にその文字数以下の記事が占める累積割合を示す。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 文字数の中央値はニュース695字・コラム779字、90パーセンタイルはニュース2,204字・コラム1,382字である。 曲線が50％に達する位置が中央値、25％・75％に達する位置が四分位点の目安である。同じ文字数で曲線が上にある媒体ほど短い記事の割合が高く、全体として短文側に分布している。反対に曲線が右へ寄るほど、同じ累積割合に達するまでにより多くの文字数が必要である。ニュースとコラムの曲線を重ねることで、平均値だけでは分かりにくい分布全体の差や、長文側の裾の広がりを比較できる。記事数が異なる媒体でも割合で比較できるが、少数標本では一件ごとの長短が曲線に強く表れる。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 記事本数そのものは曲線から読み取れないため、件数は概要カードや記事一覧で確認する必要がある。文字数は内容の質を直接示す値ではない。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 記事を文字数の小さい順に並べ、横軸に文字数、縦軸にその文字数以下の記事が占める累積割合を示す。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> 文字数の中央値はニュース699字・コラム779字、90パーセンタイルはニュース2,451字・コラム1,382字である。 曲線が50％に達する位置が中央値、25％・75％に達する位置が四分位点の目安である。同じ文字数で曲線が上にある媒体ほど短い記事の割合が高く、全体として短文側に分布している。反対に曲線が右へ寄るほど、同じ累積割合に達するまでにより多くの文字数が必要である。ニュースとコラムの曲線を重ねることで、平均値だけでは分かりにくい分布全体の差や、長文側の裾の広がりを比較できる。記事数が異なる媒体でも割合で比較できるが、少数標本では一件ごとの長短が曲線に強く表れる。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> 記事本数そのものは曲線から読み取れないため、件数は概要カードや記事一覧で確認する必要がある。文字数は内容の質を直接示す値ではない。</p></div></div>
     </div>
     <div class="chart-card advanced-chart-card">
       <div class="chart-title">観測日あたりの月別投稿率</div>
@@ -2218,7 +2293,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">記事文字数の集中度（ローレンツ曲線・ジニ係数）</div>
       <div class="chart-box chart-box-advanced" id="chart-advanced-lorenz"></div>
-      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 記事を文字数の短い順に並べ、横軸に累積記事割合、縦軸に累積文字数割合を置いたローレンツ曲線を表示す。完全に均等な場合の基準線も重ね、記事全体の文章量がどの程度の割合の記事に集まっているかを比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ジニ係数はニュース0.435、コラム0.230となり、ニュースの方が記事間の文字数の偏りが大きい結果である。文字数上位20％の記事が占める本文量はニュース51.6％、コラム35.4％で、下位20％ではそれぞれ5.7％・12.2％である。ニュースは一部の長文記事が総文字数を大きく担い、コラムは比較的均等に文章量が分布していることが曲線に表れている。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> ジニ係数は記事文字数の分布だけを測る指標で、内容の価値や品質、読者への影響を示すものではない。媒体ごとに記事数が異なるため、係数だけで優劣を決めず、中央値・四分位範囲・記事一覧も合わせて確認する必要がある。</p></div></div>
+      <div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察</div><div class="chart-desc-copy"><p class="chart-insight-paragraph"><strong class="chart-insight-label">指標の概要</strong> 記事を文字数の短い順に並べ、横軸に累積記事割合、縦軸に累積文字数割合を置いたローレンツ曲線を表示す。完全に均等な場合の基準線も重ね、記事全体の文章量がどの程度の割合の記事に集まっているかを比較する。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">主な傾向</strong> ジニ係数はニュース0.452、コラム0.230となり、ニュースの方が記事間の文字数の偏りが大きい結果である。文字数上位約20％の記事（ニュース19本・コラム14本）が占める本文量はニュース54.4％、コラム35.4％で、下位約20％ではそれぞれ5.8％・12.2％である。ニュースは一部の長文記事が総文字数を大きく担い、コラムは比較的均等に文章量が分布していることが曲線に表れている。</p><p class="chart-insight-paragraph"><strong class="chart-insight-label">解釈上の注意</strong> ジニ係数は記事文字数の分布だけを測る指標で、内容の価値や品質、読者への影響を示すものではない。媒体ごとに記事数が異なるため、係数だけで優劣を決めず、中央値・四分位範囲・記事一覧も合わせて確認する必要がある。</p></div></div>
     </div>
     <div class="chart-card advanced-chart-card advanced-chart-wide">
       <div class="chart-title">同一媒体内の公開間隔と記事文字数の関係</div>
@@ -2335,12 +2410,10 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       </div>
       <div class="dashboard-field dashboard-choice-field">
         <span class="dashboard-field-label">タグで絞り込む</span>
-        <input type="hidden" id="news-tag-filter" value="">
-        <div class="dashboard-select" data-select-id="news-tag-filter" data-placeholder="すべて">
-          <button type="button" class="dashboard-select-trigger" aria-haspopup="listbox" aria-expanded="false">
-            <span class="dashboard-select-value">すべて</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="dashboard-select-menu" role="listbox"></div>
+        <div class="tenmei-choice dashboard-tenmei-choice" data-control-kind="choice" data-control-id="news-tag-filter" data-control-label="タグで絞り込む" data-options='[{"value":"","label":"すべて"}]'>
+          <input type="hidden" id="news-tag-filter" value="">
+          <button type="button" class="tenmei-choice__trigger" id="news-tag-filter-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="news-tag-filter-options" aria-label="タグで絞り込む"><span class="tenmei-choice__icon" aria-hidden="true"><i class="bi bi-tags"></i></span><span class="tenmei-choice__value"></span><i class="bi bi-chevron-down tenmei-choice__chevron" aria-hidden="true"></i></button>
+          <div class="tenmei-choice__popover" id="news-tag-filter-popover" hidden><div class="tenmei-choice__options" id="news-tag-filter-options" role="listbox" aria-label="タグで絞り込む"></div></div>
         </div>
       </div>
       <span class="filter-count modern-filter-count" id="news-count" aria-live="polite">--件表示中</span>
@@ -2374,12 +2447,10 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
       </div>
       <div class="dashboard-field dashboard-choice-field">
         <span class="dashboard-field-label">カテゴリで絞り込む</span>
-        <input type="hidden" id="col-cat-filter" value="">
-        <div class="dashboard-select" data-select-id="col-cat-filter" data-placeholder="すべて">
-          <button type="button" class="dashboard-select-trigger" aria-haspopup="listbox" aria-expanded="false">
-            <span class="dashboard-select-value">すべて</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="dashboard-select-menu" role="listbox"></div>
+        <div class="tenmei-choice dashboard-tenmei-choice" data-control-kind="choice" data-control-id="col-cat-filter" data-control-label="カテゴリで絞り込む" data-options='[{"value":"","label":"すべて"}]'>
+          <input type="hidden" id="col-cat-filter" value="">
+          <button type="button" class="tenmei-choice__trigger" id="col-cat-filter-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="col-cat-filter-options" aria-label="カテゴリで絞り込む"><span class="tenmei-choice__icon" aria-hidden="true"><i class="bi bi-bookmarks"></i></span><span class="tenmei-choice__value"></span><i class="bi bi-chevron-down tenmei-choice__chevron" aria-hidden="true"></i></button>
+          <div class="tenmei-choice__popover" id="col-cat-filter-popover" hidden><div class="tenmei-choice__options" id="col-cat-filter-options" role="listbox" aria-label="カテゴリで絞り込む"></div></div>
         </div>
       </div>
       <span class="filter-count modern-filter-count" id="col-count" aria-live="polite">--件表示中</span>
@@ -4135,8 +4206,9 @@ document.getElementById('print-period-summary').textContent = reportPeriodText;
 // Min/Max/Medians
 const sortedNews = [...newsData].sort((a,b) => b.chars - a.chars);
 const sortedCol = [...colData].sort((a,b) => b.chars - a.chars);
-const medianNews = sortedNews[Math.floor(sortedNews.length/2)].chars;
-const medianCol = sortedCol[Math.floor(sortedCol.length/2)].chars;
+const medianOf = rows => {const values=rows.map(a=>a.chars).filter(Number.isFinite).sort((a,b)=>a-b);if(!values.length)return 0;const mid=Math.floor(values.length/2);return Math.round(values.length%2?values[mid]:(values[mid-1]+values[mid])/2);};
+const medianNews=medianOf(newsData);
+const medianCol=medianOf(colData);
 
 document.getElementById('stat-max-news').innerText = sortedNews[0].chars.toLocaleString();
 document.getElementById('stat-max-news-sub').innerText = `#${sortedNews[0].id} ${sortedNews[0].title.slice(0,10)}...`;
@@ -6167,124 +6239,34 @@ const dashboardCharts = [
 
 // 全グラフ共通の視覚調整。ライブラリ・バージョン・描画エンジンは変更しない。
 function polishDashboardChartOptions() {
-  const font = dashboardChartFont;
-  const palette = ['#8f252b','#c4a059','#718b7b','#7188a4','#8b7898','#c4a059','#55443a'];
-  const mediumColor = name => /ニュース|社務所だより/.test(String(name||'')) ? palette[0]
-    : /コラム|神籤草子/.test(String(name||'')) ? palette[1] : null;
-  const axisStyle = axis => ({
-    ...axis,
-    axisLine:{...axis.axisLine,lineStyle:{...axis.axisLine?.lineStyle,color:'#e7ded7',width:1}},
-    axisTick:{...axis.axisTick,lineStyle:{...axis.axisTick?.lineStyle,color:'#e7ded7'}},
-    axisLabel:{...axis.axisLabel,color:'#786e67',fontFamily:font,fontSize:axis.axisLabel?.fontSize||11,margin:axis.axisLabel?.margin||10},
-    nameTextStyle:{...axis.nameTextStyle,color:'#786e67',fontFamily:font,fontSize:11,fontWeight:600},
-    splitLine:{...axis.splitLine,show:axis.splitLine?.show===false?false:(axis.splitLine?.show??['value','time','log'].includes(axis.type)),lineStyle:{...axis.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}}
-  });
-  const normalizeTree = (nodes, depth=0, parentColor=null) => (nodes||[]).map((node,index)=>{
-    const base = node.name==='社務所だより'?palette[0]:node.name==='神籤草子'?palette[1]:parentColor||palette[(index+2)%palette.length];
-    const item = {...node,itemStyle:{...node.itemStyle,color:base,borderColor:'#fffdfb',borderWidth:1}};
-    if(node.children) item.children=normalizeTree(node.children,depth+1,base);
-    return item;
-  });
-  dashboardCharts.forEach(({chart})=>{
-    try{
-      if(!chart||chart.isDisposed?.())return;
-      const current=chart.getOption()||{};
-      const patch={
-        backgroundColor:'transparent',
-        color:palette,
-        animationDuration:520,
-        animationDurationUpdate:320,
-        textStyle:{fontFamily:font,color:'#55443a',fontSize:12},
-        tooltip:{
-          ...current.tooltip?.[0],
-          backgroundColor:'rgba(48,41,35,.97)',borderColor:'#c4a059',borderWidth:1,
-          padding:[11,14],textStyle:{...current.tooltip?.[0]?.textStyle,fontFamily:font,color:'#fffdfb',fontSize:12},
-          extraCssText:'border-radius:10px;box-shadow:0 10px 28px rgba(48,41,35,.16);'
-        },
-        axisPointer:{...current.axisPointer?.[0],lineStyle:{color:'#c4a059',width:1,type:'dashed'},crossStyle:{color:'#c4a059'}},
-        toolbox:{
-          ...current.toolbox?.[0],show:true,right:8,top:6,itemSize:14,itemGap:8,
-          backgroundColor:'rgba(247,242,237,.94)',borderColor:'#e7ded7',borderWidth:1,
-          iconStyle:{...current.toolbox?.[0]?.iconStyle,borderColor:'#55443a'},
-          emphasis:{...current.toolbox?.[0]?.emphasis,iconStyle:{borderColor:'#8f252b'}}
-        }
-      };
-      if(current.legend?.length)patch.legend=current.legend.map(legend=>({
-        ...legend,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',
-        itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',
-        textStyle:{...legend.textStyle,fontFamily:font,color:'#55443a',fontSize:11},
-        pageTextStyle:{fontFamily:font,color:'#55443a'}
-      }));
-      if(current.xAxis?.length)patch.xAxis=current.xAxis.map(axisStyle);
-      if(current.yAxis?.length)patch.yAxis=current.yAxis.map(axisStyle);
-      if(current.singleAxis?.length)patch.singleAxis=current.singleAxis.map(axisStyle);
-      if(current.parallelAxis?.length)patch.parallelAxis=current.parallelAxis.map(axis=>({
-        ...axis,nameTextStyle:{...axis.nameTextStyle,fontFamily:font,color:'#55443a',fontSize:11},
-        axisLabel:{...axis.axisLabel,fontFamily:font,color:'#786e67',fontSize:10},
-        axisLine:{...axis.axisLine,lineStyle:{...axis.axisLine?.lineStyle,color:'#e7ded7'}}
-      }));
-      if(current.grid?.length)patch.grid=current.grid.map(grid=>({...grid,containLabel:grid.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
-      if(current.visualMap?.length)patch.visualMap=current.visualMap.map(map=>({
-        ...map,inRange:{...map.inRange,color:['#f7f2ed','#f7f2ed','#c4a059','#8f252b']},
-        textStyle:{...map.textStyle,fontFamily:font,color:'#55443a'}
-      }));
-      if(current.dataZoom?.length)patch.dataZoom=current.dataZoom.map(zoom=>({
-        ...zoom,borderColor:'#e7ded7',backgroundColor:'#f7f2ed',fillerColor:'rgba(196,160,89,.22)',
-        handleStyle:{...zoom.handleStyle,color:'#fffdfb',borderColor:'#9b793d'},
-        moveHandleStyle:{...zoom.moveHandleStyle,color:'#c4a059'},
-        textStyle:{...zoom.textStyle,fontFamily:font,color:'#786e67'}
-      }));
-      if(current.series?.length)patch.series=current.series.map((series,index)=>{
-        const named=mediumColor(series.name);
-        const color=named||palette[index%palette.length];
-        const item={};
-        if(series.type==='line'){
-          item.lineStyle={...series.lineStyle,color,width:2.5};
-          item.itemStyle={...series.itemStyle,color};
-          if(series.symbolSize==null)item.symbolSize=6;
-        }else if(series.type==='bar'){
-          item.itemStyle={...series.itemStyle,color,borderRadius:series.itemStyle?.borderRadius??[4,4,0,0]};
-          item.barMaxWidth=series.barMaxWidth||36;
-        }else if(series.type==='scatter'){
-          item.itemStyle={...series.itemStyle,color,opacity:series.itemStyle?.opacity??.76};
-        }else if(series.type==='boxplot'){
-          item.itemStyle={...series.itemStyle,color,borderColor:color,borderWidth:2};
-        }else if(series.type==='radar'){
-          item.lineStyle={...series.lineStyle,color,width:2.4};
-          item.itemStyle={...series.itemStyle,color};
-          item.areaStyle={...series.areaStyle,color,opacity:series.areaStyle?.opacity??.12};
-        }else if(series.type==='parallel'){
-          item.lineStyle={...series.lineStyle,color,opacity:series.lineStyle?.opacity??.3};
-        }else if(series.type==='sankey'){
-          item.lineStyle={...series.lineStyle,opacity:series.lineStyle?.opacity??.32};
-          item.label={...series.label,fontFamily:font,color:'#55443a',fontSize:10};
-        }else if(series.type==='treemap'){
-          item.data=normalizeTree(series.data);
-          item.label={...series.label,fontFamily:font,color:'#fffdfb',fontSize:11};
-          item.upperLabel={...series.upperLabel,fontFamily:font,color:'#fffdfb'};
-          item.itemStyle={...series.itemStyle,borderColor:'#fffdfb',borderWidth:2};
-        }else if(series.type==='pie'||series.type==='funnel'){
-          item.label={...series.label,fontFamily:font,color:'#55443a',fontSize:11};
-          item.labelLine={...series.labelLine,lineStyle:{...series.labelLine?.lineStyle,color:'#e7ded7'}};
-          if(Array.isArray(series.data))item.data=series.data.map((entry,i)=>({
-            ...entry,itemStyle:{...entry.itemStyle,color:entry.itemStyle?.color||palette[i%palette.length]}
-          }));
-        }else if(series.type==='heatmap'){
-          item.itemStyle={...series.itemStyle,borderColor:'#fffdfb',borderWidth:1};
-        }else if(series.type==='themeRiver'){
-          item.itemStyle={...series.itemStyle,opacity:.9};
-        }
-        return item;
-      });
-      if(current.calendar?.length)patch.calendar=current.calendar.map(calendar=>({
-        ...calendar,itemStyle:{...calendar.itemStyle,borderColor:'#fffdfb',borderWidth:1},
-        dayLabel:{...calendar.dayLabel,color:'#786e67',fontFamily:font,fontSize:10},
-        monthLabel:{...calendar.monthLabel,color:'#55443a',fontFamily:font,fontSize:11},
-        yearLabel:{...calendar.yearLabel,color:'#55443a',fontFamily:font,fontSize:13}
-      }));
-      chart.setOption(patch);
-    }catch(error){console.warn('[Dashboard shared chart theme]',chart.getDom?.()?.id,error);}
-  });
+ const font=dashboardChartFont,palette=['#8f252b','#c4a059','#718b7b','#7188a4','#8b7898','#9b793d','#786e67'],paletteSet=new Set(palette);
+ const mediumColor=n=>/ニュース|社務所だより/.test(String(n||''))?palette[0]:/コラム|神籤草子/.test(String(n||''))?palette[1]:null;
+ const stableColor=(n,i=0)=>{const v=String(n||'');if(!v)return palette[i%palette.length];let h=2166136261;for(let j=0;j<v.length;j++)h=Math.imul(h^v.charCodeAt(j),16777619);return palette[(h>>>0)%palette.length];};
+ const resolveColor=(n,e,i=0)=>mediumColor(n)||(typeof e==='string'&&paletteSet.has(e.toLowerCase())?e.toLowerCase():stableColor(n,i));
+ const axisStyle=a=>({...a,axisLine:{...a.axisLine,lineStyle:{...a.axisLine?.lineStyle,color:'#e7ded7',width:1}},axisTick:{...a.axisTick,lineStyle:{...a.axisTick?.lineStyle,color:'#e7ded7'}},axisLabel:{...a.axisLabel,color:'#786e67',fontFamily:font,fontSize:a.axisLabel?.fontSize||11,margin:a.axisLabel?.margin||10},nameTextStyle:{...a.nameTextStyle,color:'#786e67',fontFamily:font,fontSize:11,fontWeight:600},splitLine:{...a.splitLine,show:a.splitLine?.show===false?false:(a.splitLine?.show??['value','time','log'].includes(a.type)),lineStyle:{...a.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}});
+ const tree=nodes=>(nodes||[]).map((n,i)=>({...n,itemStyle:{...n.itemStyle,color:resolveColor(n.name,n.itemStyle?.color,i),borderColor:'#fffdfb',borderWidth:1},...(n.children?{children:tree(n.children)}:{})}));
+ dashboardCharts.forEach(({chart})=>{try{if(!chart||chart.isDisposed?.())return;const c=chart.getOption()||{},p={backgroundColor:'transparent',color:palette,animationDuration:520,animationDurationUpdate:320,textStyle:{fontFamily:font,color:'#55443a',fontSize:12},tooltip:{...c.tooltip?.[0],backgroundColor:'rgba(48,41,35,.97)',borderColor:'#c4a059',borderWidth:1,padding:[11,14],textStyle:{...c.tooltip?.[0]?.textStyle,fontFamily:font,color:'#fffdfb',fontSize:12},extraCssText:'border-radius:10px;box-shadow:0 10px 28px rgba(48,41,35,.16);'},axisPointer:{...c.axisPointer?.[0],lineStyle:{color:'#c4a059',width:1,type:'dashed'},crossStyle:{color:'#c4a059'}},toolbox:{...c.toolbox?.[0],show:true,right:8,top:6,itemSize:14,itemGap:8,backgroundColor:'rgba(247,242,237,.94)',borderColor:'#e7ded7',borderWidth:1,iconStyle:{...c.toolbox?.[0]?.iconStyle,borderColor:'#55443a'},emphasis:{...c.toolbox?.[0]?.emphasis,iconStyle:{borderColor:'#8f252b'}}}};
+ if(c.legend?.length)p.legend=c.legend.map(l=>({...l,top:null,bottom:5,left:'center',right:null,selectedMode:'multiple',itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',textStyle:{...l.textStyle,fontFamily:font,color:'#55443a',fontSize:11},pageTextStyle:{fontFamily:font,color:'#55443a'}}));
+ if(c.xAxis?.length)p.xAxis=c.xAxis.map(axisStyle);if(c.yAxis?.length)p.yAxis=c.yAxis.map(axisStyle);if(c.singleAxis?.length)p.singleAxis=c.singleAxis.map(axisStyle);
+ if(c.parallelAxis?.length)p.parallelAxis=c.parallelAxis.map(a=>({...a,nameTextStyle:{...a.nameTextStyle,fontFamily:font,color:'#55443a',fontSize:11},axisLabel:{...a.axisLabel,fontFamily:font,color:'#786e67',fontSize:10},axisLine:{...a.axisLine,lineStyle:{...a.axisLine?.lineStyle,color:'#e7ded7'}}}));
+ if(c.grid?.length)p.grid=c.grid.map(g=>({...g,containLabel:g.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
+ if(c.visualMap?.length)p.visualMap=c.visualMap.map(v=>({...v,inRange:{...v.inRange,color:['#fffdfb','#ead8c8','#c4a059','#8f252b']},textStyle:{...v.textStyle,fontFamily:font,color:'#55443a'}}));
+ if(c.dataZoom?.length)p.dataZoom=c.dataZoom.map(z=>({...z,borderColor:'#e7ded7',backgroundColor:'#f7f2ed',fillerColor:'rgba(196,160,89,.22)',handleStyle:{...z.handleStyle,color:'#fffdfb',borderColor:'#9b793d'},moveHandleStyle:{...z.moveHandleStyle,color:'#c4a059'},textStyle:{...z.textStyle,fontFamily:font,color:'#786e67'}}));
+ if(c.series?.length)p.series=c.series.map((s,i)=>{const color=resolveColor(s.name,s.itemStyle?.color||s.lineStyle?.color||s.areaStyle?.color,i),o={};
+  if(s.type==='line'){o.lineStyle={...s.lineStyle,color,width:s.lineStyle?.width||2.5};o.itemStyle={...s.itemStyle,color};if(s.symbolSize==null)o.symbolSize=6;}
+  else if(s.type==='bar'){o.itemStyle={...s.itemStyle,color,borderRadius:s.itemStyle?.borderRadius??[4,4,0,0]};o.barMaxWidth=s.barMaxWidth||36;}
+  else if(s.type==='scatter')o.itemStyle={...s.itemStyle,color,opacity:s.itemStyle?.opacity??.76};
+  else if(s.type==='boxplot'){o.itemStyle={...s.itemStyle,color,borderColor:color,borderWidth:2};if(Array.isArray(s.data))o.data=s.data.map((d,j)=>({...d,itemStyle:{...d.itemStyle,color:resolveColor(d.name,d.itemStyle?.color,j),borderColor:resolveColor(d.name,d.itemStyle?.borderColor||d.itemStyle?.color,j)}}));}
+  else if(s.type==='radar'){if(Array.isArray(s.data)&&s.data.length)o.data=s.data.map((d,j)=>{const cc=resolveColor(d.name,d.itemStyle?.color||d.lineStyle?.color||d.areaStyle?.color,j);return {...d,itemStyle:{...d.itemStyle,color:cc},lineStyle:{...d.lineStyle,color:cc,width:d.lineStyle?.width||2.4},areaStyle:{...d.areaStyle,color:cc,opacity:d.areaStyle?.opacity??.12}};});else{o.lineStyle={...s.lineStyle,color,width:2.4};o.itemStyle={...s.itemStyle,color};o.areaStyle={...s.areaStyle,color,opacity:s.areaStyle?.opacity??.12};}}
+  else if(s.type==='parallel')o.lineStyle={...s.lineStyle,color,opacity:s.lineStyle?.opacity??.3};
+  else if(s.type==='sankey'){o.lineStyle={...s.lineStyle,opacity:s.lineStyle?.opacity??.32};if(Array.isArray(s.data))o.data=s.data.map((n,j)=>({...n,itemStyle:{...n.itemStyle,color:resolveColor(n.name,n.itemStyle?.color,j)}}));o.label={...s.label,fontFamily:font,color:'#55443a',fontSize:10};}
+  else if(s.type==='treemap'){o.data=tree(s.data);o.label={...s.label,fontFamily:font,color:'#fffdfb',fontSize:11};o.upperLabel={...s.upperLabel,fontFamily:font,color:'#fffdfb'};o.itemStyle={...s.itemStyle,borderColor:'#fffdfb',borderWidth:2};}
+  else if(s.type==='pie'||s.type==='funnel'){o.colorBy='data';o.label={...s.label,fontFamily:font,color:'#55443a',fontSize:11};o.labelLine={...s.labelLine,lineStyle:{...s.labelLine?.lineStyle,color:'#e7ded7'}};if(Array.isArray(s.data))o.data=s.data.map((d,j)=>({...d,itemStyle:{...d.itemStyle,color:resolveColor(d.name,d.itemStyle?.color,j)}}));}
+  else if(s.type==='heatmap')o.itemStyle={...s.itemStyle,borderColor:'#fffdfb',borderWidth:1};
+  else if(s.type==='themeRiver')o.itemStyle={...s.itemStyle,opacity:.9};return o;});
+ if(c.calendar?.length)p.calendar=c.calendar.map(v=>({...v,itemStyle:{...v.itemStyle,borderColor:'#fffdfb',borderWidth:1},dayLabel:{...v.dayLabel,color:'#786e67',fontFamily:font,fontSize:10},monthLabel:{...v.monthLabel,color:'#55443a',fontFamily:font,fontSize:11},yearLabel:{...v.yearLabel,color:'#55443a',fontFamily:font,fontSize:13}}));
+ chart.setOption(p);
+ }catch(error){console.warn('[Dashboard shared chart theme]',chart.getDom?.()?.id,error);}});
 }
 polishDashboardChartOptions();
 
@@ -6542,72 +6524,46 @@ let colSortKey = 'date', colSortDir = -1;
 let newsFiltered = [...newsData].sort((a,b) => pd(b.date).getTime() - pd(a.date).getTime() || b.id - a.id);
 let colFiltered  = [...colData].sort((a,b) => pd(b.date).getTime() - pd(a.date).getTime() || b.id - a.id);
 
-function setupDashboardSelect(selectId, values, options = {}) {
-  const root = document.querySelector(`.dashboard-select[data-select-id="${selectId}"]`);
-  const hidden = document.getElementById(selectId);
-  if (!root || !hidden) return;
-  const menu = root.querySelector('.dashboard-select-menu');
-  const valueNode = root.querySelector('.dashboard-select-value');
-  const optionValues = selectId === 'csv-export-type' ? ['articles', ...values] : ['', ...values];
-  menu.innerHTML = optionValues.map(value => {
-    const label = options.labels?.[value] || value || 'すべて';
-    return `<button type="button" class="dashboard-select-option" role="option" data-value="${String(value).replace(/"/g, '&quot;')}" aria-selected="${value === '' ? 'true' : 'false'}">${label}</button>`;
-  }).join('');
-  const setValue = (value, emit = true) => {
-    hidden.value = value;
-    valueNode.textContent = options.labels?.[value] || value || 'すべて';
-    menu.querySelectorAll('.dashboard-select-option').forEach(option => {
-      const active = option.dataset.value === value;
-      option.setAttribute('aria-selected', String(active));
-      option.classList.toggle('active', active);
-    });
-    if (emit) {
-      if (selectId === 'news-tag-filter') filterNews();
-      else if (selectId === 'col-cat-filter') filterCol();
-    }
-  };
-  root.querySelector('.dashboard-select-trigger').addEventListener('click', () => {
-    const open = root.classList.toggle('open');
-    root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', String(open));
-  });
-  menu.addEventListener('click', event => {
-    const option = event.target.closest('.dashboard-select-option');
-    if (!option) return;
-    setValue(option.dataset.value);
-    root.classList.remove('open');
-    root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', 'false');
-  });
-  menu.addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      root.classList.remove('open');
-      root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', 'false');
-      root.querySelector('.dashboard-select-trigger').focus();
-    }
-  });
-  setValue(selectId === 'csv-export-type' ? 'articles' : '');
+function setupTenmeiChoiceOptions(selectId,values,settings={}){
+ const root=document.querySelector(`.tenmei-choice[data-control-id="${selectId}"]`),hidden=document.getElementById(selectId);if(!root||!hidden)return;
+ const includeAll=settings.includeAll!==false,options=values.map(value=>({value:String(value),label:settings.labels?.[value]||String(value)}));
+ if(includeAll)options.unshift({value:'',label:'すべて'});root.dataset.options=JSON.stringify(options);hidden.value=settings.defaultValue??(includeAll?'':(options[0]?.value||''));
 }
-const allTags = [...new Set(newsData.map(a => a.tag))].sort();
-const allCats = [...new Set(colData.map(a => a.category))].sort();
-setupDashboardSelect('news-tag-filter', allTags);
-setupDashboardSelect('col-cat-filter', allCats);
-setupDashboardSelect('csv-export-type', ['monthly', 'weekly', 'daily', 'classifications'], {
-  labels: {
-    articles: '全記事データ（157件）',
-    monthly: '月別集計',
-    weekly: '週別集計',
-    daily: '日別・累計',
-    classifications: '分類別集計'
-  }
-});
+const allTags=[...new Set(newsData.map(a=>a.tag))].sort(),allCats=[...new Set(colData.map(a=>a.category))].sort();
+setupTenmeiChoiceOptions('news-tag-filter',allTags);setupTenmeiChoiceOptions('col-cat-filter',allCats);
+setupTenmeiChoiceOptions('csv-export-type',['articles','monthly','weekly','daily','classifications'],{includeAll:false,defaultValue:'articles',labels:{articles:'全記事データ（157件）',monthly:'月別集計',weekly:'週別集計',daily:'日別・累計',classifications:'分類別集計'}});
 
-document.addEventListener('click', event => {
-  document.querySelectorAll('.dashboard-select.open').forEach(root => {
-    if (!root.contains(event.target)) {
-      root.classList.remove('open');
-      root.querySelector('.dashboard-select-trigger').setAttribute('aria-expanded', 'false');
-    }
-  });
-});
+
+// Tenmei source custom-choice behavior, aligned with tenmei-mori main.
+const TenmeiDashboardChoices=(()=>{
+ const states=new Map();let activeRoot=null,typeahead='',typeaheadTimer=null;const moveTolerance=10;
+ const escapeChoiceHTML=v=>String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+ const notify=input=>{input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));};
+ const close=(focus=false)=>{if(!activeRoot)return;const root=activeRoot,t=root.querySelector('.tenmei-choice__trigger'),p=root.querySelector('.tenmei-choice__popover');root.dataset.open='false';t?.setAttribute('aria-expanded','false');if(p)p.hidden=true;root.style.zIndex='';activeRoot=null;if(focus)t?.focus();};
+ const sync=s=>{const i=Math.max(0,s.options.findIndex(o=>o.value===s.input.value)),o=s.options[i];if(!o)return;s.value.textContent=o.detail?`${o.symbol?o.symbol+' ':''}${o.label} (${o.detail})`:`${o.symbol?o.symbol+' ':''}${o.label}`;s.nodes.forEach((n,j)=>{const yes=j===i;n.setAttribute('aria-selected',String(yes));n.classList.toggle('is-active',j===s.active&&s.root.dataset.open==='true');const check=n.querySelector('.tenmei-choice__option-check');if(check)check.hidden=!yes;});};
+ const setActive=(s,i,focus=true)=>{if(!s.options.length)return;s.active=(i+s.options.length)%s.options.length;sync(s);if(focus){const n=s.nodes[s.active];n?.focus({preventScroll:true});n?.scrollIntoView({block:'nearest'});}};
+ const choose=(s,i)=>{const o=s.options[i];if(!o)return;s.input.value=o.value;notify(s.input);s.active=i;sync(s);close(true);};
+ const open=(s,i=null)=>{if(activeRoot&&activeRoot!==s.root)close(false);activeRoot=s.root;s.root.dataset.open='true';s.root.style.zIndex='240';s.popover.hidden=false;s.trigger.setAttribute('aria-expanded','true');const current=Math.max(0,s.options.findIndex(o=>o.value===s.input.value));setActive(s,i===null?current:i,true);};
+ const build=root=>{const id=root.dataset.controlId,input=document.getElementById(id),trigger=document.getElementById(id+'-trigger'),popover=document.getElementById(id+'-popover'),list=document.getElementById(id+'-options');if(!id||!input||!trigger||!popover||!list)return null;let options=[];try{options=JSON.parse(root.dataset.options||'[]');}catch(e){console.error('天命乃杜選択欄データの読み込みに失敗しました。',e);}const value=trigger.querySelector('.tenmei-choice__value');
+ list.innerHTML=options.map((o,i)=>`<button type="button" class="tenmei-choice__option" id="${id}-option-${i}" role="option" aria-selected="false" data-option-index="${i}"><span class="tenmei-choice__option-label">${escapeChoiceHTML(o.symbol?o.symbol+' ':'')}${escapeChoiceHTML(o.label)}</span><span class="tenmei-choice__option-detail">${escapeChoiceHTML(o.detail||'')}</span><i class="bi bi-check2 tenmei-choice__option-check" aria-hidden="true" hidden></i></button>`).join('');
+ const s={root,input,trigger,popover,list,value,options,nodes:[...list.querySelectorAll('.tenmei-choice__option')],active:0,pending:null,ignoreClickUntil:0};states.set(id,s);sync(s);trigger.addEventListener('click',()=>root.dataset.open==='true'?close(true):open(s));trigger.addEventListener('keydown',e=>{if(['Enter',' ','ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();const i=Math.max(0,options.findIndex(o=>o.value===input.value));open(s,e.key==='ArrowUp'?i-1:i);}if(e.key==='Escape')close(true);});
+ const clear=id=>{if(!s.pending||s.pending.id!==id)return null;const p=s.pending;s.pending=null;if(p.target.hasPointerCapture?.(id))p.target.releasePointerCapture(id);return p;};
+ list.addEventListener('pointerdown',e=>{if(e.button!==0)return;const n=e.target.closest('.tenmei-choice__option');if(!n)return;s.pending={id:e.pointerId,index:Number(n.dataset.optionIndex),target:n,x:e.clientX,y:e.clientY,moved:false};n.setPointerCapture?.(e.pointerId);});
+ list.addEventListener('pointermove',e=>{const p=s.pending;if(!p||p.id!==e.pointerId||p.moved)return;if(Math.hypot(e.clientX-p.x,e.clientY-p.y)>moveTolerance){p.moved=true;s.ignoreClickUntil=performance.now()+500;}});
+ list.addEventListener('pointerup',e=>{const p=clear(e.pointerId);if(!p||p.moved||!p.target?.isConnected)return;const r=p.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;s.ignoreClickUntil=performance.now()+700;choose(s,p.index);});
+ list.addEventListener('pointercancel',e=>clear(e.pointerId));list.addEventListener('click',e=>{const n=e.target.closest('.tenmei-choice__option');if(!n)return;if(performance.now()<s.ignoreClickUntil){e.preventDefault();e.stopPropagation();return;}choose(s,Number(n.dataset.optionIndex));});
+ list.addEventListener('keydown',e=>{const i=s.active;if(e.key==='ArrowDown'){e.preventDefault();setActive(s,i+1);}else if(e.key==='ArrowUp'){e.preventDefault();setActive(s,i-1);}else if(e.key==='Home'){e.preventDefault();setActive(s,0);}else if(e.key==='End'){e.preventDefault();setActive(s,options.length-1);}else if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(s,i);}else if(e.key==='Escape'){e.preventDefault();close(true);}else if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){typeahead+=e.key.toLocaleLowerCase('ja-JP');window.clearTimeout(typeaheadTimer);typeaheadTimer=window.setTimeout(()=>typeahead='',650);const q=typeahead,offset=options.slice(i+1).findIndex(o=>o.label.toLocaleLowerCase('ja-JP').startsWith(q)),fallback=options.findIndex(o=>o.label.toLocaleLowerCase('ja-JP').startsWith(q));if(offset>=0)setActive(s,i+1+offset);else if(fallback>=0)setActive(s,fallback);}});
+ input.addEventListener('change',()=>sync(s));return s;};
+ const buildRoot=root=>{if(!root||root.dataset.tenmeiControlReady==='true')return;const s=build(root);if(s)root.dataset.tenmeiControlReady='true';};
+ const roots=[...document.querySelectorAll('[data-control-kind="choice"]')],visible=root=>{const st=getComputedStyle(root);return st.display!=='none'&&st.visibility!=='hidden'&&root.offsetParent!==null;};roots.filter(visible).forEach(buildRoot);
+ document.addEventListener('pointerdown',e=>{const root=e.target.closest?.('[data-control-kind="choice"]');if(root){if(activeRoot&&activeRoot!==root)close(false);buildRoot(root);return;}if(activeRoot&&!activeRoot.contains(e.target))close(false);},true);
+ document.addEventListener('focusin',e=>{const root=e.target.closest?.('[data-control-kind="choice"]');if(root)buildRoot(root);},true);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeRoot)close(true);});
+ const syncAll=()=>states.forEach(sync),updateChoiceOptions=(id,next)=>{const opts=Array.isArray(next)?next.map(o=>({value:String(o.value),label:String(o.label),detail:o.detail?String(o.detail):'',symbol:o.symbol?String(o.symbol):''})):[],s=states.get(id),root=s?.root||document.querySelector('[data-control-kind="choice"][data-control-id="'+id+'"]');if(root)root.dataset.options=JSON.stringify(opts);if(!s)return false;s.options=opts;s.list.innerHTML=opts.map((o,i)=>`<button type="button" class="tenmei-choice__option" id="${id}-option-${i}" role="option" aria-selected="false" data-option-index="${i}"><span class="tenmei-choice__option-label">${escapeChoiceHTML(o.symbol?o.symbol+' ':'')}${escapeChoiceHTML(o.label)}</span><span class="tenmei-choice__option-detail">${escapeChoiceHTML(o.detail||'')}</span><i class="bi bi-check2 tenmei-choice__option-check" aria-hidden="true" hidden></i></button>`).join('');s.nodes=[...s.list.querySelectorAll('.tenmei-choice__option')];s.active=Math.max(0,opts.findIndex(o=>o.value===s.input.value));sync(s);return true;};
+ return {syncAll,closeActive:close,updateChoiceOptions};
+})();
+window.TenmeiCustomControls=TenmeiDashboardChoices;
+document.getElementById('news-tag-filter')?.addEventListener('change',()=>filterNews());
+document.getElementById('col-cat-filter')?.addEventListener('change',()=>filterCol());
 
 // 本サイトの handleSearch / getPaginatedData と同じ規則を使う。
 // 空白を除去して小文字化し、タイトル・説明・本文・タグ・カテゴリを連結した検索対象へ部分一致させる。
