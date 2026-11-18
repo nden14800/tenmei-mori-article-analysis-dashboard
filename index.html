@@ -5121,10 +5121,8 @@ const paretoTop = paretoCounts.slice(0,11);
 if(paretoCounts.length>11) paretoTop.push({key:'その他',value:paretoCounts.slice(11).reduce((sum,row)=>sum+row.value,0)});
 const paretoTotal = paretoTop.reduce((sum,row)=>sum+row.value,0)||1;
 let paretoRunning = 0;
-const paretoLabels = paretoTop.map(row => {
-  const full = row.key.replace('社務所だより::','ニュース・').replace('神籤草子::','コラム・');
-  return full.length > 13 ? full.slice(0, 12) + '…' : full;
-});
+const paretoFullLabels = paretoTop.map(row => row.key.replace('社務所だより::','ニュース・').replace('神籤草子::','コラム・'));
+const paretoLabels = paretoFullLabels.map(full => full.length > 13 ? full.slice(0, 12) + '…' : full);
 const paretoValues = paretoTop.map(row=>row.value);
 const paretoPercent = paretoValues.map(value=>{paretoRunning+=value;return Math.round(paretoRunning/paretoTotal*1000)/10;});
 const chartAdvancedPareto = createAdvancedChart('chart-advanced-pareto');
@@ -5132,7 +5130,7 @@ setAdvancedOption(chartAdvancedPareto, 'chart-advanced-pareto', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: params => {
     const i=params[0].dataIndex;
-    return '<strong>'+paretoLabels[i]+'</strong><br>記事数: '+paretoValues[i]+'件<br>累積構成比: '+paretoPercent[i]+'%';
+    return '<strong>'+paretoFullLabels[i]+'</strong><br>記事数: '+paretoValues[i]+'件<br>累積構成比: '+paretoPercent[i]+'%';
   }},
   legend: { data: ['記事数','累積構成比'], bottom: 0, textStyle: advancedFontText },
   grid: { left: 58, right: 72, top: 58, bottom: 128, containLabel: true },
