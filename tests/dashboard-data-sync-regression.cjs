@@ -67,7 +67,7 @@ assert.strictEqual(colData[0].date, '2026/10/25', '最新コラムの公開日�
 assert.strictEqual(colData[0].category, '基礎知識', '最新コラムのカテゴリを維持する必要があります');
 assert.strictEqual(colData[0].title, '【基礎知識】氏神さまは生まれた土地の神様？——氏神・産土神・崇敬神社の違い', '最新コラムのタイトルを維持する必要があります');
 assert.strictEqual(colData[0].desc, '氏神さまは今住んでいる地域の神様？ 産土神や鎮守、崇敬神社との違いを神社本庁の説明に沿って整理。自分の氏神さまを知る方法や、複数の神社を大切にお参りする考え方も紹介します。', '最新コラムの一覧説明を維持する必要があります');
-assert.strictEqual(colChars['66'], 1543, '最新コラムの本文文字数を維持する必要があります');
+assert.strictEqual(colChars['66'], 1522, '最新コラムの本文文字数を維持する必要があります');
 
 for (const article of colData) {
   const length = Array.from(article.desc || '').length;
@@ -76,9 +76,9 @@ for (const article of colData) {
 }
 
 assert.strictEqual(totalNewsChars, 92770, 'ニュース本文総文字数を維持する必要があります');
-assert.strictEqual(totalColChars, 59214, 'コラム本文総文字数を維持する必要があります');
-assert.strictEqual(totalNewsChars + totalColChars, 151984, '全記事の総文字数を維持する必要があります');
-assert(html.includes('<dd id="print-total-summary">156記事・151,984字</dd>'), '印刷概要の件数と文字数を維持する必要があります');
+assert.strictEqual(totalColChars, 59193, 'コラム本文総文字数を維持する必要があります');
+assert.strictEqual(totalNewsChars + totalColChars, 151963, '全記事の総文字数を維持する必要があります');
+assert(html.includes('<dd id="print-total-summary">156記事・151,963字</dd>'), '印刷概要の件数と文字数を維持する必要があります');
 assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年10月25日（320日間）</dd>'), '印刷概要の対象期間を維持する必要があります');
 assert(html.includes('<span class="dashboard-select-value">全記事データ（156件）</span>'), '全記事CSVの件数を維持する必要があります');
 assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '両媒体の一覧説明列を統一する必要があります');
