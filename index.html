@@ -373,6 +373,7 @@
   }
   .chart-reset-button:hover, .chart-reset-button:focus-visible { background: var(--deep-red); transform: translateY(-1px); outline: 2px solid var(--gold); outline-offset: 2px; }
   .chart-action-status { min-height: 1em; color: var(--mist); font-family: var(--font-main); font-size: 0.72rem; }
+  .pareto-chart-hidden { display: none !important; }
 
   /* PDFとCSVは、共有用レポートと再分析用データを明確に分けて提供する。 */
   .export-panel {
@@ -1796,6 +1797,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
         <button class="line-style-button" type="button" data-line-style="smooth" aria-pressed="false">滑らか</button>
         <button class="line-style-button" type="button" data-line-style="step" aria-pressed="false">階段状</button>
       </div>
+      <button class="chart-reset-button" id="pareto-toggle-all" type="button" aria-pressed="true">Paretoを全て非表示</button>
       <button class="chart-reset-button" id="chart-reset-all" type="button">全グラフを初期表示に戻す</button>
       <span class="chart-action-status" id="chart-action-status" role="status" aria-live="polite"></span>
     </div>
@@ -4616,7 +4618,9 @@ chartMonthly.setOption({
   yAxis: { type: 'value', axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'bar', data: mNewsCnt, itemStyle: { color: '#8f252b' }, barMaxWidth: 40 },
-    { name: '神籤草子', type: 'bar', data: mColCnt, itemStyle: { color: '#c4a059' }, barMaxWidth: 40 }
+    { name: '神籤草子', type: 'bar', data: mColCnt, itemStyle: { color: '#c4a059' }, barMaxWidth: 40 },
+    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(mNewsCnt.map((value,index)=>({index,value})),row=>-row.index,row=>row.value).reverse().map(row=>[sortedMonths[row.index],row.value]), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#8f252b',width:2.5,type:'dashed'}, itemStyle:{color:'#8f252b'}, z:5 },
+    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(mColCnt.map((value,index)=>({index,value})),row=>-row.index,row=>row.value).reverse().map(row=>[sortedMonths[row.index],row.value]), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#c4a059',width:2.5,type:'dashed'}, itemStyle:{color:'#c4a059'}, z:5 }
   ]
 });
 
@@ -4997,13 +5001,15 @@ chartScatter.setOption({
     textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 },
     formatter: p => `#${p.data[0]} [${p.data[3]}]<br>${p.data[2].slice(0,28)}…<br><strong>${p.data[1].toLocaleString()}字</strong>`
   },
-  legend: { data: ['社務所だより', '神籤草子'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
+  legend: { data: ['社務所だより', '神籤草子', 'ニュースのパレート線', 'コラムのパレート線'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
   grid: { left: '5%', right: '5%', bottom: '15%', top: '5%', containLabel: true },
   xAxis: { type: 'value', name: 'ID', nameTextStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
   yAxis: { type: 'value', name: '文字数', nameTextStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, axisLabel: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }, splitLine: { lineStyle: { color: '#f7f2ed', type: 'dashed' } } },
   series: [
     { name: '社務所だより', type: 'scatter', data: scatterNews, symbolSize: 7, itemStyle: { color: '#8f252b', opacity: 0.75 } },
-    { name: '神籤草子',     type: 'scatter', data: scatterCol,  symbolSize: 7, itemStyle: { color: '#c4a059', opacity: 0.75 } }
+    { name: '神籤草子',     type: 'scatter', data: scatterCol,  symbolSize: 7, itemStyle: { color: '#c4a059', opacity: 0.75 } },
+    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(scatterNews,row=>-row[0],row=>row[1]).reverse().map(row=>row.slice(0,4)), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#8f252b',width:2.5,type:'dashed'}, itemStyle:{color:'#8f252b'}, z:5 },
+    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(scatterCol,row=>-row[0],row=>row[1]).reverse().map(row=>row.slice(0,4)), showSymbol:true, symbol:'diamond', symbolSize:7, smooth:false, lineStyle:{color:'#c4a059',width:2.5,type:'dashed'}, itemStyle:{color:'#c4a059'}, z:5 }
   ]
 });
 
@@ -5359,7 +5365,7 @@ function adaptiveAxisMax(value) {
 }
 
 function addChartCapabilities(chart, label, options = {}) {
-  const { zoom = false, zoomGridBottom = 80, zoomLegendBottom = 36, brush = false, magic = false } = options;
+  const { zoom = false, zoomGridBottom = 92, zoomLegendBottom = 5, brush = false, magic = false } = options;
   chart.setOption({
     toolbox: createChartToolbox(label, { brush, zoom, magic }),
     aria: createChartAria(label),
@@ -5410,7 +5416,7 @@ function addChartCapabilities(chart, label, options = {}) {
           left: 16,
           right: 16,
           height: 16,
-          bottom: 8,
+          bottom: 28,
           showDetail: false,
           showDataShadow: false,
           brushSelect: false,
@@ -5431,7 +5437,7 @@ function addChartCapabilities(chart, label, options = {}) {
         }
       ]
     };
-    if (currentLegend?.data?.length) zoomOption.legend = { bottom: zoomLegendBottom };
+    if (currentLegend?.data?.length) zoomOption.legend = { top: null, bottom: zoomLegendBottom, left: 'center', right: null };
     chart.setOption(zoomOption);
     chart.resize();
   }
@@ -6140,7 +6146,7 @@ function polishDashboardChartOptions() {
         }
       };
       if(current.legend?.length)patch.legend=current.legend.map(legend=>({
-        ...legend,top:legend.top,bottom:legend.bottom,left:legend.left,right:legend.right,
+        ...legend,top:null,bottom:5,left:'center',right:null,
         itemWidth:12,itemHeight:8,itemGap:18,icon:'roundRect',
         textStyle:{...legend.textStyle,fontFamily:font,color:'#55443a',fontSize:11},
         pageTextStyle:{fontFamily:font,color:'#55443a'}
@@ -6257,6 +6263,41 @@ document.querySelectorAll('.line-style-button').forEach(button => {
 });
 applySelectedLineStyle(selectedLineStyle, false);
 
+// Paretoフロンティアは対象グラフをまたいで一括表示・非表示にする。
+// 個別の凡例操作はそのまま利用でき、全体操作で全系列をまとめて復元できる。
+const paretoToggleButton = document.getElementById('pareto-toggle-all');
+const paretoChartCard = chartAdvancedPareto.getDom()?.closest('.chart-card');
+let paretoVisible = (() => {
+  try { return localStorage.getItem('tenmei-dashboard-pareto-visible') !== 'false'; }
+  catch (_) { return true; }
+})();
+function applyParetoVisibility(visible, announce = true) {
+  dashboardCharts.forEach(({ chart }) => {
+    if (!chart || chart.isDisposed?.()) return;
+    const names = [...new Set((chart.getOption().series || [])
+      .filter(series => /パレート線/.test(String(series.name || '')))
+      .map(series => series.name))];
+    names.forEach(name => chart.dispatchAction({
+      type: visible ? 'legendSelect' : 'legendUnSelect',
+      name
+    }));
+  });
+  paretoChartCard?.classList.toggle('pareto-chart-hidden', !visible);
+  if (visible && chartAdvancedPareto && !chartAdvancedPareto.isDisposed?.()) chartAdvancedPareto.resize();
+  paretoVisible = visible;
+  if (paretoToggleButton) {
+    paretoToggleButton.textContent = visible ? 'Paretoを全て非表示' : 'Paretoを全て表示';
+    paretoToggleButton.setAttribute('aria-pressed', String(visible));
+  }
+  try { localStorage.setItem('tenmei-dashboard-pareto-visible', String(visible)); } catch (_) {}
+  if (announce) {
+    document.getElementById('chart-action-status').textContent =
+      visible ? '全グラフのParetoフロンティアとPareto図を表示しました。'
+              : '全グラフのParetoフロンティアとPareto図を非表示にしました。';
+  }
+}
+paretoToggleButton?.addEventListener('click', () => applyParetoVisibility(!paretoVisible));
+
 dashboardCharts.forEach(({ chart, label, options }) => {
   addChartCapabilities(chart, label, options);
   // ECharts標準の復元後も、後から付加した探索機能と選択済みの線形状を失わないようにする。
@@ -6264,12 +6305,16 @@ dashboardCharts.forEach(({ chart, label, options }) => {
     window.requestAnimationFrame(() => {
       addChartCapabilities(chart, label, options);
       applySelectedLineStyle(selectedLineStyle, false);
+      applyParetoVisibility(paretoVisible, false);
     });
   });
 });
+applyParetoVisibility(paretoVisible, false);
+
 
 document.getElementById('chart-reset-all').addEventListener('click', () => {
   dashboardCharts.forEach(({ chart }) => chart.dispatchAction({ type: 'restore' }));
+  window.requestAnimationFrame(() => applyParetoVisibility(paretoVisible, false));
   document.getElementById('chart-action-status').textContent = 'すべてのグラフを初期表示へ戻しました。';
 });
 
