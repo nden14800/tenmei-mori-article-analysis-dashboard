@@ -132,6 +132,13 @@ assert((html.match(/class="chart-insight-label"/g) || []).length === 135, '全41
 for (const id of ['chart-title-body-scatter', 'chart-day-of-month', 'chart-title-length', 'chart-advanced-pareto-frontier', 'chart-advanced-monthly-boxplot', 'chart-advanced-lorenz', 'chart-advanced-gap-scatter']) {
   assert(html.includes('id="' + id + '"'), '追加グラフの描画領域が必要です: ' + id);
 }
+const detailedStatsStart = html.indexOf('<div class="section-title">詳細な統計分析</div>');
+const titleDetailStart = html.indexOf('<div class="section-title">タイトルと公開日の追加分析</div>');
+assert(detailedStatsStart >= 0 && titleDetailStart > detailedStatsStart, '詳細な統計分析のセクション範囲が必要です');
+for (const id of ['chart-advanced-pareto-frontier', 'chart-advanced-monthly-boxplot', 'chart-advanced-lorenz', 'chart-advanced-gap-scatter']) {
+  const position = html.indexOf('id="' + id + '"');
+  assert(position > detailedStatsStart && position < titleDetailStart, '追加した統計グラフは詳細な統計分析内に配置します: ' + id);
+}
 assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength") && html.includes("chart: chartAdvancedParetoFrontier") && html.includes("chart: chartAdvancedMonthlyBoxplot") && html.includes("chart: chartAdvancedLorenz") && html.includes("chart: chartAdvancedGapScatter"), '追加グラフを共通リサイズ・操作対象へ登録します');
 assert(html.includes('calculateParetoFrontier') && html.includes('calculateLorenzCurve') && html.includes('paretoFrontierNews') && html.includes('lorenzNews'), 'パレートフロンティアとローレンツ曲線をデータから計算します');
 
