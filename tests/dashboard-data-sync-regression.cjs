@@ -129,18 +129,21 @@ assert(descriptionLengths.slice(38).every((length) => length >= 340 && length <=
 assert(Array.from(chartNarrativeText).length >= 16000, '全グラフの考察総文字数を維持する必要があります');
 assert((html.match(/▍ 洞察・考察/g) || []).length === 45, '説明欄の見出しを全41件で統一する必要があります');
 assert((html.match(/class="chart-insight-label"/g) || []).length === 135, '全41件の考察を「指標の概要・主な傾向・解釈上の注意」の三段構成に統一します');
-for (const id of ['chart-title-body-scatter', 'chart-day-of-month', 'chart-title-length', 'chart-advanced-pareto-frontier', 'chart-advanced-monthly-boxplot', 'chart-advanced-lorenz', 'chart-advanced-gap-scatter']) {
+for (const id of ['chart-title-body-scatter', 'chart-day-of-month', 'chart-title-length', 'chart-advanced-weekday-month-heatmap', 'chart-advanced-title-monthly-median', 'chart-advanced-lorenz', 'chart-advanced-gap-scatter']) {
   assert(html.includes('id="' + id + '"'), '追加グラフの描画領域が必要です: ' + id);
 }
+assert(!html.includes('chart-advanced-pareto-frontier'), 'パレート線は独立カードではなく既存の散布図へ統合します');
+assert(!html.includes('chart-advanced-monthly-boxplot'), '月別中央値と重複する月別箱ひげ図を残しません');
 const detailedStatsStart = html.indexOf('<div class="section-title">詳細な統計分析</div>');
 const titleDetailStart = html.indexOf('<div class="section-title">タイトルと公開日の追加分析</div>');
 assert(detailedStatsStart >= 0 && titleDetailStart > detailedStatsStart, '詳細な統計分析のセクション範囲が必要です');
-for (const id of ['chart-advanced-pareto-frontier', 'chart-advanced-monthly-boxplot', 'chart-advanced-lorenz', 'chart-advanced-gap-scatter']) {
+for (const id of ['chart-advanced-weekday-month-heatmap', 'chart-advanced-title-monthly-median', 'chart-advanced-lorenz', 'chart-advanced-gap-scatter']) {
   const position = html.indexOf('id="' + id + '"');
   assert(position > detailedStatsStart && position < titleDetailStart, '追加した統計グラフは詳細な統計分析内に配置します: ' + id);
 }
-assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength") && html.includes("chart: chartAdvancedParetoFrontier") && html.includes("chart: chartAdvancedMonthlyBoxplot") && html.includes("chart: chartAdvancedLorenz") && html.includes("chart: chartAdvancedGapScatter"), '追加グラフを共通リサイズ・操作対象へ登録します');
-assert(html.includes('calculateParetoFrontier') && html.includes('calculateLorenzCurve') && html.includes('paretoFrontierNews') && html.includes('lorenzNews'), 'パレートフロンティアとローレンツ曲線をデータから計算します');
+assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength") && html.includes("chart: chartAdvancedWeekdayMonthHeatmap") && html.includes("chart: chartAdvancedTitleMonthlyMedian") && html.includes("chart: chartAdvancedLorenz") && html.includes("chart: chartAdvancedGapScatter"), '追加グラフを共通リサイズ・操作対象へ登録します');
+assert(html.includes('calculateScatterPareto') && html.includes('calculateLorenzCurve') && html.includes('chart-title-body-scatter') && html.includes('chart-advanced-gap-scatter') && html.includes('chart-advanced-date-scatter') && html.includes('lorenzNews'), '複数の既存散布図へパレート線を統合し、ローレンツ曲線をデータから計算します');
+assert((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length >= 6, '3つの既存散布図へ媒体別のパレート線を追加します');
 
 const styleBlocks = [...html.matchAll(/<style\b/gi)];
 assert.strictEqual(styleBlocks.length, 1, 'スタイルシートは一つに統合する必要があります');
