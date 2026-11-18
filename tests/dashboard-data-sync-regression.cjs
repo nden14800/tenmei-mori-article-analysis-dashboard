@@ -149,7 +149,7 @@ assert(html.includes('id="pareto-toggle-all"') && html.includes('function applyP
 assert(html.includes("type: visible ? 'legendSelect' : 'legendUnSelect'"), '凡例操作と連動してパレート線を全グラフで表示・非表示にします');
 assert(html.includes('pareto-chart-hidden') && html.includes("paretoChartCard?.classList.toggle('pareto-chart-hidden', !visible)"), '独立したパレート図も一括操作の対象にします');
 assert(html.includes('top:null,bottom:5,left:\'center\',right:null'), '全グラフの凡例を下部中央へ統一します');
-assert(html.includes('zoomLegendBottom=5') && html.includes('bottom: 28'), 'ズーム用スライダーと凡例の位置を分離します');
+assert(/zoomLegendBottom\s*=\s*5/.test(html) && /bottom:\s*28/.test(html), 'ズーム用スライダーと凡例の位置を分離します');
 assert(!/legend:\s*\{[^}]*\btop\s*:\s*(?!null)/.test(html), '右上配置の凡例を残しません');
 assert(html.includes('chartMonthly.setOption') && html.includes('chartScatter.setOption'), '月別投稿数と記事ID・文字数の散布図にもパレート線を表示します');
 assert((html.match(/max\s*:\s*100\b/g) || []).length === 6, '固定上限100は累積構成比・月内構成比・ローレンツ曲線・レーダー指標など百分率尺度の軸だけに限定します');
