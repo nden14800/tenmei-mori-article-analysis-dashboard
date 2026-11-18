@@ -155,7 +155,7 @@ assert(html.includes('chartMonthly.setOption') && html.includes('chartScatter.se
 const graphIds = [...html.matchAll(/id="(chart-[^"]+)"/g)].map((match) => match[1]).filter((id) => !['chart-reset-all', 'chart-action-status'].includes(id));
 assert.strictEqual(graphIds.length, 46, '描画対象のグラフ数を46件維持します');
 assert.strictEqual(new Set(graphIds).size, graphIds.length, 'グラフIDの重複を残しません');
-const graphTitles = [...html.matchAll(/<div class="chart-title">([\\s\\S]*?)<\\/div>/g)].map((match) => match[1].replace(/<[^>]+>/g, '').trim());
+const graphTitles = [...html.matchAll(/<div class="chart-title">([\s\S]*?)<\/div>/g)].map((match) => match[1].replace(/<[^>]+>/g, '').trim());
 assert.strictEqual(new Set(graphTitles).size, graphTitles.length, '同じタイトルの重複グラフを残しません');
 assert((html.match(/max\s*:\s*100\b/g) || []).length === 6, '固定上限100は累積構成比・月内構成比・ローレンツ曲線・レーダー指標など百分率尺度の軸だけに限定します');
 
