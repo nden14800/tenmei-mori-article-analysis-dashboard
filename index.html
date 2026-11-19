@@ -5083,7 +5083,7 @@ const maxDay = Math.max(...Object.values(dailyCounts), 1);
 const heatmapYears = Array.from(new Set(heatmapData.map(([date]) => Number(date.slice(0, 4))))).sort((a, b) => a - b);
 const heatmapPanelHeight = 156;
 const heatmapTopPadding = 26;
-const heatmapBottomPadding = 44;
+const heatmapBottomPadding = 82; // 凡例専用の余白を確保し、最終週のセルと重ねない
 const heatmapChartElement = document.getElementById('chart-heatmap');
 heatmapChartElement.style.height = `${heatmapTopPadding + (heatmapYears.length * heatmapPanelHeight) + heatmapBottomPadding}px`;
 
@@ -5113,7 +5113,7 @@ const chartHeatmap = createDashboardChart(heatmapChartElement);
 chartHeatmap.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
-  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 7, left: 'center', inRange: { color: ['#f7f2ed', '#ead8c8', '#8f252b'] }, textStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
+  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 18, left: 'center', itemWidth: 170, itemHeight: 12, inRange: { color: ['#f7f2ed', '#ead8c8', '#8f252b'] }, textStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
   calendar: heatmapCalendars,
   series: heatmapSeries
 });
