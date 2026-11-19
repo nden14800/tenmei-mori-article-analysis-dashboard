@@ -5114,7 +5114,7 @@ chartHeatmap.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
   // カレンダーヒートマップでも他の横長visualMapと同じ向きを明示。操作ハンドルは無効化。
-  visualMap: [{
+  visualMap: {
     type: 'continuous',
     show: true,
     min: 0,
@@ -5123,14 +5123,14 @@ chartHeatmap.setOption({
     orient: 'horizontal',
     inverse: false,
     left: 'center',
-    top: heatmapTopPadding + (heatmapYears.length * heatmapPanelHeight) + 8,
+    bottom: 18,
     itemWidth: 170,
     itemHeight: 12,
     calculable: false,
     realtime: false,
     inRange: { color: ['#f7f2ed', '#ead8c8', '#8f252b'] },
     textStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }
-  }],
+  },
   calendar: heatmapCalendars,
   series: heatmapSeries
 });
@@ -6695,7 +6695,12 @@ function polishDashboardChartOptions() {
    if(current.singleAxis?.length)option.singleAxis=current.singleAxis.map(axis=>axisStyle(axis,'single'));
    if(current.parallelAxis?.length)option.parallelAxis=current.parallelAxis.map(axis=>({...axis,nameTextStyle:{...axis.nameTextStyle,fontFamily:font,color:'#55443a',fontSize:11},axisLabel:{...axis.axisLabel,fontFamily:font,color:'#786e67',fontSize:10},axisLine:{...axis.axisLine,lineStyle:{...axis.axisLine?.lineStyle,color:'#e7ded7'}}}));
    if(current.grid?.length)option.grid=current.grid.map(grid=>({...grid,containLabel:grid.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
-   if(current.visualMap?.length)option.visualMap=current.visualMap.map(map=>({...map,inRange:{...map.inRange,color:['#fffdfb','#f1e5d5','#d6b36b','#b65d32','#8f252b']},textStyle:{...map.textStyle,fontFamily:font,color:'#55443a'}}));
+   if(current.visualMap?.length)option.visualMap=current.visualMap.map(map=>({
+    ...map,
+    ...(chart.getDom?.()?.id==='chart-heatmap'?{orient:'horizontal',left:'center',bottom:18,itemWidth:170,itemHeight:12}:{}),
+    inRange:{...map.inRange,color:['#fffdfb','#f1e5d5','#d6b36b','#b65d32','#8f252b']},
+    textStyle:{...map.textStyle,fontFamily:font,color:'#55443a'}
+   }));
    if(current.dataZoom?.length)option.dataZoom=current.dataZoom.map(zoom=>({...zoom,borderColor:'#e7ded7',backgroundColor:'#f7f2ed',fillerColor:'rgba(155,116,46,.20)',handleStyle:{...zoom.handleStyle,color:'#fffdfb',borderColor:'#9b742e'},moveHandleStyle:{...zoom.moveHandleStyle,color:'#9b742e'},textStyle:{...zoom.textStyle,fontFamily:font,color:'#786e67'}}));
    if(series.length)option.series=series.map((item,index)=>{
     const rawColor=item.itemStyle?.color??item.lineStyle?.color??item.areaStyle?.color;
