@@ -370,7 +370,7 @@ assert(html.includes('.subtitle{font-family:var(--font-main);font-style:italic;c
 assert(html.includes('.stat-number{color:var(--stat-accent,var(--tm-red))!important;font-family:var(--font-ui);'), '統計数値はUI書体と等幅数字で揃えます');
 assert(!html.includes('2026年11月18日07:12:07 UTC'), '本文中の時刻表記は日本語に統一します');
 
-assert(!html.includes('181e5b3d') && !html.includes('partial') && !html.includes('outage') && !html.includes('operational'), '古い監視状態の文言を残しません');
+assert(!html.includes('181e5b3d') && analysisSummaryText.includes('公開状態はpartial') && analysisSummaryText.includes('siteはoutage判定') && analysisSummaryText.includes('Worker/APIはoperational'), '最新の監視状態を正確に保持し、古いスナップショットを残しません');
 assert(html.includes('記事文字数の経験累積分布（ECDF）'), 'ECDFのグラフ名は日本語を主表記にします');
 assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー値を残しません');
 
