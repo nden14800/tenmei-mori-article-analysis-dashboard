@@ -81,7 +81,7 @@ const expectedNewsHashes = Object.fromEntries(sourceNewsData.map((article) => [S
 const expectedColHashes = Object.fromEntries(sourceColData.map((article) => [String(article.id), contentHash(article.content)]));
 const totalNewsChars = Object.values(newsChars).reduce((sum, value) => sum + Number(value), 0);
 const totalColChars = Object.values(colChars).reduce((sum, value) => sum + Number(value), 0);
-const validPublicationTime = /^([01]\\d|2[0-3]):[0-5]\\d$/;
+const validPublicationTime = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
 const newsHourCounts = Array(24).fill(0);
 for (const article of newsData) {
   if (!article.time) continue;
@@ -107,7 +107,7 @@ const latestColumn = sourceColData.reduce((latest, article) => article.id > late
 assert.strictEqual(newsData[0].id, latestNews.id, '最新ニュースを本体mainの最大IDと一致させます');
 assert.strictEqual(colData[0].id, latestColumn.id, '最新コラムを本体mainの最大IDと一致させます');
 const allDates = [...sourceNewsData, ...sourceColData].map((article) => article.date).sort();
-const toUtcDate = (value) => new Date(value.replace(/\\//g, '-') + 'T00:00:00Z');
+const toUtcDate = (value) => new Date(value.split('/').join('-') + 'T00:00:00Z');
 const startDate = toUtcDate(allDates[0]);
 const endDate = toUtcDate(allDates[allDates.length - 1]);
 const inclusiveDays = Math.round((endDate - startDate) / 86400000) + 1;
