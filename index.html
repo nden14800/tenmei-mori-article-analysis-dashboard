@@ -1958,6 +1958,189 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
   <meta name="tenmei-source-index-blob" content="fa7eaf6e28374f6f2fe0b19355140925e6aa0bea">
   <meta name="tenmei-source-health-history-blob" content="cda73eb77a1b55143d26b5792653a411987c2c10">
   <meta name="tenmei-source-health-current-blob" content="5a575e6453dab457b428495ee1b5d7e718e4cb6a">
+
+<style id="tenmei-canonical-choice-completion">
+/* Restore the complete canonical Tenmei choice popover and option styles.
+   The previous dashboard copy ended at the popover selector and omitted this block. */
+.csv-tenmei-choice {
+  --tenmei-control-accent: var(--deep-red, #8f252b);
+  --card-border: var(--border, #e7ded7);
+  --input-bg: #fffdfb;
+  --text-main: var(--ink, #302923);
+  --text-sub: var(--mist, #786e67);
+  --card-bg: #fffdfb;
+}
+.csv-tenmei-choice .tenmei-choice__trigger {
+  border-color: var(--card-border) !important;
+  background: var(--input-bg) !important;
+  color: var(--text-main) !important;
+  font-family: var(--font-ui, 'Zen Kaku Gothic New', sans-serif) !important;
+  font-size: .88rem !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  box-shadow: none;
+}
+.csv-tenmei-choice .tenmei-choice__options { display:grid !important; grid-template-columns:minmax(0,1fr); }
+.csv-tenmei-choice .tenmei-choice__option {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  width:100% !important;
+  min-height:38px !important;
+  border:1px solid transparent !important;
+  border-radius:7px !important;
+  background:transparent !important;
+  color:var(--text-main) !important;
+  font-family:var(--font-ui, 'Zen Kaku Gothic New', sans-serif) !important;
+  font-size:.84rem !important;
+  font-weight:500 !important;
+  text-align:left !important;
+  box-shadow:none !important;
+}
+.csv-tenmei-choice .tenmei-choice__option:hover,
+.csv-tenmei-choice .tenmei-choice__option.is-active {
+  border-color:color-mix(in srgb,var(--tenmei-control-accent) 24%,transparent) !important;
+  background:color-mix(in srgb,var(--tenmei-control-accent) 10%,transparent) !important;
+}
+.csv-tenmei-choice .tenmei-choice__option[aria-selected="true"] {
+  border-color:color-mix(in srgb,var(--tenmei-control-accent) 38%,transparent) !important;
+  background:color-mix(in srgb,var(--tenmei-control-accent) 15%,transparent) !important;
+  color:var(--tenmei-control-accent) !important;
+  font-weight:800 !important;
+}
+.csv-tenmei-choice .tenmei-choice__popover {
+  position:absolute !important;
+  top:calc(100% + 6px) !important;
+  left:0 !important;
+  z-index:241 !important;
+  width:100% !important;
+  min-width:min(100%,296px) !important;
+  padding:6px !important;
+  border:1px solid color-mix(in srgb,var(--tenmei-control-accent) 25%,var(--card-border)) !important;
+  border-radius:10px !important;
+  background:var(--card-bg) !important;
+  box-shadow:0 10px 24px rgba(31,22,18,.14) !important;
+  box-sizing:border-box !important;
+}
+.csv-tenmei-choice .tenmei-choice__popover[hidden] { display:none !important; }
+.csv-tenmei-choice .tenmei-choice__option-label { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.csv-tenmei-choice .tenmei-choice__option-check { color:var(--tenmei-control-accent); }
+.csv-export-row .csv-tenmei-choice { position:relative; flex:1 1 220px; min-width:0; z-index:1; }
+.csv-export-row .csv-tenmei-choice[data-open="true"] { z-index:240 !important; }
+.tenmei-choice__popover,
+    .tenmei-date__popover {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        z-index: 120;
+        width: 100%;
+        min-width: min(100%, 296px);
+        padding: 6px;
+        border: 1px solid color-mix(in srgb, var(--tenmei-control-accent) 25%, var(--card-border));
+        border-radius: 10px;
+        background: var(--card-bg);
+        box-shadow: 0 10px 24px rgba(31, 22, 18, 0.14);
+        box-sizing: border-box;
+        transform-origin: top center;
+    }
+    .tenmei-choice__popover[hidden],
+    .tenmei-date__popover[hidden] { display: none !important; }
+    .tenmei-choice__options { display: grid; max-height: 252px; gap: 1px; overflow-y: auto; overscroll-behavior: contain; padding: 0; }
+    .tenmei-choice__option {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        min-height: 38px;
+        padding: 7px 9px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--text-main);
+        font-family: 'Zen Kaku Gothic New', 'Zen Old Mincho', sans-serif;
+        font-size: 0.84rem;
+        line-height: 1.35;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 120ms ease, color 120ms ease;
+    }
+    .tenmei-choice__option:hover,
+    .tenmei-choice__option.is-active { border-color: color-mix(in srgb, var(--tenmei-control-accent) 24%, transparent); background: color-mix(in srgb, var(--tenmei-control-accent) 10%, transparent); }
+    .tenmei-choice__option[aria-selected="true"] { border-color: color-mix(in srgb, var(--tenmei-control-accent) 38%, transparent); background: color-mix(in srgb, var(--tenmei-control-accent) 15%, transparent); color: var(--tenmei-control-accent); font-weight: 800; }
+    .tenmei-choice__option-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tenmei-choice__option-detail { display: none; }
+    .tenmei-choice__option-check { color: var(--tenmei-control-accent); font-size: 0.9rem; }
+    .tenmei-date__popover { width: min(318px, calc(100vw - 32px)); padding: 12px; }
+    .tenmei-date__header { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; align-items: center; gap: 6px; margin-bottom: 9px; }
+    .tenmei-date__title { margin: 0; color: var(--text-main); font-family: 'Zen Old Mincho', serif; font-size: 0.95rem; font-weight: 800; text-align: center; }
+    .tenmei-date__nav,
+    .tenmei-date__utility {
+        display: inline-grid;
+        min-height: 36px;
+        place-items: center;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        background: color-mix(in srgb, var(--input-bg) 88%, var(--card-bg));
+        color: var(--text-main);
+        cursor: pointer;
+        transition: background-color 140ms cubic-bezier(0.23, 1, 0.32, 1), border-color 140ms cubic-bezier(0.23, 1, 0.32, 1), transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .tenmei-date__nav:hover,
+    .tenmei-date__utility:hover { border-color: color-mix(in srgb, var(--tenmei-control-accent) 48%, var(--card-border)); background: color-mix(in srgb, var(--tenmei-control-accent) 9%, transparent); }
+    .tenmei-date__nav:active,
+    .tenmei-date__utility:active { transform: scale(0.96); }
+    .tenmei-date__weekdays,
+    .tenmei-date__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+    .tenmei-date__weekdays { margin-bottom: 3px; color: var(--text-sub); font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.68rem; font-weight: 800; text-align: center; }
+    .tenmei-date__weekdays span:first-child { color: #b53b3b; }
+    .tenmei-date__weekdays span:last-child { color: #557ca5; }
+    .tenmei-date__day {
+        min-height: 35px;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--text-main);
+        font-family: 'Zen Kaku Gothic New', sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), transform 120ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .tenmei-date__day:hover,
+    .tenmei-date__day.is-focused { border-color: color-mix(in srgb, var(--tenmei-control-accent) 35%, transparent); background: color-mix(in srgb, var(--tenmei-control-accent) 10%, transparent); }
+    .tenmei-date__day.is-today { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tenmei-control-accent) 50%, transparent); }
+    .tenmei-date__day[aria-selected="true"] { border-color: var(--tenmei-control-accent); background: var(--tenmei-control-accent); color: #fff; box-shadow: 0 5px 12px color-mix(in srgb, var(--tenmei-control-accent) 28%, transparent); }
+    .tenmei-date__day:active { transform: scale(0.94); }
+    .tenmei-date__blank { min-height: 35px; }
+    .tenmei-date__footer { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--card-border); }
+    .tenmei-date__utility { min-height: 34px; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.74rem; font-weight: 800; }
+    #view-zodiac .tenmei-choice { --tenmei-control-accent: var(--zodiac-accent); }
+    #view-history .tenmei-choice,
+    #view-history .tenmei-date { --tenmei-control-accent: var(--history-red, #a82a2f); }
+    #view-zodiac .tenmei-choice__trigger { min-height: var(--ver4-control-height); border-radius: var(--ver4-control-radius); font-size: 0.95rem; }
+    .dark .tenmei-choice__trigger,
+    .dark .tenmei-date__trigger { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.045); }
+    .dark .tenmei-choice__popover,
+    .dark .tenmei-date__popover { border-color: rgba(231, 197, 163, 0.19); background: #1c1615; box-shadow: 0 20px 44px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.04); }
+    .dark .tenmei-choice__option:hover,
+    .dark .tenmei-choice__option.is-active { background: color-mix(in srgb, var(--tenmei-control-accent) 15%, transparent); }
+    .dark .tenmei-date__nav,
+    .dark .tenmei-date__utility { border-color: rgba(255,255,255,0.11); background: rgba(255,255,255,0.05); }
+    @media (prefers-reduced-motion: reduce) {
+        .tenmei-choice__trigger,
+        .tenmei-date__trigger,
+        .tenmei-choice__chevron,
+        .tenmei-date__chevron,
+        .tenmei-choice__option,
+        .tenmei-date__day,
+        .tenmei-date__nav,
+        .tenmei-date__utility { transition: none !important; }
+    }
+
+    
+</style>
+
 </head>
 <body>
 
