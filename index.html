@@ -5113,18 +5113,8 @@ const chartHeatmap = createDashboardChart(heatmapChartElement);
 chartHeatmap.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
-  // 以前の横向きECharts visualMapを維持し、下端位置だけ調整。
-  visualMap: {
-    min: 0,
-    max: maxDay,
-    orient: 'horizontal',
-    bottom: 4,
-    left: 'center',
-    itemWidth: 170,
-    itemHeight: 12,
-    inRange: { color: ['#f7f2ed', '#ead8c8', '#8f252b'] },
-    textStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }
-  },
+  // 3c4241e以前に正常表示されていたECharts標準visualMap設定をそのまま復元。
+  visualMap: { min: 0, max: maxDay, orient: 'horizontal', bottom: 18, left: 'center', itemWidth: 170, itemHeight: 12, inRange: { color: ['#f7f2ed', '#ead8c8', '#8f252b'] }, textStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
   calendar: heatmapCalendars,
   series: heatmapSeries
 });
