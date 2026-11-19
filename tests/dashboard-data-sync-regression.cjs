@@ -58,12 +58,12 @@ function extractSourceArray(marker) {
     const char = sourceHtml[index];
     if (quote) {
       if (escaped) { escaped = false; continue; }
-      if (char === '\\\\') { escaped = true; continue; }
+      if (char === '\\') { escaped = true; continue; }
       if (char === quote) quote = null;
       continue;
     }
     if (char === String.fromCharCode(96)) { template = !template; continue; }
-    if (template) { if (char === '\\\\') index += 1; continue; }
+    if (template) { if (char === '\\') index += 1; continue; }
     if (char === '"' || char === "'") { quote = char; continue; }
     if (char === '[') depth += 1;
     else if (char === ']') {
