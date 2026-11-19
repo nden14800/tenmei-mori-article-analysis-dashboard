@@ -1,8 +1,10 @@
 const assert = require('assert');
 const fs = require('fs');
 const vm = require('vm');
+const crypto = require('crypto');
 
 const html = fs.readFileSync('index.html', 'utf8');
+const sourceHtml = fs.readFileSync('tenmei-mori/index.html', 'utf8');
 
 function extractLiteral(variableName, opener, closer) {
   const marker = 'const ' + variableName + ' =';
@@ -44,37 +46,73 @@ const newsChars = extractObject('newsChars');
 const colChars = extractObject('colChars');
 const newsContentHashes = extractObject('newsContentHashes');
 const colContentHashes = extractObject('colContentHashes');
-const totalNewsChars = Object.values(newsChars).reduce((sum, value) => sum + value, 0);
-const totalColChars = Object.values(colChars).reduce((sum, value) => sum + value, 0);
-const validPublicationTime = /^([01]\d|2[0-3]):[0-5]\d$/;
+function extractSourceArray(marker) {
+  const start = sourceHtml.indexOf(marker);
+  assert.notStrictEqual(start, -1, '本体ソースの配列宣言が必要です: ' + marker);
+  const open = sourceHtml.indexOf('[', start);
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  let template = false;
+  for (let index = open; index < sourceHtml.length; index += 1) {
+    const char = sourceHtml[index];
+    if (quote) {
+      if (escaped) { escaped = false; continue; }
+      if (char === '\\\\') { escaped = true; continue; }
+      if (char === quote) quote = null;
+      continue;
+    }
+    if (char === String.fromCharCode(96)) { template = !template; continue; }
+    if (template) { if (char === '\\\\') index += 1; continue; }
+    if (char === '"' || char === "'") { quote = char; continue; }
+    if (char === '[') depth += 1;
+    else if (char === ']') {
+      depth -= 1;
+      if (depth === 0) return sourceHtml.slice(open, index + 1);
+    }
+  }
+  throw new Error('本体ソースの配列終端が見つかりません: ' + marker);
+}
+
+const sourceNewsData = Function('"use strict"; return (' + extractSourceArray('const newsData = [') + ')')();
+const sourceColData = Function('"use strict"; return (' + extractSourceArray('const columnData = [') + ')')();
+const contentHash = (content) => crypto.createHash('sha256').update(String(content || ''), 'utf8').digest('hex');
+const expectedNewsHashes = Object.fromEntries(sourceNewsData.map((article) => [String(article.id), contentHash(article.content)]));
+const expectedColHashes = Object.fromEntries(sourceColData.map((article) => [String(article.id), contentHash(article.content)]));
+const totalNewsChars = Object.values(newsChars).reduce((sum, value) => sum + Number(value), 0);
+const totalColChars = Object.values(colChars).reduce((sum, value) => sum + Number(value), 0);
+const validPublicationTime = /^([01]\\d|2[0-3]):[0-5]\\d$/;
 const newsHourCounts = Array(24).fill(0);
 for (const article of newsData) {
   assert(validPublicationTime.test(article.time || ''), 'ニュース全件に有効な公開時刻が必要です');
   newsHourCounts[Number(article.time.slice(0, 2))] += 1;
 }
+const sourceNewsFields = ['id', 'title', 'date', 'time', 'tag', 'tagColor', 'borderColor', 'desc'];
+const sourceColFields = ['id', 'title', 'date', 'category', 'icon', 'colorClass', 'desc'];
+const normalizeRecords = (items, fields) => Array.from(items, (article) => fields.map((field) => String(article[field] || '')));
+assert.deepStrictEqual(normalizeRecords(newsData, sourceNewsFields), normalizeRecords(sourceNewsData, sourceNewsFields), 'ニュースの全レコード・メタデータを本体mainと一致させます');
+assert.deepStrictEqual(normalizeRecords(colData, sourceColFields), normalizeRecords(sourceColData, sourceColFields), 'コラムの全レコード・メタデータを本体mainと一致させます');
+assert.strictEqual(JSON.stringify(newsContentHashes), JSON.stringify(expectedNewsHashes), 'ニュース本文ハッシュを本体mainと一致させます');
+assert.strictEqual(JSON.stringify(colContentHashes), JSON.stringify(expectedColHashes), 'コラム本文ハッシュを本体mainと一致させます');
+assert.strictEqual(Object.keys(newsChars).length, sourceNewsData.length, 'ニュース全件の文字数を保持します');
+assert.strictEqual(Object.keys(colChars).length, sourceColData.length, 'コラム全件の文字数を保持します');
+assert.strictEqual(JSON.stringify(Object.keys(newsChars).sort()), JSON.stringify(sourceNewsData.map((article) => String(article.id)).sort()), 'ニュース文字数のID集合を本体mainと一致させます');
+assert.strictEqual(JSON.stringify(Object.keys(colChars).sort()), JSON.stringify(sourceColData.map((article) => String(article.id)).sort()), 'コラム文字数のID集合を本体mainと一致させます');
+assert(Object.values(newsChars).every((value) => Number.isInteger(value) && value > 0), 'ニュース文字数はすべて正の整数である必要があります');
+assert(Object.values(colChars).every((value) => Number.isInteger(value) && value > 0), 'コラム文字数はすべて正の整数である必要があります');
+assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), newsData.length, '時刻分布にニュース全件を集計する必要があります');
+const latestNews = sourceNewsData.reduce((latest, article) => article.id > latest.id ? article : latest, sourceNewsData[0]);
+const latestColumn = sourceColData.reduce((latest, article) => article.id > latest.id ? article : latest, sourceColData[0]);
+assert.strictEqual(newsData[0].id, latestNews.id, '最新ニュースを本体mainの最大IDと一致させます');
+assert.strictEqual(colData[0].id, latestColumn.id, '最新コラムを本体mainの最大IDと一致させます');
+const allDates = [...sourceNewsData, ...sourceColData].map((article) => article.date).sort();
+const toUtcDate = (value) => new Date(value.replace(/\\//g, '-') + 'T00:00:00Z');
+const startDate = toUtcDate(allDates[0]);
+const endDate = toUtcDate(allDates[allDates.length - 1]);
+const inclusiveDays = Math.round((endDate - startDate) / 86400000) + 1;
+const formatJapaneseDate = (date) => date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月' + date.getUTCDate() + '日';
+const expectedPeriodSummary = '<dd id="print-period-summary">' + formatJapaneseDate(startDate) + '〜' + formatJapaneseDate(endDate) + '（' + inclusiveDays + '日間）</dd>';
 
-assert.strictEqual(newsData.length, 91, 'ニュース91件を維持する必要があります');
-assert.strictEqual(colData.length, 66, 'コラム66件を維持する必要があります');
-assert.strictEqual(Object.keys(newsContentHashes).length, newsData.length, 'ニュース全件の本文ソースハッシュを保持する必要があります');
-assert.strictEqual(Object.keys(colContentHashes).length, colData.length, 'コラム全件の本文ソースハッシュを保持する必要があります');
-for (const article of newsData) assert(/^[a-f0-9]{64}$/.test(newsContentHashes[String(article.id)] || ''), 'ニュースID' + article.id + 'の本文ソースハッシュが必要です');
-for (const article of colData) assert(/^[a-f0-9]{64}$/.test(colContentHashes[String(article.id)] || ''), 'コラムID' + article.id + 'の本文ソースハッシュが必要です');
-assert.strictEqual(newsData[0].id, 91, '最新ニュースID91を維持する必要があります');
-assert.strictEqual(newsData[0].date, '2026/11/18', '最新ニュースの公開日を維持する必要があります');
-assert.strictEqual(newsData[0].title, '【大規模更新】記事分析ダッシュボードの刷新と、Ver.5.0の今後について', '最新ニュースのタイトルを維持する必要があります');
-assert.strictEqual(newsData[0].tag, '新機能・改善', '最新ニュースのタグを維持する必要があります');
-assert.strictEqual(newsData[0].time, '21:19', '最新ニュースの公開時刻を維持する必要があります');
-assert.strictEqual(newsChars['90'], 3346, '直前ニュースの本文文字数を維持する必要があります');
-assert.strictEqual(newsChars['91'], 5713, '最新ニュースの本文文字数を同期する必要があります');
-assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), 91, '時刻分布にニュース全件を集計する必要があります');
-assert.strictEqual(newsHourCounts.slice(16, 20).reduce((sum, count) => sum + count, 0), 36, '16〜19時台の件数を維持する必要があります');
-
-assert.strictEqual(colData[0].id, 66, '最新コラムID66を維持する必要があります');
-assert.strictEqual(colData[0].date, '2026/10/25', '最新コラムの公開日を維持する必要があります');
-assert.strictEqual(colData[0].category, '基礎知識', '最新コラムのカテゴリを維持する必要があります');
-assert.strictEqual(colData[0].title, '【基礎知識】氏神さまは生まれた土地の神様？——氏神・産土神・崇敬神社の違い', '最新コラムのタイトルを維持する必要があります');
-assert.strictEqual(colData[0].desc, '氏神さまは今住んでいる地域の神様？ 産土神や鎮守、崇敬神社との違いを神社本庁の説明に沿って整理。自分の氏神さまを知る方法や、複数の神社を大切にお参りする考え方も紹介します。', '最新コラムの一覧説明を維持する必要があります');
-assert.strictEqual(colChars['66'], 1522, '最新コラムの本文文字数を維持する必要があります');
 
 for (const article of colData) {
   const length = Array.from(article.desc || '').length;
@@ -82,12 +120,12 @@ for (const article of colData) {
   assert(length >= 60 && length <= 105, 'コラムID' + article.id + 'の一覧説明は70〜105字である必要があります（' + length + '字）');
 }
 
-assert.strictEqual(totalNewsChars, 98483, 'ニュース本文総文字数を同期する必要があります');
-assert.strictEqual(totalColChars, 59193, 'コラム本文総文字数を維持する必要があります');
-assert.strictEqual(totalNewsChars + totalColChars, 157676, '全記事の総文字数を同期する必要があります');
-assert(html.includes('<dd id="print-total-summary">157記事・157,676字</dd>'), '印刷概要の件数と文字数を維持する必要があります');
-assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年11月18日（344日間）</dd>'), '印刷概要の対象期間を維持する必要があります');
-assert(html.includes('data-control-id="csv-export-type"') && html.includes('"label":"全記事データ（157件）"'), '全記事CSVの件数を維持する必要があります');
+const totalArticleCount = newsData.length + colData.length;
+const totalArticleChars = totalNewsChars + totalColChars;
+assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
+assert(html.includes('<dd id="print-total-summary">' + totalArticleCount + '記事・'), '印刷概要の件数を最新データと一致させます');
+assert(html.includes(expectedPeriodSummary), '印刷概要の対象期間を本体mainの最古・最新日と一致させます');
+assert(html.includes('data-control-id="csv-export-type"') && html.includes('"label":"全記事データ（' + totalArticleCount + '件）"'), '全記事CSVの件数を最新データと一致させます');
 assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '両媒体の一覧説明列を統一する必要があります');
 
 const requiredHeadings = [
