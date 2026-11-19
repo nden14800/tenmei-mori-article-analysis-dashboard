@@ -1575,7 +1575,7 @@ h1.site-title,.section-title,.header-kamon .brand-kanji{font-family:'Zen Old Min
 .chart-title::before,.chart-card .chart-title::before,.advanced-chart-card .chart-title::before{content:'';flex:0 0 3px;width:3px;height:1.35em;margin-top:.16em;border-radius:3px;background:linear-gradient(180deg,var(--tm-red),var(--tm-gold))}
 .chart-box,.chart-box-tall,.chart-box-advanced,.heatmap-chart{display:block!important;width:100%!important;min-width:0!important;flex:0 0 auto!important;border-radius:10px!important;background:linear-gradient(180deg,rgba(255,253,251,.7),rgba(247,242,237,.2))!important}
 .chart-box{height:360px!important}.chart-box-tall{height:420px!important}.chart-box.zoomable-chart{height:390px!important}.chart-box-tall.zoomable-chart{height:445px!important}
-.chart-box-advanced,.advanced-charts-grid .chart-box-advanced{height:380px!important}.advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:420px!important}.heatmap-chart{height:390px!important}
+.chart-box-advanced,.advanced-charts-grid .chart-box-advanced{height:380px!important}.advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:420px!important}
 .chart-desc,.chart-card .chart-desc,.advanced-chart-card .chart-desc{display:block!important;max-width:none!important;margin:.9rem 0 0!important;padding:.9rem 1.05rem!important;border:1px solid var(--tm-border)!important;border-left:3px solid var(--tm-gold)!important;border-radius:10px!important;background:linear-gradient(135deg,#f7f2ed,#fffdfb)!important;color:#55443a!important;font-family:var(--font-ui)!important;font-size:.79rem!important;font-weight:400!important;line-height:1.9!important;letter-spacing:0!important;text-wrap:pretty;overflow-wrap:anywhere}
 .chart-desc-title{display:flex;align-items:center;gap:.45rem;margin:0 0 .5rem;color:#89631f;font-size:.74rem;font-weight:700;letter-spacing:.045em;line-height:1.5}
 .chart-desc-title::before{content:'';width:5px;height:5px;flex:0 0 5px;border-radius:50%;background:var(--tm-gold)}
@@ -1609,7 +1609,7 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
 .advanced-charts-intro{max-width:900px;margin:0 0 1.2rem;color:var(--tm-muted);font-size:.83rem;line-height:1.9}.article-index-section{margin-top:2.5rem}
 .ornamental-divider{color:var(--tm-gold);font-family:'Zen Old Mincho',serif;letter-spacing:.16em}:focus-visible{outline:2px solid var(--tm-gold);outline-offset:3px}
 @media(max-width:900px){.charts-grid,.charts-grid-3,.advanced-charts-grid{grid-template-columns:minmax(0,1fr)!important}.chart-card-wide,.advanced-charts-grid .advanced-chart-wide{grid-column:1!important}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.container{padding-inline:1rem}}
-@media(max-width:700px){body{font-size:14px}header{padding:2rem 1rem 1.6rem;margin-bottom:1.6rem}.section-title{margin:2rem 0 1rem}.chart-card,.advanced-chart-card{padding:.9rem!important;border-radius:12px!important}.chart-title{font-size:.84rem!important;min-height:2.8em!important}.chart-box{height:320px!important}.chart-box-tall{height:370px!important}.chart-box.zoomable-chart{height:350px!important}.chart-box-tall.zoomable-chart{height:390px!important}.chart-box-advanced,.advanced-charts-grid .chart-box-advanced{height:350px!important}.advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:380px!important}.heatmap-chart{height:350px!important}.chart-desc{padding:.8rem .9rem!important;font-size:.76rem!important;line-height:1.85!important}.stat-card{padding:1rem .65rem!important}.stat-number{font-size:1.8rem!important}.table-wrap{border-radius:10px!important}}
+@media(max-width:700px){body{font-size:14px}header{padding:2rem 1rem 1.6rem;margin-bottom:1.6rem}.section-title{margin:2rem 0 1rem}.chart-card,.advanced-chart-card{padding:.9rem!important;border-radius:12px!important}.chart-title{font-size:.84rem!important;min-height:2.8em!important}.chart-box{height:320px!important}.chart-box-tall{height:370px!important}.chart-box.zoomable-chart{height:350px!important}.chart-box-tall.zoomable-chart{height:390px!important}.chart-box-advanced,.advanced-charts-grid .chart-box-advanced{height:350px!important}.advanced-charts-grid .advanced-chart-wide .chart-box-advanced{height:380px!important}.chart-desc{padding:.8rem .9rem!important;font-size:.76rem!important;line-height:1.85!important}.stat-card{padding:1rem .65rem!important}.stat-number{font-size:1.8rem!important}.table-wrap{border-radius:10px!important}}
 @media(max-width:420px){.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.6rem!important}.stat-number{font-size:1.55rem!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}.chart-card:hover,.advanced-chart-card:hover{transform:none!important}}
 
@@ -5114,7 +5114,7 @@ chartHeatmap.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
   // カレンダーヒートマップでも他の横長visualMapと同じ向きを明示。操作ハンドルは無効化。
-  visualMap: {
+  visualMap: [{
     type: 'continuous',
     show: true,
     min: 0,
@@ -5123,14 +5123,14 @@ chartHeatmap.setOption({
     orient: 'horizontal',
     inverse: false,
     left: 'center',
-    bottom: 18,
+    top: heatmapTopPadding + (heatmapYears.length * heatmapPanelHeight) + 8,
     itemWidth: 170,
     itemHeight: 12,
     calculable: false,
     realtime: false,
     inRange: { color: ['#f7f2ed', '#ead8c8', '#8f252b'] },
     textStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }
-  },
+  }],
   calendar: heatmapCalendars,
   series: heatmapSeries
 });
