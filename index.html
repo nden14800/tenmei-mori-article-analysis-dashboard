@@ -1850,6 +1850,152 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     .tenmei-date[data-open="true"] .tenmei-date__chevron { color: var(--tenmei-control-accent); transform: rotate(180deg); }
     .tenmei-choice__popover,
 
+
+/* Exact Tenmei archive-control alignment: search fields and custom choices. */
+.dashboard-search-field .dashboard-input-shell {
+  display:flex;
+  min-height:48px;
+  align-items:center;
+  gap:.7rem;
+  padding:0 .9rem;
+  border:1px solid rgba(131,92,60,.22);
+  border-radius:14px;
+  color:var(--tm-red);
+  background:var(--tm-soft);
+  box-shadow:none;
+  transition:border-color 160ms ease,box-shadow 160ms ease,background 160ms ease;
+}
+.dashboard-search-field .dashboard-input-shell:focus-within {
+  border-color:var(--tm-gold);
+  background:var(--tm-paper);
+  box-shadow:0 0 0 3px rgba(184,139,57,.18);
+}
+.dashboard-search-field .dashboard-input-icon {
+  width:auto;
+  height:auto;
+  flex:0 0 auto;
+  color:inherit;
+  font-size:.9rem;
+  line-height:1;
+}
+.dashboard-search-field .dashboard-input-shell input {
+  width:100%!important;
+  min-width:0;
+  height:46px;
+  flex:1 1 auto;
+  border:0!important;
+  outline:0!important;
+  color:var(--tm-ink);
+  background:transparent;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:.9rem;
+  font-weight:400;
+  line-height:1.5;
+}
+.dashboard-search-field .dashboard-input-shell input::placeholder {
+  color:var(--tm-muted);
+  opacity:.78;
+}
+.dashboard-search-field label {
+  margin:0 0 .42rem;
+  color:var(--tm-muted);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:.74rem;
+  font-weight:700;
+  line-height:1.5;
+  letter-spacing:.01em;
+}
+/* The column archive uses the same violet accent as the source site. */
+#tab-col .dashboard-search-field .dashboard-input-shell {
+  border-color:rgba(86,74,122,.22);
+  color:#564a7a;
+  background:#f8f7fb;
+}
+#tab-col .dashboard-search-field .dashboard-input-shell:focus-within {
+  border-color:#7565b5;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(117,101,181,.16);
+}
+#tab-col .dashboard-search-field .dashboard-input-shell input { color:#38334a; }
+#tab-col .dashboard-search-field .dashboard-input-shell input::placeholder { color:#77718a; }
+#tab-col .dashboard-search-field label { color:#77718a; }
+
+.dashboard-tenmei-choice .tenmei-choice__trigger,
+.csv-export-row .tenmei-choice__trigger {
+  width:100%;
+  min-height:46px;
+  grid-template-columns:20px minmax(0,1fr) 20px;
+  padding:0 .85rem;
+  border:1px solid var(--tm-border);
+  border-radius:13px;
+  background:var(--tm-paper);
+  color:var(--tm-ink);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:.84rem;
+  font-weight:700;
+  line-height:1.45;
+  box-shadow:none;
+}
+.dashboard-tenmei-choice .tenmei-choice__icon,
+.csv-export-row .tenmei-choice__icon { color:var(--tenmei-control-accent,var(--tm-gold)); }
+.dashboard-tenmei-choice .tenmei-choice__value,
+.csv-export-row .tenmei-choice__value {
+  min-width:0;
+  padding:0 .5rem;
+  overflow:hidden;
+  color:inherit;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:.88rem;
+  font-weight:600;
+  line-height:1.4;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.dashboard-tenmei-choice .tenmei-choice__trigger:hover,
+.csv-export-row .tenmei-choice__trigger:hover {
+  border-color:color-mix(in srgb,var(--tenmei-control-accent,var(--tm-red)) 46%,var(--tm-border));
+}
+.dashboard-tenmei-choice .tenmei-choice__trigger:focus-visible,
+.dashboard-tenmei-choice[data-open="true"] .tenmei-choice__trigger,
+.csv-export-row .tenmei-choice__trigger:focus-visible,
+.csv-export-row .tenmei-choice[data-open="true"] .tenmei-choice__trigger {
+  border-color:var(--tenmei-control-accent,var(--tm-red));
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--tenmei-control-accent,var(--tm-red)) 14%,transparent);
+}
+.dashboard-tenmei-choice .tenmei-choice__popover,
+.csv-export-row .tenmei-choice__popover {
+  border-radius:12px;
+  padding:6px;
+  box-shadow:0 16px 34px rgba(31,22,18,.16);
+}
+.dashboard-tenmei-choice .tenmei-choice__option,
+.csv-export-row .tenmei-choice__option {
+  min-height:40px;
+  border-radius:9px;
+  padding:8px 10px;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:.84rem;
+  font-weight:500;
+  line-height:1.45;
+}
+.dashboard-tenmei-choice .tenmei-choice__option[aria-selected="true"],
+.csv-export-row .tenmei-choice__option[aria-selected="true"] { font-weight:700; }
+#tab-col .dashboard-tenmei-choice {
+  --tenmei-control-accent:#564a7a;
+  --card-border:rgba(86,74,122,.22);
+  --input-bg:#f8f7fb;
+  --text-main:#38334a;
+  --text-sub:#77718a;
+  --card-bg:#fff;
+}
+#tab-col .dashboard-tenmei-choice .tenmei-choice__trigger { border-color:rgba(86,74,122,.22);background:#f8f7fb;color:#38334a; }
+#tab-col .dashboard-tenmei-choice .tenmei-choice__icon { color:#564a7a; }
+@media (prefers-reduced-motion:reduce) {
+  .dashboard-search-field .dashboard-input-shell,
+  .dashboard-tenmei-choice .tenmei-choice__trigger,
+  .dashboard-tenmei-choice .tenmei-choice__chevron { transition:none; }
+}
+
 </style>
   <meta name="tenmei-source-commit" content="fb1f7647976e31a1a8d4c1426d238e096f8889f5">
   <meta name="tenmei-source-index-blob" content="fa7eaf6e28374f6f2fe0b19355140925e6aa0bea">
