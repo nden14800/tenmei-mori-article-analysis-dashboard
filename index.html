@@ -1959,6 +1959,19 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
   <meta name="tenmei-source-health-history-blob" content="cda73eb77a1b55143d26b5792653a411987c2c10">
   <meta name="tenmei-source-health-current-blob" content="5a575e6453dab457b428495ee1b5d7e718e4cb6a">
 
+<style id="tenmei-dashboard-choice-default-tokens">
+/* Dashboard-wide fallbacks for every shared Tenmei choice/date control.
+   Section-specific news/column themes keep precedence through their more specific selectors. */
+.tenmei-choice,
+.tenmei-date {
+  --tenmei-control-accent: var(--deep-red, #8f252b);
+  --card-border: var(--border, #e7ded7);
+  --input-bg: var(--paper, #fffdfb);
+  --text-main: var(--ink, #302923);
+  --text-sub: var(--mist, #786e67);
+  --card-bg: var(--paper, #fffdfb);
+}
+</style>
 <style id="tenmei-canonical-choice-completion">
 /* Restore the complete canonical Tenmei choice popover and option styles.
    The previous dashboard copy ended at the popover selector and omitted this block. */
