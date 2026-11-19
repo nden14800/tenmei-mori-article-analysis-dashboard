@@ -5602,29 +5602,53 @@ function calculateScatterPareto(rows,getX,getY){
 }
 
 const chartTitleBodyScatter = createDashboardChart(document.getElementById('chart-title-body-scatter'));
+// EChartsのtooltip.params.dataは系列・変換経路によって配列ではなく { value, ... } になる。
+// 座標と記事メタデータを明示的に分離し、どちらの形式でも記事情報を失わない形に統一する。
 const titleBodyScatterData = type => allArticles
   .filter(article => article.type === type)
-  .map(article => [
-    Array.from(String(article.title || '')).length,
-    article.chars,
-    article.title,
-    article.date,
-    article.id
-  ]);
+  .map(article => {
+    const title = String(article.title || '');
+    const titleChars = Array.from(title).length;
+    const bodyChars = Number(article.chars);
+    return {
+      value: [titleChars, bodyChars],
+      article: {
+        id: article.id,
+        title,
+        date: article.date,
+        titleChars,
+        bodyChars
+      }
+    };
+  })
+  .filter(row => Number.isFinite(row.value[0]) && Number.isFinite(row.value[1]));
+const formatTitleBodyTooltip = params => {
+  const row = Array.isArray(params) ? params[0] : params;
+  if (!row) return '';
+  const meta = row.data?.article || row.data?.value && row.data.article || row.data || {};
+  const values = Array.isArray(row.value) ? row.value : Array.isArray(meta.value) ? meta.value : [];
+  const title = String(meta.title || 'タイトル情報なし');
+  const titleChars = Number.isFinite(Number(meta.titleChars)) ? Number(meta.titleChars) : values[0];
+  const bodyChars = Number.isFinite(Number(meta.bodyChars)) ? Number(meta.bodyChars) : values[1];
+  const id = meta.id !== undefined && meta.id !== null && meta.id !== '' ? '#' + meta.id : '記事ID不明';
+  const date = meta.date ? String(meta.date) : '公開日不明';
+  const safeTitle = title.replace(/[&<>"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
+  const shortTitle = Array.from(safeTitle).slice(0, 34).join('');
+  const titleText = Number.isFinite(Number(titleChars)) ? Number(titleChars).toLocaleString() + '字' : '取得できません';
+  const bodyText = Number.isFinite(Number(bodyChars)) ? Number(bodyChars).toLocaleString() + '字' : '取得できません';
+  return '<strong>' + (row.seriesName || '記事') + '</strong><br>'
+    + id + ' ' + shortTitle + (Array.from(title).length > 34 ? '…' : '')
+    + '<br>公開日: ' + date
+    + '<br>タイトル: ' + titleText
+    + '<br>本文: <strong>' + bodyText + '</strong>';
+};
 chartTitleBodyScatter.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: {
     trigger: 'item',
     backgroundColor: '#302923ee',
     textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 },
-    formatter: p => {
-      const d = p.data;
-      return '<strong>' + (p.seriesName || '') + '</strong><br>'
-        + '#' + d[4] + ' ' + String(d[2]).slice(0, 34) + (String(d[2]).length > 34 ? '…' : '')
-        + '<br>公開日: ' + d[3]
-        + '<br>タイトル: ' + d[0] + '字'
-        + '<br>本文: <strong>' + Number(d[1]).toLocaleString() + '字</strong>';
-    }
+    formatter: formatTitleBodyTooltip
   },
   legend: { data: ['社務所だより', '神籤草子', 'ニュースのパレート線', 'コラムのパレート線'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
   grid: { left: 66, right: 28, top: 48, bottom: 64, containLabel: true },
@@ -5641,8 +5665,8 @@ chartTitleBodyScatter.setOption({
   series: [
     { name: '社務所だより', type: 'scatter', data: titleBodyScatterData('news'), symbolSize: 10, itemStyle: { color: '#8f252b', opacity: 0.76 }, emphasis: { focus: 'series', scale: 1.45 } },
     { name: '神籤草子', type: 'scatter', data: titleBodyScatterData('col'), symbolSize: 10, itemStyle: { color: '#c4a059', opacity: 0.82 }, emphasis: { focus: 'series', scale: 1.45 } },
-    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('news'),d=>d[0],d=>d[1]).map(d=>[d[0],d[1]]), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#8f252b',width:2.6}, itemStyle:{color:'#8f252b'}, tooltip:{show:false}, z:5 },
-    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('col'),d=>d[0],d=>d[1]).map(d=>[d[0],d[1]]), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#c4a059',width:2.6}, itemStyle:{color:'#c4a059'}, tooltip:{show:false}, z:5 }
+    { name: 'ニュースのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('news'),d=>d.value[0],d=>d.value[1]).map(d=>d.value), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#8f252b',width:2.6}, itemStyle:{color:'#8f252b'}, tooltip:{show:false}, z:5 },
+    { name: 'コラムのパレート線', type: 'line', data: calculateScatterPareto(titleBodyScatterData('col'),d=>d.value[0],d=>d.value[1]).map(d=>d.value), showSymbol:true, symbol:'diamond', symbolSize:8, smooth:false, lineStyle:{color:'#c4a059',width:2.6}, itemStyle:{color:'#c4a059'}, tooltip:{show:false}, z:5 }
   ]
 });
 
