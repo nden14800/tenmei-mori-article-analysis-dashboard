@@ -55,19 +55,70 @@ function getObject(text, marker) {
   throw new Error('unterminated object: ' + marker);
 }
 
+const HTML_VOID_TAGS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+const HTML_NAMED_ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: '\u00a0', mdash: '—', ndash: '–', hellip: '…', ldquo: '“', rdquo: '”', lsquo: '‘', rsquo: '’', times: '×', middot: '·', bull: '•', copy: '©', reg: '®', yen: '¥' };
+function decodeHtmlEntities(value) {
+  return value.replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]+);/gi, (match, entity) => {
+    if (entity[0] === '#') {
+      const codePoint = entity[1].toLowerCase() === 'x' ? parseInt(entity.slice(2), 16) : parseInt(entity.slice(1), 10);
+      try { return Number.isFinite(codePoint) ? String.fromCodePoint(codePoint) : match; } catch { return match; }
+    }
+    return HTML_NAMED_ENTITIES[entity.toLowerCase()] ?? match;
+  });
+}
+// 本体の countArticleCharacters() と同じ基準でDOM textContent相当を数え、属性・コメント・.ai-image-disclosureを除いて空白を除去する。
 function visibleChars(html) {
-  return String(html || '')
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]*>/g, '')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/\s+/g, '')
-    .length;
+  const input = String(html || '');
+  let text = '';
+  const skippedTags = [];
+  let index = 0;
+  while (index < input.length) {
+    if (input[index] !== '<') {
+      const nextTag = input.indexOf('<', index);
+      const end = nextTag < 0 ? input.length : nextTag;
+      if (!skippedTags.length) text += decodeHtmlEntities(input.slice(index, end));
+      index = end;
+      continue;
+    }
+    if (input.startsWith('<!--', index)) {
+      const commentEnd = input.indexOf('-->', index + 4);
+      index = commentEnd < 0 ? input.length : commentEnd + 3;
+      continue;
+    }
+    let tagEnd = index + 1;
+    let quote = null;
+    for (; tagEnd < input.length; tagEnd += 1) {
+      const char = input[tagEnd];
+      if (quote) { if (char === quote) quote = null; continue; }
+      if (char === '"' || char === "'") { quote = char; continue; }
+      if (char === '>') break;
+    }
+    if (tagEnd >= input.length) {
+      if (!skippedTags.length) text += decodeHtmlEntities(input.slice(index));
+      break;
+    }
+    const token = input.slice(index, tagEnd + 1);
+    const match = token.match(/^<\s*(\/?)\s*([a-z][a-z0-9:-]*)\b([\s\S]*?)>$/i);
+    if (match) {
+      const closing = Boolean(match[1]);
+      const tagName = match[2].toLowerCase();
+      const attributes = match[3] || '';
+      if (skippedTags.length) {
+        if (closing) {
+          const lastIndex = skippedTags.lastIndexOf(tagName);
+          if (lastIndex >= 0) skippedTags.length = lastIndex;
+        } else if (!HTML_VOID_TAGS.has(tagName) && !/\/\s*$/.test(attributes)) {
+          skippedTags.push(tagName);
+        }
+      } else if (!closing) {
+        const classMatch = attributes.match(/\bclass\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+        const classes = classMatch ? (classMatch[1] ?? classMatch[2] ?? '').split(/\s+/) : [];
+        if (classes.includes('ai-image-disclosure') && !HTML_VOID_TAGS.has(tagName) && !/\/\s*$/.test(attributes)) skippedTags.push(tagName);
+      }
+    }
+    index = tagEnd + 1;
+  }
+  return text.replace(/\s+/g, '').length;
 }
 
 const newsSource = evalArray(getArray(source, 'const newsData = ['));
@@ -138,32 +189,15 @@ for (const a of [...news].sort((left, right) => right.id - left.id)) {
   if (!colorClass || !color) throw new Error('unknown site news tag color: ' + a.tag + ' / ' + a.tagColor);
   if (!tagColors[a.tag]) tagColors[a.tag] = color;
 }
-// 既存記事の文字数は、過去に本サイトの countArticleCharacters() と照合して確定した値を維持する。
-// 正規表現だけで再計算するとブラウザの DOM textContent と微妙にずれるため、既存値を再計算して上書きしない。
-// 新規記事だけは現在の同期処理で算出し、次回以降はその確定値として保持する。
-const historicalNewsChars = {"1":196,"2":277,"3":107,"4":98,"5":84,"6":295,"7":417,"8":386,"9":320,"10":290,"11":835,"12":394,"13":630,"14":1318,"15":1399,"16":352,"17":269,"18":548,"19":537,"20":453,"21":1265,"22":800,"23":702,"24":662,"25":950,"26":767,"27":1184,"28":602,"29":983,"30":863,"31":562,"32":441,"33":830,"34":680,"35":819,"36":550,"37":941,"38":1765,"39":475,"40":485,"41":826,"42":908,"43":432,"44":391,"45":359,"46":332,"47":514,"48":592,"49":398,"50":889,"51":431,"52":581,"53":625,"54":475,"55":353,"56":650,"57":649,"58":579,"59":774,"60":542,"61":636,"62":787,"63":820,"64":725,"65":764,"66":666,"67":691,"68":813,"69":449,"70":699,"71":730,"72":958,"73":1337,"74":1649,"75":2176,"76":1173,"77":1357,"78":2479,"79":1828,"80":4903,"81":2451,"82":3885,"83":2670,"84":2023,"85":1740,"86":1962,"87":4022};
-const historicalColChars = {"1":849,"2":617,"3":484,"4":420,"5":382,"6":789,"7":910,"8":632,"9":651,"10":700,"11":595,"12":568,"13":1357,"14":494,"15":486,"16":734,"17":625,"18":556,"19":544,"20":626,"21":771,"22":615,"23":735,"24":732,"25":539,"26":519,"27":1967,"28":582,"29":543,"30":568,"31":716,"32":514,"33":789,"34":743,"35":973,"36":755,"37":846,"38":649,"39":691,"40":591,"41":811,"42":788,"43":921,"44":787,"45":585,"46":893,"47":1205,"48":1268,"49":1124,"50":1226,"51":1290,"52":1407,"53":1477,"54":1102,"55":1235,"56":1311,"57":1315,"58":1016,"59":1149,"60":888,"61":1280,"62":1241,"66":1522};
-function evalObject(literal) { return Function('"use strict"; return (' + literal + ')')(); }
-function readOptionalDashboardObject(text, declaration) {
-  if (!text.includes(declaration)) return {};
-  return evalObject(getObject(text, declaration));
-}
+// 本文文字数は毎回、本体の countArticleCharacters() と同じ基準で全件再計算し、過去の固定値を再利用しない。
 function contentHash(html) { return crypto.createHash('sha256').update(String(html || ''), 'utf8').digest('hex'); }
-const previousNewsContentHashes = readOptionalDashboardObject(dashboard, 'const newsContentHashes = {');
-const previousColContentHashes = readOptionalDashboardObject(dashboard, 'const colContentHashes = {');
 const newsContentHashes = Object.fromEntries(newsSource.map(a => [String(a.id), contentHash(a.content)]));
 const colContentHashes = Object.fromEntries(colSource.map(a => [String(a.id), contentHash(a.content)]));
-const newsChars = Object.fromEntries(newsSource.map(a => {
-  const key = String(a.id);
-  return [key, Object.prototype.hasOwnProperty.call(historicalNewsChars, key) && (!previousNewsContentHashes[key] || previousNewsContentHashes[key] === newsContentHashes[key]) ? historicalNewsChars[key] : visibleChars(a.content)];
-}));
-const colChars = Object.fromEntries(colSource.map(a => {
-  const key = String(a.id);
-  return [key, Object.prototype.hasOwnProperty.call(historicalColChars, key) && (!previousColContentHashes[key] || previousColContentHashes[key] === colContentHashes[key]) ? historicalColChars[key] : visibleChars(a.content)];
-}));
+const newsChars = Object.fromEntries(newsSource.map(a => [String(a.id), visibleChars(a.content)]));
+const colChars = Object.fromEntries(colSource.map(a => [String(a.id), visibleChars(a.content)]));
 
 // 「洞察・考察」は記事データとは別の分析資産。現行49件の文章を一文字も失わない。
-// 自動同期で index.html の配列を書き換えても、既存46件の文章を一文字も失わない。
+// 自動同期で index.html の配列を書き換えても、既存49件の文章を一文字も失わない。
 // 元サイトにこの分析文章の正本が存在しないため、現在のダッシュボード文を保護対象として扱う。
 function extractInsights(text) {
   const re = /<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><div class="chart-desc-copy">([\s\S]*?)<\/div><\/div>/g;
@@ -271,6 +305,26 @@ if (comprehensiveAfter !== comprehensiveBefore) {
 if (comprehensiveCharsAfter !== comprehensiveCharsBefore) {
   throw new Error(`Comprehensive Analysis の文字数が変化しました: ${comprehensiveCharsBefore} -> ${comprehensiveCharsAfter}`);
 }
+
+function setSourceSnapshotMeta(text, name, value) {
+  if (!value) return text;
+  if (!/^[0-9a-f]{40}$/i.test(value)) throw new Error('invalid source snapshot SHA for ' + name);
+  const tag = '<meta name="' + name + '" content="' + value + '">';
+  const pattern = new RegExp("<meta\\s+name=[\"']" + name + "[\"'][^>]*>", 'i');
+  if (pattern.test(text)) return text.replace(pattern, tag);
+  const headEnd = text.indexOf('</head>');
+  if (headEnd < 0) throw new Error('dashboard <head> not found while writing source snapshot');
+  return text.slice(0, headEnd) + '  ' + tag + '\n' + text.slice(headEnd);
+}
+const sourceSnapshotFields = [
+  ['tenmei-source-commit', process.env.TENMEI_SOURCE_COMMIT],
+  ['tenmei-source-index-blob', process.env.TENMEI_SOURCE_INDEX_BLOB],
+  ['tenmei-source-health-history-blob', process.env.TENMEI_SOURCE_HEALTH_HISTORY_BLOB],
+  ['tenmei-source-health-current-blob', process.env.TENMEI_SOURCE_HEALTH_CURRENT_BLOB]
+];
+const providedSnapshotFields = sourceSnapshotFields.filter(([, value]) => value);
+if (providedSnapshotFields.length && providedSnapshotFields.length !== sourceSnapshotFields.length) throw new Error('source snapshot environment is incomplete');
+for (const [name, value] of sourceSnapshotFields) dashboard = setSourceSnapshotMeta(dashboard, name, value);
 
 fs.writeFileSync(DASHBOARD_FILE,dashboard);
 console.log(JSON.stringify({news:news.length,columns:cols.length,total:news.length+cols.length,latestNews,latestColumn},null,2));

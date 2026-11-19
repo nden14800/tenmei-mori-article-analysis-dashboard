@@ -2,6 +2,9 @@ const assert = require('assert');
 const fs = require('fs');
 const vm = require('vm');
 const crypto = require('crypto');
+const os = require('os');
+const path = require('path');
+const { spawnSync } = require('child_process');
 
 const html = fs.readFileSync('index.html', 'utf8');
 const sourceHtml = fs.readFileSync('tenmei-mori/index.html', 'utf8');
@@ -79,6 +82,73 @@ const sourceColData = Function('"use strict"; return (' + extractSourceArray('co
 const contentHash = (content) => crypto.createHash('sha256').update(String(content || ''), 'utf8').digest('hex');
 const expectedNewsHashes = Object.fromEntries(sourceNewsData.map((article) => [String(article.id), contentHash(article.content)]));
 const expectedColHashes = Object.fromEntries(sourceColData.map((article) => [String(article.id), contentHash(article.content)]));
+
+function countArticleCharacters(html) {
+  const input = String(html || '');
+  const voidTags = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+  const namedEntities = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: '\u00a0', mdash: '—', ndash: '–', hellip: '…', ldquo: '“', rdquo: '”', lsquo: '‘', rsquo: '’', times: '×', middot: '·', bull: '•', copy: '©', reg: '®', yen: '¥' };
+  const decode = (value) => value.replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]+);/gi, (match, entity) => {
+    if (entity[0] === '#') {
+      const codePoint = entity[1].toLowerCase() === 'x' ? parseInt(entity.slice(2), 16) : parseInt(entity.slice(1), 10);
+      try { return Number.isFinite(codePoint) ? String.fromCodePoint(codePoint) : match; } catch { return match; }
+    }
+    return namedEntities[entity.toLowerCase()] ?? match;
+  });
+  let text = '';
+  const skippedTags = [];
+  let index = 0;
+  while (index < input.length) {
+    if (input[index] !== '<') {
+      const nextTag = input.indexOf('<', index);
+      const end = nextTag < 0 ? input.length : nextTag;
+      if (!skippedTags.length) text += decode(input.slice(index, end));
+      index = end;
+      continue;
+    }
+    if (input.startsWith('<!--', index)) {
+      const commentEnd = input.indexOf('-->', index + 4);
+      index = commentEnd < 0 ? input.length : commentEnd + 3;
+      continue;
+    }
+    let tagEnd = index + 1;
+    let quote = null;
+    for (; tagEnd < input.length; tagEnd += 1) {
+      const char = input[tagEnd];
+      if (quote) { if (char === quote) quote = null; continue; }
+      if (char === '"' || char === "'") { quote = char; continue; }
+      if (char === '>') break;
+    }
+    if (tagEnd >= input.length) {
+      if (!skippedTags.length) text += decode(input.slice(index));
+      break;
+    }
+    const token = input.slice(index, tagEnd + 1);
+    const match = token.match(/^<\s*(\/?)\s*([a-z][a-z0-9:-]*)\b([\s\S]*?)>$/i);
+    if (match) {
+      const closing = Boolean(match[1]);
+      const tagName = match[2].toLowerCase();
+      const attributes = match[3] || '';
+      if (skippedTags.length) {
+        if (closing) {
+          const lastIndex = skippedTags.lastIndexOf(tagName);
+          if (lastIndex >= 0) skippedTags.length = lastIndex;
+        } else if (!voidTags.has(tagName) && !/\/\s*$/.test(attributes)) {
+          skippedTags.push(tagName);
+        }
+      } else if (!closing) {
+        const classMatch = attributes.match(/\bclass\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+        const classes = classMatch ? (classMatch[1] ?? classMatch[2] ?? '').split(/\s+/) : [];
+        if (classes.includes('ai-image-disclosure') && !voidTags.has(tagName) && !/\/\s*$/.test(attributes)) skippedTags.push(tagName);
+      }
+    }
+    index = tagEnd + 1;
+  }
+  return text.replace(/\s+/g, '').length;
+}
+const expectedNewsChars = Object.fromEntries(sourceNewsData.map((article) => [String(article.id), countArticleCharacters(article.content)]));
+const expectedColChars = Object.fromEntries(sourceColData.map((article) => [String(article.id), countArticleCharacters(article.content)]));
+const normalizeCountMap = (map) => Object.fromEntries(Object.keys(map).sort().map((key) => [key, Number(map[key])]));
+
 const totalNewsChars = Object.values(newsChars).reduce((sum, value) => sum + Number(value), 0);
 const totalColChars = Object.values(colChars).reduce((sum, value) => sum + Number(value), 0);
 const validPublicationTime = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
@@ -97,6 +167,8 @@ assert.strictEqual(JSON.stringify(newsContentHashes), JSON.stringify(expectedNew
 assert.strictEqual(JSON.stringify(colContentHashes), JSON.stringify(expectedColHashes), 'コラム本文ハッシュを本体mainと一致させます');
 assert.strictEqual(Object.keys(newsChars).length, sourceNewsData.length, 'ニュース全件の文字数を保持します');
 assert.strictEqual(Object.keys(colChars).length, sourceColData.length, 'コラム全件の文字数を保持します');
+assert.deepStrictEqual(normalizeCountMap(newsChars), normalizeCountMap(expectedNewsChars), 'ニュース文字数を本体の countArticleCharacters() と同じ基準で全件再計算します');
+assert.deepStrictEqual(normalizeCountMap(colChars), normalizeCountMap(expectedColChars), 'コラム文字数を本体の countArticleCharacters() と同じ基準で全件再計算します');
 assert.strictEqual(JSON.stringify(Object.keys(newsChars).sort()), JSON.stringify(sourceNewsData.map((article) => String(article.id)).sort()), 'ニュース文字数のID集合を本体mainと一致させます');
 assert.strictEqual(JSON.stringify(Object.keys(colChars).sort()), JSON.stringify(sourceColData.map((article) => String(article.id)).sort()), 'コラム文字数のID集合を本体mainと一致させます');
 assert(Object.values(newsChars).every((value) => Number.isInteger(value) && value > 0), 'ニュース文字数はすべて正の整数である必要があります');
@@ -125,6 +197,19 @@ for (const article of colData) {
 
 const totalArticleCount = newsData.length + colData.length;
 const totalArticleChars = totalNewsChars + totalColChars;
+
+const analysisSummaryStart = html.indexOf('  <!-- MEGA SUMMARY -->');
+const analysisSummaryEnd = html.indexOf('  <!-- ARTICLE TABLES -->', analysisSummaryStart);
+assert(analysisSummaryStart >= 0 && analysisSummaryEnd > analysisSummaryStart, '総合分析の数値検証範囲が必要です');
+const analysisSummaryText = html.slice(analysisSummaryStart, analysisSummaryEnd).replace(/<[^>]+>/g, '').replace(/\s+/g, '');
+const formatCount = (value) => Number(value).toLocaleString('en-US');
+assert(analysisSummaryText.includes('総文字数は' + formatCount(totalArticleChars) + '字'), '総合分析の総文字数を再計算した値と一致させます');
+assert(analysisSummaryText.includes('ニュースは合計' + formatCount(totalNewsChars) + '字・平均約' + formatCount(Math.round(totalNewsChars / newsData.length)) + '字'), '総合分析のニュース文字数・平均を再計算した値と一致させます');
+assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColChars) + '字・平均約' + formatCount(Math.round(totalColChars / colData.length)) + '字'), '総合分析のコラム文字数・平均を再計算した値と一致させます');
+assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
+assert(analysisSummaryText.includes('ID65の2,068字'), '最長コラムの文字数を再計算した値と一致させます');
+assert(analysisSummaryText.includes('公開状態はpartial') && analysisSummaryText.includes('CSPによるインラインスクリプト実行拒否'), '最新の監視状態を記事データと分離して記録します');
+
 assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
 assert(html.includes('<dd id="print-total-summary">' + totalArticleCount + '記事・'), '印刷概要の件数を最新データと一致させます');
 assert(html.includes(expectedPeriodSummary), '印刷概要の対象期間を本体mainの最古・最新日と一致させます');
@@ -136,7 +221,7 @@ const requiredHeadings = [
   '▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）',
   '▍ フェーズ II — インフラ・機能拡張の集中期（2026年1月中旬〜2月）',
   '▍ フェーズ III — 投稿の空白と運営再開（2026年2月〜4月）',
-  '▍ フェーズ IV — 「本数より質」への転換期（2026年5月〜8月）',
+  '▍ フェーズ IV — 「本数より説明量」への転換期（2026年5月〜8月）',
   '▍ フェーズ V — 秋から初冬の継続改善と読み物の拡充（2026年9月〜11月）',
   '▍ ニュースとコラムの役割分担',
   '▍ 公開日時の分布から見える傾向',
@@ -160,6 +245,34 @@ assert(!html.includes('読み解きのポイント'), '説明欄ラベルを旧�
 
 const chartDescriptions = [...html.matchAll(/<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><div class="chart-desc-copy">([\s\S]*?)<\/div><\/div>/g)];
 assert.strictEqual(chartDescriptions.length, 49, '全49個の洞察・考察を維持する必要があります');
+
+const chartTextAt = (number) => chartDescriptions[number - 1][1].replace(/<[^>]*>/g, '').replace(/\s+/g, '');
+const synchronizedInsightFacts = [
+  [3, ['3,902字', '2,796字', '3,212字', '7,732字', '3,866字']],
+  [5, ['8,433字', '7,732字']],
+  [6, ['10本で平均3,625字', '平均1,073字']],
+  [9, ['37.4%']],
+  [10, ['平均794字']],
+  [13, ['100,665字', '59,067字', '159,732字', '1,106字', '895字', '1,017字', '63.0%', '37.0%']],
+  [17, ['1,200字超22本', 'ニュース22本・コラム17本', '1,200字超が22本', '合計39本', '24.8%']],
+  [18, ['ID87のVer.4.0は4,230字', 'ID65が2,068字', '3,346〜4,248字']],
+  [19, ['1,430字', '1,222字', '1,110字', '1,062字', '1,044字', '732字', '842字']],
+  [20, ['3,625字', '4,185字']],
+  [21, ['1,391字', '1,036字']],
+  [23, ['ニュース11本・コラム20本']],
+  [27, ['1,106字', '895字']],
+  [29, ['ニュース6本、コラム0本']],
+  [30, ['ID65の2,068字']],
+  [34, ['ニュース3,902字']],
+  [35, ['7月3,200字']],
+  [39, ['2,479字', '1,400字']],
+  [42, ['0.460', '0.228', '55.4％', '35.2％', '5.7％', '12.2％']]
+];
+for (const [number, fragments] of synchronizedInsightFacts) {
+  const body = chartTextAt(number);
+  for (const fragment of fragments) assert(body.includes(fragment), '洞察・考察 #' + number + ' の数値を最新データと一致させます: ' + fragment);
+}
+
 for (const match of chartDescriptions) {
   const labels = [...match[1].matchAll(/<strong class="chart-insight-label">([^<]+)<\/strong>/g)].map((item) => item[1]);
   assert.deepStrictEqual(labels, ['指標の概要', '主な傾向', '解釈上の注意'], '全グラフの洞察・考察を同じ三段構成に統一します');
@@ -192,6 +305,8 @@ for (const id of ['chart-advanced-weekday-month-heatmap', 'chart-advanced-title-
 }
 assert(html.includes("chart: chartTitleBodyScatter") && html.includes("chart: chartDayOfMonth") && html.includes("chart: chartTitleLength") && html.includes("chart: chartAdvancedWeekdayMonthHeatmap") && html.includes("chart: chartAdvancedTitleMonthlyMedian") && html.includes("chart: chartAdvancedWeekdayBoxplot") && html.includes("chart: chartAdvancedLorenz") && html.includes("chart: chartAdvancedGapScatter"), '追加グラフを共通リサイズ・操作対象へ登録します');
 assert(html.includes('calculateScatterPareto') && html.includes('calculateLorenzCurve') && html.includes('chart-title-body-scatter') && html.includes('chart-advanced-gap-scatter') && html.includes('chart-advanced-date-scatter') && html.includes('lorenzNews'), '複数の既存散布図へパレート線を統合し、ローレンツ曲線をデータから計算します');
+assert(/const share\s*=\s*cumulative\s*\/\s*total;/.test(html), 'ジニ係数の面積計算は累積割合0〜1で行います');
+assert(/points\.push\(\[x,\s*share\s*\*\s*100\]\)/.test(html), 'ローレンツ曲線の表示座標だけを百分率へ変換します');
 assert((html.match(/name: ?'(?:ニュース|コラム)のパレート線'/g) || []).length >= 6, '3つの既存散布図へ媒体別のパレート線を追加します');
 assert.strictEqual((html.match(/name: ?'(?:ニュース|コラム)のパレート線'|name: ?'分類のパレート線'/g) || []).length, 11, '6つのグラフにパレート線を配置します');
 const paretoLegendCharts = [
@@ -312,6 +427,31 @@ const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
   .map((match) => match[1])
   .filter((script) => script.trim());
 for (const script of scripts) new Function(script);
+
+const syncScriptSource = fs.readFileSync('scripts/sync-tenmei-data.mjs', 'utf8');
+assert(!syncScriptSource.includes('historicalNewsChars') && !syncScriptSource.includes('previousNewsContentHashes'), '文字数の固定履歴値を再利用しません');
+const tempSyncDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'tenmei-dashboard-sync-'));
+try {
+  const tempDashboardFile = path.join(tempSyncDirectory, 'index.html');
+  fs.writeFileSync(tempDashboardFile, html, 'utf8');
+  const syncScriptFile = path.resolve('scripts/sync-tenmei-data.mjs');
+  const sourceFile = path.resolve(process.env.TENMEI_SOURCE_FILE || 'tenmei-mori/index.html');
+  const syncEnvironment = { ...process.env, TENMEI_SOURCE_FILE: sourceFile, DASHBOARD_FILE: tempDashboardFile };
+  let firstSyncOutput = null;
+  for (let pass = 0; pass < 2; pass += 1) {
+    const result = spawnSync(process.execPath, [syncScriptFile], { cwd: process.cwd(), env: syncEnvironment, encoding: 'utf8' });
+    assert.strictEqual(result.status, 0, '同期スクリプトはテスト用コピーで正常終了します: ' + (result.stderr || result.stdout));
+    const syncedCopy = fs.readFileSync(tempDashboardFile, 'utf8');
+    if (pass === 0) {
+      firstSyncOutput = syncedCopy;
+      assert.strictEqual(firstSyncOutput, html, '最新ソースと整合したダッシュボードへの初回同期は変更を発生させません');
+    } else {
+      assert.strictEqual(syncedCopy, firstSyncOutput, '同一ソースへの連続同期で文字数やスナップショットが揺り戻りません');
+    }
+  }
+} finally {
+  fs.rmSync(tempSyncDirectory, { recursive: true, force: true });
+}
 
 console.log('記事データ・49件の洞察文・詳細統計・パレート操作・凡例統一・総合分析の回帰テストに合格しました。');
 console.log(JSON.stringify({

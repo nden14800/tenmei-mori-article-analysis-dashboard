@@ -38,13 +38,50 @@ jobs:
           path: tenmei-mori
           fetch-depth: 1
 
+      - name: Resolve and compare source snapshot
+        id: source_snapshot
+        shell: bash
+        run: |
+          current_commit="$(git -C tenmei-mori rev-parse HEAD)"
+          index_blob="$(git -C tenmei-mori rev-parse HEAD:index.html)"
+          health_history_blob="$(git -C tenmei-mori rev-parse HEAD:status/health-history.json)"
+          health_current_blob="$(git -C tenmei-mori rev-parse HEAD:status/public/health.json)"
+          previous_commit="$(sed -n 's/.*<meta name="tenmei-source-commit" content="\([0-9a-f]\{40\}\)".*/\1/p' index.html | head -n 1)"
+          echo "commit=$current_commit" >> "$GITHUB_OUTPUT"
+          echo "index_blob=$index_blob" >> "$GITHUB_OUTPUT"
+          echo "health_history_blob=$health_history_blob" >> "$GITHUB_OUTPUT"
+          echo "health_current_blob=$health_current_blob" >> "$GITHUB_OUTPUT"
+          echo "Previous source commit: ${previous_commit:-none}"
+          echo "Current source commit: $current_commit"
+          if [ -n "$previous_commit" ] && [ "$previous_commit" != "$current_commit" ]; then
+            if git -C tenmei-mori fetch --no-tags --depth=1 origin "$previous_commit"; then
+              echo "Changed source files:"
+              git -C tenmei-mori diff --name-status "$previous_commit" "$current_commit"
+              echo "Source diff summary:"
+              git -C tenmei-mori diff --stat "$previous_commit" "$current_commit"
+            else
+              echo "::warning::Could not fetch previous source snapshot $previous_commit for a local diff."
+            fi
+          else
+            echo "No source revision delta since the previous snapshot."
+          fi
+
       - name: Sync article data
         run: node scripts/sync-tenmei-data.mjs
         env:
           TENMEI_SOURCE_FILE: tenmei-mori/index.html
           DASHBOARD_FILE: index.html
+          TENMEI_SOURCE_COMMIT: ${{ steps.source_snapshot.outputs.commit }}
+          TENMEI_SOURCE_INDEX_BLOB: ${{ steps.source_snapshot.outputs.index_blob }}
+          TENMEI_SOURCE_HEALTH_HISTORY_BLOB: ${{ steps.source_snapshot.outputs.health_history_blob }}
+          TENMEI_SOURCE_HEALTH_CURRENT_BLOB: ${{ steps.source_snapshot.outputs.health_current_blob }}
 
       - name: Verify synchronized data
+        env:
+          TENMEI_SOURCE_COMMIT: ${{ steps.source_snapshot.outputs.commit }}
+          TENMEI_SOURCE_INDEX_BLOB: ${{ steps.source_snapshot.outputs.index_blob }}
+          TENMEI_SOURCE_HEALTH_HISTORY_BLOB: ${{ steps.source_snapshot.outputs.health_history_blob }}
+          TENMEI_SOURCE_HEALTH_CURRENT_BLOB: ${{ steps.source_snapshot.outputs.health_current_blob }}
         run: |
           node --check scripts/sync-tenmei-data.mjs
           grep -q 'const newsContentHashes = {' index.html
@@ -56,7 +93,10 @@ jobs:
 
       - name: Verify source revision
         run: |
-          echo "tenmei-mori source: $(git -C tenmei-mori rev-parse HEAD)"
+          echo "tenmei-mori source: ${{ steps.source_snapshot.outputs.commit }}"
+          echo "source index blob: ${{ steps.source_snapshot.outputs.index_blob }}"
+          echo "source health history blob: ${{ steps.source_snapshot.outputs.health_history_blob }}"
+          echo "source health current blob: ${{ steps.source_snapshot.outputs.health_current_blob }}"
           echo "dashboard source: $(git rev-parse HEAD)"
 
       - name: Commit synchronized data
