@@ -5042,14 +5042,19 @@ chartMonthlyAvg.setOption({
     backgroundColor: '#302923dd',
     textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 },
     formatter: params => {
-      let s = `<strong>${params[0].axisValueLabel}</strong><br>`;
-      params.forEach(p => {
-        const valueText = p.seriesIndex === 1
-          ? (p.value == null ? '投稿なし' : p.value.toLocaleString() + '字（平均）')
-          : p.value.toLocaleString() + '字（合計）';
-        s += `${p.marker}${p.seriesName}: <strong>${valueText}</strong><br>`;
+      const rows = Array.isArray(params) ? params : [params].filter(Boolean);
+      if (!rows.length) return '';
+      const label = rows[0].axisValueLabel || rows[0].name || '';
+      let html = label ? `<strong>${label}</strong><br>` : '';
+      rows.forEach(p => {
+        const raw = Array.isArray(p.value) ? p.value[p.value.length - 1] : p.value;
+        const n = Number(raw);
+        const valid = raw !== null && raw !== '' && Number.isFinite(n);
+        const valueText = !valid ? 'データなし'
+          : (p.seriesIndex === 1 ? n.toLocaleString() + '字（平均）' : n.toLocaleString() + '字（合計）');
+        html += `${p.marker || ''}${p.seriesName || '系列'}: <strong>${valueText}</strong><br>`;
       });
-      return s;
+      return html;
     }
   },
   legend: { data: ['月別ニュース総文字数', 'ニュース1記事平均文字数'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
@@ -5133,7 +5138,12 @@ chartWeekly.setOption({
 const chartWeeklyChars = createDashboardChart(document.getElementById('chart-weekly-chars'));
 chartWeeklyChars.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
-  tooltip: { trigger: 'axis', backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" }, formatter: p => `${p[0].name}<br>総文字数: <strong>${p[0].value.toLocaleString()}字</strong>` },
+  tooltip: { trigger: 'axis', backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" }, formatter: p => {
+    const row = Array.isArray(p) ? p[0] : p;
+    if (!row) return '';
+    const n = Number(row.value);
+    return `${row.name || row.axisValueLabel || ''}<br>総文字数: <strong>${Number.isFinite(n) ? n.toLocaleString() + '字' : 'データなし'}</strong>`;
+  } },
   grid: { left: '5%', right: '5%', bottom: '18%', top: '8%', containLabel: true },
   xAxis: { type: 'category', data: wLabels,
     axisLabel: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 10, rotate: 30 },
@@ -5161,7 +5171,12 @@ const chartTagBubble = createDashboardChart(document.getElementById('chart-tag-b
 chartTagBubble.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: {
-    formatter: p => `${p.data.name}<br>記事数: ${p.data.value[0]}本<br>平均文字数: ${p.data.value[1]}字<br>総文字数: ${p.data.value[2].toLocaleString()}字`,
+    formatter: p => {
+      const row = p?.data || {};
+      const values = Array.isArray(row.value) ? row.value : [];
+      const format = (value, suffix) => value !== null && value !== '' && Number.isFinite(Number(value)) ? Number(value).toLocaleString() + suffix : 'データなし';
+      return `${row.name || p?.name || '分類'}<br>記事数: ${format(values[0], '本')}<br>平均文字数: ${format(values[1], '字')}<br>総文字数: ${format(values[2], '字')}`;
+    },
     backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 }
   },
   legend: { data: ['分類', '分類のパレート線'], bottom: 0, textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 } },
@@ -5271,7 +5286,12 @@ chartGroupAvgChars.setOption({
     trigger: 'axis',
     backgroundColor: '#302923dd',
     textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 },
-    formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
+    formatter: p => {
+      const row = Array.isArray(p) ? p[0] : p;
+      if (!row) return '';
+      const n = Number(row.value);
+      return `${row.name || row.axisValueLabel || '分類'}<br>平均 <strong>${Number.isFinite(n) ? n.toLocaleString() + '字' : 'データなし'}</strong>`;
+    }
   },
   grid: { left: 5, right: 60, top: 5, bottom: 5, containLabel: true },
   xAxis: {
@@ -5529,7 +5549,14 @@ chartCatLen.setOption({
     trigger: 'axis',
     backgroundColor: '#302923dd',
     textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 },
-    formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong> (${catGroups[p[0].name].length}件)`
+    formatter: p => {
+      const row = Array.isArray(p) ? p[0] : p;
+      if (!row) return '';
+      const n = Number(row.value);
+      const category = row.name || row.axisValueLabel || '';
+      const count = Array.isArray(catGroups?.[category]) ? catGroups[category].length : null;
+      return `${category}<br>平均 <strong>${Number.isFinite(n) ? n.toLocaleString() + '字' : 'データなし'}</strong>${count === null ? '' : ` (${count}件)`}`;
+    }
   },
   // タグ別グラフと同じ安全領域を確保し、カテゴリが増えても操作部と干渉させない。
   grid: { left: 5, right: 96, top: 38, bottom: 5, containLabel: true },
@@ -6044,8 +6071,12 @@ const chartAdvancedBoxplot = createAdvancedChart('chart-advanced-boxplot');
 setAdvancedOption(chartAdvancedBoxplot, 'chart-advanced-boxplot', {
   textStyle: { fontFamily: advancedFont },
   tooltip: { ...advancedTooltip, trigger: 'item', formatter: p => {
-    const v = Array.isArray(p.data) ? p.data : p.data.value;
-    return '<strong>' + p.name + '</strong><br>最小 ' + Math.round(v[0]).toLocaleString() + '字<br>第1四分位 ' + Math.round(v[1]).toLocaleString() + '字<br>中央値 ' + Math.round(v[2]).toLocaleString() + '字<br>第3四分位 ' + Math.round(v[3]).toLocaleString() + '字<br>最大 ' + Math.round(v[4]).toLocaleString() + '字';
+    const raw = Array.isArray(p?.data) ? p.data : p?.data?.value;
+    if (!Array.isArray(raw) || raw.length < 5) return '';
+    const values = raw.map(Number);
+    if (!values.every(Number.isFinite)) return '';
+    const labels = ['最小','第1四分位','中央値','第3四分位','最大'];
+    return '<strong>' + (p.name || '分類') + '</strong><br>' + labels.map((label,index)=>label+' '+Math.round(values[index]).toLocaleString()+'字').join('<br>');
   }},
   grid: { left: 35, right: 18, top: 48, bottom: 65, containLabel: true },
   xAxis: { type: 'category', data: boxGroups.map(g=>g.label), axisLabel: { ...advancedFontText, rotate: 15 } },
@@ -6343,7 +6374,7 @@ sortedMonths.forEach(month=>{for(const type of ['news','col']){const rows=advanc
 const chartAdvancedActiveDays=createAdvancedChart('chart-advanced-active-days');
 setAdvancedOption(chartAdvancedActiveDays,'chart-advanced-active-days',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',axisPointer:{type:'shadow'}},legend:{data:['ニュース','コラム'],bottom:4,textStyle:advancedFontText},grid:{left:76,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'月内の活動日数',minInterval:1,axisLabel:{...advancedFontText,fontSize:11},splitLine:{lineStyle:{color:'#f7f2ed',type:'dashed'}}},series:[{name:'ニュース',type:'bar',data:monthlyActiveDays.news,barMaxWidth:28,itemStyle:{color:'#8f252b',borderRadius:[3,3,0,0]}},{name:'コラム',type:'bar',data:monthlyActiveDays.col,barMaxWidth:28,itemStyle:{color:'#c4a059',borderRadius:[3,3,0,0]}}]});
 const chartAdvancedIntensity=createAdvancedChart('chart-advanced-intensity');
-setAdvancedOption(chartAdvancedIntensity,'chart-advanced-intensity',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',formatter:p=>p.map(x=>x.seriesName+': '+(x.value==null?'該当なし':x.value.toFixed(2)+'本/活動日')).join('<br>')},legend:{data:['ニュース','コラム'],bottom:4,textStyle:advancedFontText},grid:{left:80,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'一活動日あたりの記事数',axisLabel:{...advancedFontText,fontSize:11,formatter:v=>Number(v).toFixed(1)},splitLine:{lineStyle:{color:'#f7f2ed',type:'dashed'}}},series:[{name:'ニュース',type:'line',data:monthlyPostsPerActiveDay.news,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'}},{name:'コラム',type:'line',data:monthlyPostsPerActiveDay.col,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#c4a059',width:2.8},itemStyle:{color:'#c4a059'}}]});
+setAdvancedOption(chartAdvancedIntensity,'chart-advanced-intensity',{textStyle:{fontFamily:advancedFont},tooltip:{...advancedTooltip,trigger:'axis',formatter:p=>(Array.isArray(p)?p:[]).map(x=>{const n=Number(x.value);return (x.seriesName||'系列')+': '+(x.value==null||!Number.isFinite(n)?'該当なし':n.toFixed(2)+'本/活動日');}).join('<br>')},legend:{data:['ニュース','コラム'],bottom:4,textStyle:advancedFontText},grid:{left:80,right:30,top:52,bottom:86,containLabel:true},xAxis:{type:'category',data:sortedMonths,axisLabel:{...advancedFontText,fontSize:11,rotate:28,interval:0,hideOverlap:true}},yAxis:{type:'value',min:0,name:'一活動日あたりの記事数',axisLabel:{...advancedFontText,fontSize:11,formatter:v=>Number(v).toFixed(1)},splitLine:{lineStyle:{color:'#f7f2ed',type:'dashed'}}},series:[{name:'ニュース',type:'line',data:monthlyPostsPerActiveDay.news,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#8f252b',width:2.8},itemStyle:{color:'#8f252b'}},{name:'コラム',type:'line',data:monthlyPostsPerActiveDay.col,connectNulls:false,symbol:'circle',symbolSize:7,lineStyle:{color:'#c4a059',width:2.8},itemStyle:{color:'#c4a059'}}]});
 
 const ecdfRows = type => advancedArticles.filter(article => article.type === type)
   .map(article => article.chars).filter(Number.isFinite).sort((a,b)=>a-b);
@@ -6474,8 +6505,8 @@ setAdvancedOption(chartAdvancedGapScatter,'chart-advanced-gap-scatter',{
     const d=p.data?.article,previous=p.data?.previous;
     return d?'<strong>'+d.mediumLabel+'</strong><br>#'+d.id+' '+String(d.title).slice(0,38)
       +(String(d.title).length>38?'…':'')
-      +'<br>直前の記事: #'+previous.id
-      +'<br>公開間隔: '+p.data.value[0]+'日'
+      +(previous ? '<br>直前の記事: #'+previous.id : '')
+      +'<br>公開間隔: '+(Number.isFinite(Number(p.data?.value?.[0])) ? Number(p.data.value[0])+'日' : 'データなし')
       +'<br>本文: '+Number(d.chars).toLocaleString()+'字':'';
   }},
   legend:{data:['社務所だより','神籤草子','ニュースのパレート線','コラムのパレート線'],bottom:5,textStyle:advancedFontText},
