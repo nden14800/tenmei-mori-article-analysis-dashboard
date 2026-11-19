@@ -5083,7 +5083,7 @@ const maxDay = Math.max(...Object.values(dailyCounts), 1);
 const heatmapYears = Array.from(new Set(heatmapData.map(([date]) => Number(date.slice(0, 4))))).sort((a, b) => a - b);
 const heatmapPanelHeight = 156;
 const heatmapTopPadding = 26;
-const heatmapBottomPadding = 24; // カレンダー本体のみの余白。凡例はチャート外のHTMLで独立表示する
+const heatmapBottomPadding = 82; // 横向きvisualMap用の下部余白を確保
 const heatmapChartElement = document.getElementById('chart-heatmap');
 heatmapChartElement.style.height = `${heatmapTopPadding + (heatmapYears.length * heatmapPanelHeight) + heatmapBottomPadding}px`;
 
