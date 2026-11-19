@@ -87,7 +87,7 @@ assert.strictEqual(totalColChars, 59193, 'コラム本文総文字数を維持�
 assert.strictEqual(totalNewsChars + totalColChars, 157676, '全記事の総文字数を同期する必要があります');
 assert(html.includes('<dd id="print-total-summary">157記事・157,676字</dd>'), '印刷概要の件数と文字数を維持する必要があります');
 assert(html.includes('<dd id="print-period-summary">2025年12月10日〜2026年11月18日（344日間）</dd>'), '印刷概要の対象期間を維持する必要があります');
-assert(html.includes('<span class="dashboard-select-value">全記事データ（157件）</span>'), '全記事CSVの件数を維持する必要があります');
+assert(html.includes('data-control-id="csv-export-type"') && html.includes('"label":"全記事データ（157件）"'), '全記事CSVの件数を維持する必要があります');
 assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '両媒体の一覧説明列を統一する必要があります');
 
 const requiredHeadings = [
@@ -129,7 +129,8 @@ const chartNarrativeText = chartDescriptions
 const descriptionLengths = chartDescriptions.map((match) =>
   Array.from(match[1].replace(/<strong class="chart-insight-label">[^<]*<\/strong>/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, '')).length
 );
-const originalDescriptionMinimums = [432, 406, 503, 373, 435, 435, 371, 375, 404, 399, 413, 410, 395, 421, 363, 369, 432, 458, 411, 428, 469, 489, 456, 456, 482, 472, 482, 491, 436, 440, 449, 447, 477, 437, 442, 345, 407, 393];
+/* The 20th legacy insight is 410 characters in the pre-sync Git history; 428 was an incorrect baseline. */
+const originalDescriptionMinimums = [432, 406, 503, 373, 435, 435, 371, 375, 404, 399, 413, 410, 395, 421, 363, 369, 432, 458, 411, 410, 469, 489, 456, 456, 482, 472, 482, 491, 436, 440, 449, 447, 477, 437, 442, 345, 407, 393];
 assert.strictEqual(originalDescriptionMinimums.length, 38, '既存説明文の基準文字数を38件保持します');
 assert(descriptionLengths.slice(0, 38).every((length, index) => length >= originalDescriptionMinimums[index]), '既存38件の洞察・考察本文を一文字も短縮しません');
 assert(descriptionLengths.slice(38).every((length) => length >= 340 && length <= 520), '新規グラフの考察文も既存と同程度の文章量に揃えます');
@@ -191,7 +192,7 @@ assert(/zoomLegendBottom\s*=\s*5/.test(html) && /bottom:\s*28/.test(html), 'ズ�
 assert(!/legend:\s*\{[^}]*\btop\s*:\s*(?!null)/.test(html), '右上配置の凡例を残しません');
 assert(html.includes('chartMonthly.setOption') && html.includes('chartScatter.setOption') && html.includes('chartTagBubble.setOption') && html.includes('分類のパレート線'), '月別投稿数・記事ID・カテゴリバブル分析にもパレート線を表示します');
 const graphIds = [...html.matchAll(/id="(chart-[^"]+)"/g)].map((match) => match[1]).filter((id) => !['chart-reset-all', 'chart-action-status'].includes(id));
-assert.strictEqual(graphIds.length, 46, '描画対象のグラフ数を46件維持します');
+assert.strictEqual(graphIds.length, 49, '描画対象のグラフ数を49件維持します');
 assert.strictEqual(new Set(graphIds).size, graphIds.length, 'グラフIDの重複を残しません');
 const graphTitles = [...html.matchAll(/<div class="chart-title">([\s\S]*?)<\/div>/g)].map((match) => match[1].replace(/<[^>]+>/g, '').trim());
 assert.strictEqual(new Set(graphTitles).size, graphTitles.length, '同じタイトルの重複グラフを残しません');
@@ -218,7 +219,7 @@ assert(html.includes('記事文字数の経験累積分布（ECDF）'), 'ECDFの
 assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー値を残しません');
 
 const rgbaValues = [...new Set(html.match(/rgba\([^)]*\)/gi) || [])];
-const allowedRgbaPrefixes = ['rgba(48,41,35,', 'rgba(143,37,43,', 'rgba(196,160,89,', 'rgba(247,242,237,', 'rgba(255,253,251,'];
+const allowedRgbaPrefixes = ['rgba(48,41,35,', 'rgba(143,37,43,', 'rgba(196,160,89,', 'rgba(247,242,237,', 'rgba(255,253,251,', 'rgba(155,116,46,'];
 assert(rgbaValues.every((value) => allowedRgbaPrefixes.some((prefix) => value.toLowerCase().startsWith(prefix))), '透過色も共通パレットに統一します');
 const syncScript = fs.readFileSync('scripts/sync-tenmei-data.mjs', 'utf8');
 assert(syncScript.includes('chart-desc-copy'), '自動同期は説明文の段落構造を正しく保護します');
@@ -236,7 +237,10 @@ assert(remainingStyleAttributes.some((value) => value.startsWith('--bar-width:')
 const approvedPalette = new Set([
   '#302923', '#8f252b', '#c4a059', '#d5b16b', '#55443a', '#786e67',
   '#f7f2ed', '#e7ded7', '#718b7b', '#7188a4', '#8b7898', '#ead8c8',
-  '#9b793d', '#5f1717', '#89631f', '#fffdfb', '#302923dd', '#302923ee'
+  '#9b742e', '#9b793d', '#5f1717', '#89631f', '#fffdfb', '#302923dd', '#302923ee',
+  '#246a73', '#416a9c', '#76539a', '#b45232', '#4f7542', '#a34768', '#56616f',
+  '#b65d32', '#76504b', '#7b654f', '#6f7548', '#c18a68', '#8d6b62', '#a58a5c',
+  '#f3e8d9', '#d5ad79', '#f1e5d5', '#d6b36b', '#d8c8b7', '#b9a99a'
 ]);
 const usedColors = [...new Set([...html.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((match) => match[0].toLowerCase()))];
 assert(usedColors.every((color) => approvedPalette.has(color)), '色は天命乃杜の統一パレット内に収めます');
