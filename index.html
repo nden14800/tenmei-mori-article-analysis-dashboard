@@ -4981,6 +4981,28 @@ function createDashboardChart(element, renderer = null) {
         }
         if (property === 'setOption') return (...args) => {
           try {
+            // 日別投稿ヒートマップだけは、後続のテーマ適用・再設定でも
+            // visualMap の向きと横長グラデーション寸法を必ず維持する。
+            if (chartId === 'chart-heatmap' && args[0] && args[0].visualMap) {
+              const maps = Array.isArray(args[0].visualMap) ? args[0].visualMap : [args[0].visualMap];
+              args[0] = {
+                ...args[0],
+                visualMap: maps.map(map => ({
+                  ...map,
+                  show: true,
+                  type: 'continuous',
+                  orient: 'horizontal',
+                  left: 'center',
+                  right: undefined,
+                  top: undefined,
+                  bottom: 18,
+                  itemWidth: 170,
+                  itemHeight: 12,
+                  calculable: false,
+                  realtime: false
+                }))
+              };
+            }
             const result = target.setOption(...args);
             element.dataset.chartState = 'configured';
             window.requestAnimationFrame(() => {
