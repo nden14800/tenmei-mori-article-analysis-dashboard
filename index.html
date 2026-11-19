@@ -5113,20 +5113,17 @@ const chartHeatmap = createDashboardChart(heatmapChartElement);
 chartHeatmap.setOption({
   textStyle: { fontFamily: "'Zen Kaku Gothic New', sans-serif" },
   tooltip: { formatter: p => `${p.data[0]}: ${p.data[1]}件`, backgroundColor: '#302923dd', textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif" } },
-  // 他のヒートマップと同じECharts標準visualMapを使用。横向き・非操作式で統一する。
+  // 以前の横向きECharts visualMapを維持し、下端位置だけ調整。
   visualMap: {
-    type: 'continuous',
-    show: true,
     min: 0,
     max: maxDay,
     orient: 'horizontal',
+    bottom: 4,
     left: 'center',
-    bottom: 8,
     itemWidth: 170,
-    itemHeight: 10,
-    calculable: false,
+    itemHeight: 12,
     inRange: { color: ['#f7f2ed', '#ead8c8', '#8f252b'] },
-    textStyle: { color: '#786e67', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 10 }
+    textStyle: { color: '#786e67', fontSize: 10, fontFamily: "'Zen Kaku Gothic New', sans-serif" }
   },
   calendar: heatmapCalendars,
   series: heatmapSeries
