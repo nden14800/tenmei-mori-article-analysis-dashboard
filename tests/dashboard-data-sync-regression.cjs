@@ -106,10 +106,12 @@ const latestNews = sourceNewsData.reduce((latest, article) => article.id > lates
 const latestColumn = sourceColData.reduce((latest, article) => article.id > latest.id ? article : latest, sourceColData[0]);
 assert.strictEqual(newsData[0].id, latestNews.id, '最新ニュースを本体mainの最大IDと一致させます');
 assert.strictEqual(colData[0].id, latestColumn.id, '最新コラムを本体mainの最大IDと一致させます');
-const allDates = [...sourceNewsData, ...sourceColData].map((article) => article.date).sort();
-const toUtcDate = (value) => new Date(value.split('/').join('-') + 'T00:00:00Z');
-const startDate = toUtcDate(allDates[0]);
-const endDate = toUtcDate(allDates[allDates.length - 1]);
+const allDates = [...sourceNewsData, ...sourceColData].map((article) => {
+  const [year, month, day] = String(article.date).split('/').map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}).sort((left, right) => left - right);
+const startDate = allDates[0];
+const endDate = allDates[allDates.length - 1];
 const inclusiveDays = Math.round((endDate - startDate) / 86400000) + 1;
 const formatJapaneseDate = (date) => date.getUTCFullYear() + '年' + (date.getUTCMonth() + 1) + '月' + date.getUTCDate() + '日';
 const expectedPeriodSummary = '<dd id="print-period-summary">' + formatJapaneseDate(startDate) + '〜' + formatJapaneseDate(endDate) + '（' + inclusiveDays + '日間）</dd>';
