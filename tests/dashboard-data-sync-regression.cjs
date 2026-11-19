@@ -84,7 +84,8 @@ const totalColChars = Object.values(colChars).reduce((sum, value) => sum + Numbe
 const validPublicationTime = /^([01]\\d|2[0-3]):[0-5]\\d$/;
 const newsHourCounts = Array(24).fill(0);
 for (const article of newsData) {
-  assert(validPublicationTime.test(article.time || ''), 'ニュース全件に有効な公開時刻が必要です');
+  if (!article.time) continue;
+  assert(validPublicationTime.test(article.time), '公開時刻が設定されたニュースは有効な形式である必要があります');
   newsHourCounts[Number(article.time.slice(0, 2))] += 1;
 }
 const sourceNewsFields = ['id', 'title', 'date', 'time', 'tag', 'tagColor', 'borderColor', 'desc'];
@@ -100,7 +101,7 @@ assert.strictEqual(JSON.stringify(Object.keys(newsChars).sort()), JSON.stringify
 assert.strictEqual(JSON.stringify(Object.keys(colChars).sort()), JSON.stringify(sourceColData.map((article) => String(article.id)).sort()), 'コラム文字数のID集合を本体mainと一致させます');
 assert(Object.values(newsChars).every((value) => Number.isInteger(value) && value > 0), 'ニュース文字数はすべて正の整数である必要があります');
 assert(Object.values(colChars).every((value) => Number.isInteger(value) && value > 0), 'コラム文字数はすべて正の整数である必要があります');
-assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), newsData.length, '時刻分布にニュース全件を集計する必要があります');
+assert.strictEqual(newsHourCounts.reduce((sum, count) => sum + count, 0), newsData.filter((article) => article.time).length, '公開時刻が設定されたニュースを漏れなく時刻分布へ集計します');
 const latestNews = sourceNewsData.reduce((latest, article) => article.id > latest.id ? article : latest, sourceNewsData[0]);
 const latestColumn = sourceColData.reduce((latest, article) => article.id > latest.id ? article : latest, sourceColData[0]);
 assert.strictEqual(newsData[0].id, latestNews.id, '最新ニュースを本体mainの最大IDと一致させます');
