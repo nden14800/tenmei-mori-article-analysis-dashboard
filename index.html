@@ -5085,7 +5085,7 @@ const heatmapPanelHeight = 156;
 const heatmapTopPadding = 26;
 const heatmapBottomPadding = 82; // 横向きvisualMap用の下部余白を確保
 const heatmapChartElement = document.getElementById('chart-heatmap');
-heatmapChartElement.style.height = `${heatmapTopPadding + (heatmapYears.length * heatmapPanelHeight) + heatmapBottomPadding}px`;
+heatmapChartElement.style.setProperty('height', `${heatmapTopPadding + (heatmapYears.length * heatmapPanelHeight) + heatmapBottomPadding}px`, 'important');
 
 const heatmapCalendars = heatmapYears.map((year, index) => ({
   range: String(year),
