@@ -5473,7 +5473,12 @@ chartTagLen.setOption({
     trigger: 'axis',
     backgroundColor: '#302923dd',
     textStyle: { color: '#f7f2ed', fontFamily: "'Zen Kaku Gothic New', sans-serif", fontSize: 11 },
-    formatter: p => `${p[0].name}<br>平均 <strong>${p[0].value.toLocaleString()}字</strong>`
+    formatter: p => {
+      const row = Array.isArray(p) ? p[0] : p;
+      if (!row) return '';
+      const n = Number(row.value);
+      return `${row.name || row.axisValueLabel || 'タグ'}<br>平均 <strong>${Number.isFinite(n) ? n.toLocaleString() + '字' : 'データなし'}</strong>`;
+    }
   },
   // 上部は操作アイコン専用、右側は値ラベルと指で操作できる縦方向スライダー専用として確保する。
   grid: { left: 5, right: 112, top: 38, bottom: 5, containLabel: true },
