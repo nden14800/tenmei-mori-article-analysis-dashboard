@@ -217,7 +217,7 @@ assert(html.includes('data-control-id="csv-export-type"') && html.includes('"lab
 assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '両媒体の一覧説明列を統一する必要があります');
 
 const requiredHeadings = [
-  '天命乃杜 — 344日間の軌跡が語るもの',
+  '天命乃杜 — 346日間の軌跡が語るもの',
   '▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）',
   '▍ フェーズ II — インフラ・機能拡張の集中期（2026年1月中旬〜2月）',
   '▍ フェーズ III — 投稿の空白と運営再開（2026年2月〜4月）',
@@ -245,6 +245,8 @@ assert(!html.includes('読み解きのポイント'), '説明欄ラベルを旧�
 
 const chartDescriptions = [...html.matchAll(/<div class="chart-desc"><div class="chart-desc-title">▍ 洞察・考察<\/div><div class="chart-desc-copy">([\s\S]*?)<\/div><\/div>/g)];
 assert.strictEqual(chartDescriptions.length, 49, '全49個の洞察・考察を維持する必要があります');
+const insightParagraphs = [...html.matchAll(/<p class="chart-insight-paragraph">([\s\S]*?)<\/p>/g)];
+assert.strictEqual(insightParagraphs.length, chartDescriptions.length * 3, '全49グラフ・147段落の洞察・考察を漏れなく保持します');
 
 const chartTextAt = (number) => chartDescriptions[number - 1][1].replace(/<[^>]*>/g, '').replace(/\s+/g, '');
 const synchronizedInsightFacts = [
@@ -253,16 +255,16 @@ const synchronizedInsightFacts = [
   [6, ['10本で平均3,625字', '「新機能」が1,073字']],
   [9, ['37.4%']],
   [10, ['平均794字']],
-  [13, ['100,665字', '59,067字', '159,732字', '1,106字', '895字', '1,017字', '63.0%', '37.0%']],
+  [13, ['100,665字', '61,699字', '162,364字', '1,106字', '921字', '1,028字', '62.0%', '38.0%']],
   [17, ['1,200字超22本', 'ニュース22本・コラム17本', '1,200字超が22本', '合計39本', '24.8%']],
-  [18, ['ID87のVer.4.0は4,230字', 'ID65が2,068字', '3,346〜4,248字']],
-  [19, ['1,430字', '1,222字', '1,110字', '1,062字', '1,044字', '732字', '842字']],
+  [18, ['ID87のVer.4.0は4,230字', 'ID65が2,068字', 'ID67が2,632字', '3,346〜4,248字']],
+  [19, ['1,430字', '1,222字', '1,110字', '610字', '1,062字', '1,149字', '1,044字', '986字', '691字', '732字', '736字', '991字']],
   [20, ['3,625字', '4,185字']],
-  [21, ['1,391字', '1,036字']],
+  [21, ['1,662字', '1,546字', '1,036字']],
   [23, ['ニュース11本・コラム20本']],
-  [27, ['1,106字', '895字']],
+  [27, ['1,106字', '921字']],
   [29, ['ニュース6本、コラム0本']],
-  [30, ['ID65の2,068字']],
+  [30, ['ID67の2,632字']],
   [34, ['ニュース3,902字']],
   [35, ['7月3,200字']],
   [39, ['2,479字', '1,400字']],
@@ -272,6 +274,11 @@ for (const [number, fragments] of synchronizedInsightFacts) {
   const body = chartTextAt(number);
   for (const fragment of fragments) assert(body.includes(fragment), '洞察・考察 #' + number + ' の数値を最新データと一致させます: ' + fragment);
 }
+assert(!html.includes('最後に基礎知識記事が追加された点'), '最新コラムのカテゴリを古い記事のカテゴリと取り違えません');
+assert(!html.includes('コラムの最長記事はID65の2,068字'), 'コラム最長記事の旧記述を残しません');
+assert(html.includes('コラムの最長記事はID67の2,632字'), '最新コラムを最長記事の記述へ反映します');
+assert(!html.includes('全記事データ（157件）'), 'CSVの古い固定件数を残しません');
+assert(analysisSummaryText.includes('勤労感謝の日と新嘗祭') && analysisSummaryText.includes('ID67'), '総合分析へ最新コラムの内容を反映します');
 
 for (const match of chartDescriptions) {
   const labels = [...match[1].matchAll(/<strong class="chart-insight-label">([^<]+)<\/strong>/g)].map((item) => item[1]);
@@ -364,7 +371,7 @@ assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(ht
 assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
 
-assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-19 · 5988e5ac'), '本体リポジトリの確認コミットを最新に保ちます');
+assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-20 · bfe4173c'), '本体リポジトリの確認コミットを最新に保ちます');
 
 assert(html.includes('.subtitle{font-family:var(--font-main);font-style:italic;color:var(--tm-muted)}'), '副題は本体サイトと同じ明朝の編集見出しにします');
 assert(html.includes('.stat-number{color:var(--stat-accent,var(--tm-red))!important;font-family:var(--font-ui);'), '統計数値はUI書体と等幅数字で揃えます');
