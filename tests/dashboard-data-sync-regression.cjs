@@ -207,7 +207,7 @@ assert(analysisSummaryText.includes('総文字数は' + formatCount(totalArticle
 assert(analysisSummaryText.includes('ニュースは合計' + formatCount(totalNewsChars) + '字・平均約' + formatCount(Math.round(totalNewsChars / newsData.length)) + '字'), '総合分析のニュース文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColChars) + '字・平均約' + formatCount(Math.round(totalColChars / colData.length)) + '字'), '総合分析のコラム文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
-assert(analysisSummaryText.includes('ID65の2,068字'), '最長コラムの文字数を再計算した値と一致させます');
+assert(analysisSummaryText.includes('ID67の2,632字'), '最長コラムの文字数を再計算した値と一致させます');
 assert(analysisSummaryText.includes('公開状態はpartial') && analysisSummaryText.includes('CSPによるインラインスクリプト実行拒否'), '最新の監視状態を記事データと分離して記録します');
 
 assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
