@@ -365,7 +365,8 @@ assert.strictEqual(new Set(graphTitles).size, graphTitles.length, '同じタイ�
 assert((html.match(/max\s*:\s*100\b/g) || []).length === 6, '固定上限100は累積構成比・月内構成比・ローレンツ曲線・レーダー指標など百分率尺度の軸だけに限定します');
 
 const styleBlocks = [...html.matchAll(/<style\b/gi)];
-assert.strictEqual(styleBlocks.length, 1, 'スタイルシートは一つに統合する必要があります');
+assert.strictEqual(styleBlocks.length, 3, '本体デザイントークンと選択UI補完用の3つのスタイルブロックを保持します');
+for (const styleId of ['tenmei-design-system', 'tenmei-dashboard-choice-default-tokens', 'tenmei-canonical-choice-completion']) assert(html.includes('id="' + styleId + '"'), '必要なスタイルブロックを保持します: ' + styleId);
 assert(/grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*400px\),\s*1fr\)\)\s*!important/.test(html), '未使用列を折りたたみ、最終行のグラフも横幅いっぱいに広げます');
 assert(/@media\s*\(max-width:\s*640px\)[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)\s*!important/.test(html), 'スマートフォンではグラフを一列に配置します');
 assert(/\.chart-card\s*,\s*\.advanced-chart-card\s*\{[\s\S]*?width:\s*100%\s*!important/.test(html), 'グラフカードは親グリッドの横幅を使い切ります');
