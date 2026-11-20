@@ -4998,8 +4998,8 @@ function createDashboardChart(element, renderer = null) {
                   right: null,
                   top: null,
                   bottom: 18,
-                  itemWidth: 170,
-                  itemHeight: 12,
+                  itemWidth: 12,
+                  itemHeight: 170,
                   align: 'left',
                   calculable: false,
                   realtime: false
@@ -6727,7 +6727,7 @@ function polishDashboardChartOptions() {
    if(current.grid?.length)option.grid=current.grid.map(grid=>({...grid,containLabel:grid.containLabel!==false,backgroundColor:'transparent',borderColor:'transparent'}));
    if(current.visualMap?.length)option.visualMap=current.visualMap.map(map=>({
     ...map,
-    ...(chart.getDom?.()?.id==='chart-heatmap'?{orient:'horizontal',left:'center',bottom:18,itemWidth:170,itemHeight:12}:{}),
+    ...(chart.getDom?.()?.id==='chart-heatmap'?{orient:'horizontal',left:'center',bottom:18,itemWidth:12,itemHeight:170}:{}),
     inRange:{...map.inRange,color:['#fffdfb','#f1e5d5','#d6b36b','#b65d32','#8f252b']},
     textStyle:{...map.textStyle,fontFamily:font,color:'#55443a'}
    }));
