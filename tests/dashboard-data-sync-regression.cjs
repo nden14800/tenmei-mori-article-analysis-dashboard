@@ -197,64 +197,6 @@ for (const article of colData) {
 
 const totalArticleCount = newsData.length + colData.length;
 const totalArticleChars = totalNewsChars + totalColChars;
-const medianOf = (values) => {
-  const sorted = values.map(Number).sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
-};
-const percentileOf = (values, percentile) => {
-  const sorted = values.map(Number).sort((a, b) => a - b);
-  const position = (sorted.length - 1) * percentile;
-  const lower = Math.floor(position), upper = Math.ceil(position);
-  return sorted[lower] + (sorted[upper] - sorted[lower]) * (position - lower);
-};
-const articleRows = (items, chars) => items.map((article) => ({
-  id: article.id,
-  date: article.date,
-  category: article.category || article.tag || '',
-  chars: Number(chars[String(article.id)])
-}));
-const newsRows = articleRows(newsData, newsChars);
-const colRows = articleRows(colData, colChars);
-const categoryAudit = Object.fromEntries([...new Set(colRows.map((row) => row.category))].sort().map((category) => {
-  const rows = colRows.filter((row) => row.category === category);
-  return [category, { count: rows.length, total: rows.reduce((sum, row) => sum + row.chars, 0), average: Math.round(rows.reduce((sum, row) => sum + row.chars, 0) / rows.length), median: medianOf(rows.map((row) => row.chars)) }];
-}));
-const weekdayAudit = (rows) => Object.fromEntries(['日','月','火','水','木','金','土'].map((day, index) => {
-  const group = rows.filter((row) => new Date(Date.UTC(...row.date.split('/').map((part, i) => i === 1 ? Number(part)-1 : Number(part)))).getUTCDay() === index);
-  return [day, { count: group.length, average: group.length ? Math.round(group.reduce((sum,row)=>sum+row.chars,0)/group.length) : null }];
-}));
-const bandAudit = (rows) => ({
-  '300字以下': rows.filter((r) => r.chars <= 300).length,
-  '301〜500字': rows.filter((r) => r.chars >= 301 && r.chars <= 500).length,
-  '501〜700字': rows.filter((r) => r.chars >= 501 && r.chars <= 700).length,
-  '701〜900字': rows.filter((r) => r.chars >= 701 && r.chars <= 900).length,
-  '901〜1,200字': rows.filter((r) => r.chars >= 901 && r.chars <= 1200).length,
-  '1,200字超': rows.filter((r) => r.chars > 1200).length
-});
-const sortedChars = (rows) => rows.map((r) => r.chars).sort((a,b)=>a-b);
-const giniOf = (values) => {
-  const sorted = values.slice().sort((a,b)=>a-b);
-  const n = sorted.length, total = sorted.reduce((a,b)=>a+b,0);
-  return sorted.reduce((sum,value,index)=>sum+(2*(index+1)-n-1)*value,0)/(n*total);
-};
-const topShare = (rows) => {
-  const sorted = rows.slice().sort((a,b)=>b.chars-a.chars);
-  const top = sorted.slice(0,Math.ceil(sorted.length*0.2));
-  const bottom = sorted.slice(-Math.ceil(sorted.length*0.2));
-  const total = rows.reduce((s,r)=>s+r.chars,0);
-  return { topCount:top.length, topPercent:+(100*top.reduce((s,r)=>s+r.chars,0)/total).toFixed(1), bottomPercent:+(100*bottom.reduce((s,r)=>s+r.chars,0)/total).toFixed(1) };
-};
-const monthAudit = (rows) => Object.fromEntries([...new Set(rows.map(r=>r.date.slice(0,7)))].sort().map(month=>{
- const values=rows.filter(r=>r.date.startsWith(month)).map(r=>r.chars).sort((a,b)=>a-b);
- return [month,{count:values.length,median:medianOf(values),q3:percentileOf(values,.75)}];
-}));
-console.log('SYNC_METRIC_AUDIT '+JSON.stringify({
- news:{count:newsRows.length,total:totalNewsChars,average:Math.round(totalNewsChars/newsRows.length),median:medianOf(sortedChars(newsRows)),p90:percentileOf(sortedChars(newsRows),.9),bands:bandAudit(newsRows),weekdays:weekdayAudit(newsRows),gini:giniOf(sortedChars(newsRows)),topShare:topShare(newsRows)},
- columns:{count:colRows.length,total:totalColChars,average:Math.round(totalColChars/colRows.length),median:medianOf(sortedChars(colRows)),p90:percentileOf(sortedChars(colRows),.9),bands:bandAudit(colRows),weekdays:weekdayAudit(colRows),categories:categoryAudit,gini:giniOf(sortedChars(colRows)),topShare:topShare(colRows),months:monthAudit(colRows),rows:colRows},
- overall:{count:totalArticleCount,total:totalArticleChars,average:Math.round(totalArticleChars/totalArticleCount),newsShare:+(100*totalNewsChars/totalArticleChars).toFixed(1),columnShare:+(100*totalColChars/totalArticleChars).toFixed(1)}
-},null,2));
-
 const analysisSummaryStart = html.indexOf('  <!-- MEGA SUMMARY -->');
 const analysisSummaryEnd = html.indexOf('  <!-- ARTICLE TABLES -->', analysisSummaryStart);
 assert(analysisSummaryStart >= 0 && analysisSummaryEnd > analysisSummaryStart, '総合分析の数値検証範囲が必要です');
@@ -265,8 +207,8 @@ assert(analysisSummaryText.includes(expectedTotalSummary), '総合分析の総�
 assert(analysisSummaryText.includes('ニュースは合計' + formatCount(totalNewsChars) + '字・平均約' + formatCount(Math.round(totalNewsChars / newsData.length)) + '字'), '総合分析のニュース文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColChars) + '字・平均約' + formatCount(Math.round(totalColChars / colData.length)) + '字'), '総合分析のコラム文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
-assert(analysisSummaryText.includes('ID67の2,632字'), '最長コラムの文字数を再計算した値と一致させます');
-assert(analysisSummaryText.includes('公開状態はpartial') && analysisSummaryText.includes('CSPによるインラインスクリプト実行拒否'), '最新の監視状態を記事データと分離して記録します');
+assert(analysisSummaryText.includes('ID67の2,628字'), '最長コラムの文字数を再計算した値と一致させます');
+assert(analysisSummaryText.includes('最新監視では全体状態はpartial') && analysisSummaryText.includes('CSPによるインラインスクリプト実行拒否') && analysisSummaryText.includes('おみくじの重要操作もoutage'), '最新の監視状態を記事データと分離して記録します');
 
 assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
 assert(html.includes('<dd id="print-total-summary">' + totalArticleCount + '記事・'), '印刷概要の件数を最新データと一致させます');
@@ -313,28 +255,31 @@ const synchronizedInsightFacts = [
   [6, ['10本で平均3,625字', '「新機能」が1,073字']],
   [9, ['37.4%']],
   [10, ['平均794字']],
-  [13, ['100,665字', '61,699字', '162,364字', '1,106字', '921字', '1,028字', '62.0%', '38.0%']],
-  [17, ['1,200字超22本', 'ニュース22本・コラム17本', '1,200字超が22本', '合計39本', '24.8%']],
-  [18, ['ID87のVer.4.0は4,230字', 'ID65が2,068字', 'ID67が2,632字', '3,346〜4,248字']],
-  [19, ['1,430字', '1,222字', '1,110字', '610字', '1,062字', '1,149字', '1,044字', '986字', '691字', '732字', '736字', '991字']],
+  [13, ['100,665字', '58,925字', '159,590字', '1,106字', '879字', '1,010字', '63.1%', '36.9%']],
+  [16, ['ニュースは土曜日22本・日曜日17本', 'コラムは火曜日17本・土曜日14本・金曜日12本・日曜日11本']],
+  [17, ['300字以下8本', '301〜500字18本', '501〜700字20本', '701〜900字16本', '901〜1,200字7本', '1,200字超22本', 'コラムは同じ順に0本、10本、20本、14本、9本、14本', '合計36本', '22.8%']],
+  [18, ['ID87のVer.4.0は4,230字', 'ID89のVer.4.2は4,185字', 'ID65は2,014字', 'ID67が2,628字', '3,346〜4,248字']],
+  [19, ['1,430字', '1,222字', '1,170字', '1,110字', '1,062字', '755字', '610字', '1,112字', '1,005字', '951字', '944字', '688字', '687字', '647字']],
   [20, ['3,625字', '4,185字']],
-  [21, ['1,662字', '1,546字', '1,036字']],
-  [23, ['ニュース11本・コラム20本']],
-  [27, ['1,106字', '921字']],
-  [29, ['ニュース6本、コラム0本']],
-  [30, ['ID67の2,632字']],
-  [34, ['ニュース3,902字']],
-  [35, ['7月3,200字']],
-  [39, ['2,479字', '1,400字']],
-  [42, ['0.460', '0.228', '55.4％', '35.2％', '5.7％', '12.2％']]
-];
+  [21, ['1,618字', '1,508字', '1,003字', '634字']],
+  [23, ['ニュース11本・コラム19本', 'ニュースは500〜999字が41本、コラムは36本']],
+  [27, ['1,106字', '879字', '699字', '743字']],
+  [29, ['500〜999字帯がニュース41本・コラム36本', '1,000〜1,999字はニュース11本・コラム19本', '2,000〜3,999字はニュース7本・コラム2本', 'ニュース6本、コラム0本']],
+  [30, ['ID67の2,628字']],
+  [32, ['ID67（2,628字）', '平均は2,075字']],
+  [34, ['ニュース3,902字・コラム1,276字', 'ニュース562字・コラム582字']],
+  [35, ['コラムは1月692字、2月762字、5月1,222字、6月1,370字、7月1,151字']],
+  [39, ['中央値はニュース699字・コラム743字', '2,479字', '1,363字']],
+  [40, ['ニュース699字、コラム743字', 'コラム562〜1,179字']],
+  [42, ['0.460', '0.256', '55.4％', '36.8％', '5.7％', '11.2％']]
+];;
 for (const [number, fragments] of synchronizedInsightFacts) {
   const body = chartTextAt(number);
   for (const fragment of fragments) assert(body.includes(fragment), '洞察・考察 #' + number + ' の数値を最新データと一致させます: ' + fragment);
 }
 assert(!html.includes('最後に基礎知識記事が追加された点'), '最新コラムのカテゴリを古い記事のカテゴリと取り違えません');
-assert(!html.includes('コラムの最長記事はID65の2,068字'), 'コラム最長記事の旧記述を残しません');
-assert(html.includes('コラムの最長記事はID67の2,632字'), '最新コラムを最長記事の記述へ反映します');
+assert(!html.includes('ID65の2,068字') && !html.includes('ID67の2,632字'), 'コラム最長記事の旧文字数を残しません');
+assert(html.includes('ID67の2,628字'), '最新コラムを最長記事の記述へ反映します');
 assert(!html.includes('全記事データ（157件）'), 'CSVの古い固定件数を残しません');
 assert(analysisSummaryText.includes('勤労感謝の日と新嘗祭') && analysisSummaryText.includes('ID67'), '総合分析へ最新コラムの内容を反映します');
 
@@ -429,13 +374,13 @@ assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(ht
 assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
 
-assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-20 · bfe4173c'), '本体リポジトリの確認コミットを最新に保ちます');
+assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-20 · 0b69c0ef'), '本体リポジトリの確認コミットを最新に保ちます');
 
 assert(html.includes('.subtitle{font-family:var(--font-main);font-style:italic;color:var(--tm-muted)}'), '副題は本体サイトと同じ明朝の編集見出しにします');
 assert(html.includes('.stat-number{color:var(--stat-accent,var(--tm-red))!important;font-family:var(--font-ui);'), '統計数値はUI書体と等幅数字で揃えます');
 assert(!html.includes('2026年11月18日07:12:07 UTC'), '本文中の時刻表記は日本語に統一します');
 
-assert(!html.includes('181e5b3d') && analysisSummaryText.includes('公開状態はpartial') && analysisSummaryText.includes('siteはoutage判定') && analysisSummaryText.includes('Worker/APIはoperational'), '最新の監視状態を正確に保持し、古いスナップショットを残しません');
+assert(!html.includes('181e5b3d') && analysisSummaryText.includes('最新監視では全体状態はpartial') && analysisSummaryText.includes('siteはoutage') && analysisSummaryText.includes('Worker/APIはoperational') && analysisSummaryText.includes('12:52:23 UTC'), '最新の監視状態を正確に保持し、古いスナップショットを残しません');
 assert(html.includes('記事文字数の経験累積分布（ECDF）'), 'ECDFのグラフ名は日本語を主表記にします');
 assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー値を残しません');
 
