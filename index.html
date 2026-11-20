@@ -2152,6 +2152,182 @@ tbody tr:nth-child(even){background:#fffdfb}tbody tr:hover{background:#f7f2ed}
     }
 
     
+
+/* Dashboard visual consistency layer — single source of truth */
+:root {
+  --dash-surface: #fffdfb;
+  --dash-surface-soft: #f7f2ed;
+  --dash-border: #e7ded7;
+  --dash-text: #55443a;
+  --dash-muted: #786e67;
+  --dash-red: #8f252b;
+  --dash-gold: #c4a059;
+  --dash-radius: 14px;
+  --dash-shadow: 0 5px 18px rgba(48,41,35,.045);
+}
+/* 全グラフカードを同じ面・境界・余白に統一 */
+.chart-card,
+.advanced-chart-card {
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: clamp(1rem, 1.5vw, 1.4rem) !important;
+  border: 1px solid var(--dash-border) !important;
+  border-radius: var(--dash-radius) !important;
+  background: var(--dash-surface) !important;
+  box-shadow: var(--dash-shadow) !important;
+  overflow: hidden !important;
+  animation: none !important;
+  transition: border-color .18s ease, box-shadow .18s ease !important;
+}
+.chart-card:hover,
+.advanced-chart-card:hover {
+  transform: none !important;
+  border-color: #d8c7b8 !important;
+  box-shadow: 0 8px 22px rgba(48,41,35,.07) !important;
+}
+/* タイトルの高さ・書体・アクセントを統一 */
+.chart-title {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: .65rem !important;
+  min-height: 2.9em !important;
+  margin: 0 0 .65rem !important;
+  padding: .1rem 0 .7rem !important;
+  border-bottom: 1px solid var(--dash-border) !important;
+  color: var(--dash-text) !important;
+  font-family: var(--font-ui, 'Zen Kaku Gothic New', sans-serif) !important;
+  font-size: .9rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .015em !important;
+  line-height: 1.6 !important;
+}
+.chart-title::before {
+  content: '' !important;
+  display: block !important;
+  flex: 0 0 3px !important;
+  width: 3px !important;
+  height: 1.35em !important;
+  margin-top: .18em !important;
+  border-radius: 3px !important;
+  background: linear-gradient(180deg, var(--dash-red), var(--dash-gold)) !important;
+}
+/* 描画領域はグラフ種別ごとの必要高を保ちつつ、同種で統一 */
+.chart-box:not(.heatmap-chart) {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 360px !important;
+  flex: 0 0 auto !important;
+  border-radius: 9px !important;
+  background: linear-gradient(180deg, rgba(255,253,251,.72), rgba(247,242,237,.18)) !important;
+}
+.chart-box-tall:not(.heatmap-chart) {
+  height: 420px !important;
+}
+.chart-box-advanced:not(.heatmap-chart) {
+  height: 390px !important;
+}
+.heatmap-chart {
+  min-width: 0 !important;
+  /* 高さは年数に応じたインライン設定を尊重 */
+}
+/* 洞察・考察パネルと本文の階層を統一 */
+.chart-desc {
+  box-sizing: border-box !important;
+  margin: .85rem 0 0 !important;
+  padding: 1rem 1.1rem !important;
+  border: 1px solid var(--dash-border) !important;
+  border-left: 3px solid var(--dash-gold) !important;
+  border-radius: 11px !important;
+  background: linear-gradient(135deg, var(--dash-surface-soft), var(--dash-surface) 78%) !important;
+  color: var(--dash-text) !important;
+  font-family: var(--font-ui, 'Zen Kaku Gothic New', sans-serif) !important;
+  font-size: .78rem !important;
+  line-height: 1.85 !important;
+}
+.chart-desc-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: .5rem !important;
+  margin: 0 0 .65rem !important;
+  color: #89631f !important;
+  font-size: .76rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .045em !important;
+  line-height: 1.5 !important;
+}
+.chart-desc-copy {
+  color: var(--dash-text) !important;
+  font-size: .78rem !important;
+  line-height: 1.9 !important;
+}
+.chart-insight-paragraph {
+  margin: 0 0 .55rem !important;
+  color: var(--dash-text) !important;
+  font-size: inherit !important;
+  line-height: 1.9 !important;
+}
+.chart-insight-paragraph:last-child { margin-bottom: 0 !important; }
+.chart-insight-label {
+  display: inline-block !important;
+  margin-right: .35rem !important;
+  color: var(--dash-red) !important;
+  font-weight: 800 !important;
+}
+/* セクション見出しも一つの階層にそろえる */
+.section-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: .8rem !important;
+  margin: 2.4rem 0 1.1rem !important;
+  padding: 0 0 .7rem !important;
+  border-bottom: 1px solid var(--dash-border) !important;
+  color: var(--dash-red) !important;
+  font-family: var(--font-ui, 'Zen Kaku Gothic New', sans-serif) !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .045em !important;
+  line-height: 1.55 !important;
+}
+.section-title::before {
+  content: '' !important;
+  flex: 0 0 3px !important;
+  width: 3px !important;
+  height: 1.3em !important;
+  background: linear-gradient(180deg, var(--dash-red), var(--dash-gold)) !important;
+}
+.section-title::after { content: none !important; }
+/* グリッドの間隔・幅を共通化 */
+.charts-grid,
+.charts-grid-3,
+.advanced-charts-grid {
+  align-items: stretch !important;
+  gap: 1.15rem !important;
+  margin-bottom: 1.25rem !important;
+}
+.charts-grid > .chart-card,
+.charts-grid-3 > .chart-card,
+.advanced-charts-grid > .chart-card,
+.advanced-charts-grid > .advanced-chart-card {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+@media (max-width: 760px) {
+  .chart-card,
+  .advanced-chart-card { padding: .9rem !important; }
+  .chart-title { min-height: 0 !important; font-size: .86rem !important; }
+  .chart-box:not(.heatmap-chart) { height: 320px !important; }
+  .chart-box-tall:not(.heatmap-chart) { height: 370px !important; }
+  .chart-box-advanced:not(.heatmap-chart) { height: 360px !important; }
+  .chart-desc { padding: .85rem .9rem !important; }
+  .section-title { margin: 1.9rem 0 .9rem !important; }
+}
+
 </style>
 
 </head>
