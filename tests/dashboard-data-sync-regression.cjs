@@ -388,7 +388,7 @@ assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー
 
 const rgbaValues = [...new Set(html.match(/rgba\([^)]*\)/gi) || [])];
 const allowedRgbaPrefixes = ['rgba(48,41,35,', 'rgba(143,37,43,', 'rgba(196,160,89,', 'rgba(247,242,237,', 'rgba(255,253,251,', 'rgba(155,116,46,', 'rgba(131,92,60,', 'rgba(86,74,122,', 'rgba(184,139,57,', 'rgba(113,84,196,', 'rgba(31,22,18,', 'rgba(255,255,255,', 'rgba(231,197,163,', 'rgba(0,0,0,'];
-const normalizeRgba = (value) => value.toLowerCase().replace(/\\s+/g, '');
+const normalizeRgba = (value) => value.toLowerCase().replace(/\s+/g, '');
 assert(rgbaValues.every((value) => allowedRgbaPrefixes.some((prefix) => normalizeRgba(value).startsWith(prefix))), '透過色も共通パレットとチャート補助色に統一します');
 const syncScript = fs.readFileSync('scripts/sync-tenmei-data.mjs', 'utf8');
 assert(syncScript.includes('chart-desc-copy'), '自動同期は説明文の段落構造を正しく保護します');
