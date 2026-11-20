@@ -197,6 +197,63 @@ for (const article of colData) {
 
 const totalArticleCount = newsData.length + colData.length;
 const totalArticleChars = totalNewsChars + totalColChars;
+const medianOf = (values) => {
+  const sorted = values.map(Number).sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+};
+const percentileOf = (values, percentile) => {
+  const sorted = values.map(Number).sort((a, b) => a - b);
+  const position = (sorted.length - 1) * percentile;
+  const lower = Math.floor(position), upper = Math.ceil(position);
+  return sorted[lower] + (sorted[upper] - sorted[lower]) * (position - lower);
+};
+const articleRows = (items, chars) => items.map((article) => ({
+  id: article.id,
+  date: article.date,
+  category: article.category || article.tag || '',
+  chars: Number(chars[String(article.id)])
+}));
+const newsRows = articleRows(newsData, newsChars);
+const colRows = articleRows(colData, colChars);
+const categoryAudit = Object.fromEntries([...new Set(colRows.map((row) => row.category))].sort().map((category) => {
+  const rows = colRows.filter((row) => row.category === category);
+  return [category, { count: rows.length, total: rows.reduce((sum, row) => sum + row.chars, 0), average: Math.round(rows.reduce((sum, row) => sum + row.chars, 0) / rows.length), median: medianOf(rows.map((row) => row.chars)) }];
+}));
+const weekdayAudit = (rows) => Object.fromEntries(['日','月','火','水','木','金','土'].map((day, index) => {
+  const group = rows.filter((row) => new Date(Date.UTC(...row.date.split('/').map((part, i) => i === 1 ? Number(part)-1 : Number(part)))).getUTCDay() === index);
+  return [day, { count: group.length, average: group.length ? Math.round(group.reduce((sum,row)=>sum+row.chars,0)/group.length) : null }];
+}));
+const bandAudit = (rows) => ({
+  '300字以下': rows.filter((r) => r.chars <= 300).length,
+  '301〜500字': rows.filter((r) => r.chars >= 301 && r.chars <= 500).length,
+  '501〜700字': rows.filter((r) => r.chars >= 501 && r.chars <= 700).length,
+  '701〜900字': rows.filter((r) => r.chars >= 701 && r.chars <= 900).length,
+  '901〜1,200字': rows.filter((r) => r.chars >= 901 && r.chars <= 1200).length,
+  '1,200字超': rows.filter((r) => r.chars > 1200).length
+});
+const sortedChars = (rows) => rows.map((r) => r.chars).sort((a,b)=>a-b);
+const giniOf = (values) => {
+  const sorted = values.slice().sort((a,b)=>a-b);
+  const n = sorted.length, total = sorted.reduce((a,b)=>a+b,0);
+  return sorted.reduce((sum,value,index)=>sum+(2*(index+1)-n-1)*value,0)/(n*total);
+};
+const topShare = (rows) => {
+  const sorted = rows.slice().sort((a,b)=>b.chars-a.chars);
+  const top = sorted.slice(0,Math.ceil(sorted.length*0.2));
+  const bottom = sorted.slice(-Math.ceil(sorted.length*0.2));
+  const total = rows.reduce((s,r)=>s+r.chars,0);
+  return { topCount:top.length, topPercent:+(100*top.reduce((s,r)=>s+r.chars,0)/total).toFixed(1), bottomPercent:+(100*bottom.reduce((s,r)=>s+r.chars,0)/total).toFixed(1) };
+};
+const monthAudit = (rows) => Object.fromEntries([...new Set(rows.map(r=>r.date.slice(0,7)))].sort().map(month=>{
+ const values=rows.filter(r=>r.date.startsWith(month)).map(r=>r.chars).sort((a,b)=>a-b);
+ return [month,{count:values.length,median:medianOf(values),q3:percentileOf(values,.75)}];
+}));
+console.log('SYNC_METRIC_AUDIT '+JSON.stringify({
+ news:{count:newsRows.length,total:totalNewsChars,average:Math.round(totalNewsChars/newsRows.length),median:medianOf(sortedChars(newsRows)),p90:percentileOf(sortedChars(newsRows),.9),bands:bandAudit(newsRows),weekdays:weekdayAudit(newsRows),gini:giniOf(sortedChars(newsRows)),topShare:topShare(newsRows)},
+ columns:{count:colRows.length,total:totalColChars,average:Math.round(totalColChars/colRows.length),median:medianOf(sortedChars(colRows)),p90:percentileOf(sortedChars(colRows),.9),bands:bandAudit(colRows),weekdays:weekdayAudit(colRows),categories:categoryAudit,gini:giniOf(sortedChars(colRows)),topShare:topShare(colRows),months:monthAudit(colRows),rows:colRows},
+ overall:{count:totalArticleCount,total:totalArticleChars,average:Math.round(totalArticleChars/totalArticleCount),newsShare:+(100*totalNewsChars/totalArticleChars).toFixed(1),columnShare:+(100*totalColChars/totalArticleChars).toFixed(1)}
+},null,2));
 
 const analysisSummaryStart = html.indexOf('  <!-- MEGA SUMMARY -->');
 const analysisSummaryEnd = html.indexOf('  <!-- ARTICLE TABLES -->', analysisSummaryStart);
