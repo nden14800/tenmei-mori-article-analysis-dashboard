@@ -409,7 +409,10 @@ const approvedPalette = new Set([
   '#9b742e', '#9b793d', '#5f1717', '#89631f', '#fffdfb', '#302923dd', '#302923ee',
   '#246a73', '#416a9c', '#76539a', '#b45232', '#4f7542', '#a34768', '#56616f',
   '#b65d32', '#76504b', '#7b654f', '#6f7548', '#c18a68', '#8d6b62', '#a58a5c',
-  '#f3e8d9', '#d5ad79', '#f1e5d5', '#d6b36b', '#d8c8b7', '#b9a99a'
+  '#f3e8d9', '#d5ad79', '#f1e5d5', '#d6b36b', '#d8c8b7', '#b9a99a',
+  '#fffdfa', '#fbf5ef', '#302522', '#756560', '#a52a32', '#b88b39', '#fcfbff', '#f5f2ff',
+  '#29243a', '#716b81', '#4b3fa4', '#7154c4', '#b49447', '#b53b3b', '#557ca5', '#fff',
+  '#a82a2f', '#1c1615', '#d8c7b8'
 ]);
 const usedColors = [...new Set([...html.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((match) => match[0].toLowerCase()))];
 assert(usedColors.every((color) => approvedPalette.has(color)), '色は天命乃杜の統一パレット内に収めます');
