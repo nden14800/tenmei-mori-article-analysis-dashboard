@@ -203,7 +203,8 @@ const analysisSummaryEnd = html.indexOf('  <!-- ARTICLE TABLES -->', analysisSum
 assert(analysisSummaryStart >= 0 && analysisSummaryEnd > analysisSummaryStart, '総合分析の数値検証範囲が必要です');
 const analysisSummaryText = html.slice(analysisSummaryStart, analysisSummaryEnd).replace(/<[^>]+>/g, '').replace(/\s+/g, '');
 const formatCount = (value) => Number(value).toLocaleString('en-US');
-assert(analysisSummaryText.includes('総文字数は' + formatCount(totalArticleChars) + '字'), '総合分析の総文字数を再計算した値と一致させます');
+const expectedTotalSummary = '総文字数は' + formatCount(totalArticleChars) + '字';
+assert(analysisSummaryText.includes(expectedTotalSummary), '総合分析の総文字数を再計算した値と一致させます: expected=' + expectedTotalSummary + '; summary=' + analysisSummaryText.slice(0, 500));
 assert(analysisSummaryText.includes('ニュースは合計' + formatCount(totalNewsChars) + '字・平均約' + formatCount(Math.round(totalNewsChars / newsData.length)) + '字'), '総合分析のニュース文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColChars) + '字・平均約' + formatCount(Math.round(totalColChars / colData.length)) + '字'), '総合分析のコラム文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
