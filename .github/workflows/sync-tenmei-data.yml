@@ -76,7 +76,7 @@ jobs:
           TENMEI_SOURCE_HEALTH_HISTORY_BLOB: ${{ steps.source_snapshot.outputs.health_history_blob }}
           TENMEI_SOURCE_HEALTH_CURRENT_BLOB: ${{ steps.source_snapshot.outputs.health_current_blob }}
 
-      - name: Verify synchronized data
+      - name: Audit all 147 insight paragraphs and comprehensive analysis
         env:
           TENMEI_SOURCE_COMMIT: ${{ steps.source_snapshot.outputs.commit }}
           TENMEI_SOURCE_INDEX_BLOB: ${{ steps.source_snapshot.outputs.index_blob }}
@@ -88,6 +88,8 @@ jobs:
           grep -q 'const colContentHashes = {' index.html
           grep -q '▍ 洞察・考察' index.html
           test "$(grep -o 'class="chart-desc-title">▍ 洞察・考察</div>' index.html | wc -l)" -eq 49
+          test "$(grep -o 'class="chart-insight-label"' index.html | wc -l)" -eq 147
+          grep -q '総合分析・考察' index.html
           ! grep -q 'chartDescriptionCopy\|chart-desc-auto' index.html
           node tests/dashboard-data-sync-regression.cjs
 
