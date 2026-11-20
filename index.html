@@ -4989,19 +4989,27 @@ function createDashboardChart(element, renderer = null) {
                 ...args[0],
                 visualMap: maps.map(map => ({
                   ...map,
+                  id: 'daily-post-heatmap-horizontal-gradient',
                   show: true,
                   type: 'continuous',
                   orient: 'horizontal',
+                  inverse: false,
                   left: 'center',
-                  right: undefined,
-                  top: undefined,
+                  right: null,
+                  top: null,
                   bottom: 18,
                   itemWidth: 170,
                   itemHeight: 12,
+                  align: 'left',
                   calculable: false,
                   realtime: false
                 }))
               };
+              // 既存 visualMap の縦向きレイアウトをマージで引き継がない。
+              // このグラフの visualMap コンポーネントだけを毎回置き換える。
+              const previous = args[1] && typeof args[1] === 'object' ? args[1] : {};
+              const replaceMerge = Array.isArray(previous.replaceMerge) ? previous.replaceMerge : [];
+              args[1] = { ...previous, replaceMerge: [...new Set([...replaceMerge, 'visualMap'])] };
             }
             const result = target.setOption(...args);
             element.dataset.chartState = 'configured';
