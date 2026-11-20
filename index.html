@@ -6869,7 +6869,7 @@ function polishDashboardChartOptions() {
    axisTick:{...axis.axisTick,show:axis.axisTick?.show??false,lineStyle:{...axis.axisTick?.lineStyle,color:'#e7ded7'}},
    axisLabel:{...axis.axisLabel,color:'#786e67',fontFamily:font,fontSize:axis.axisLabel?.fontSize||11,margin:axis.axisLabel?.margin||10,hideOverlap:axis.axisLabel?.hideOverlap??true},
    nameTextStyle:{...axis.nameTextStyle,color:'#55443a',fontFamily:font,fontSize:11,fontWeight:600},
-   splitLine:{...axis.splitLine,show:axis.splitLine?.show===false?false:(axis.splitLine?.show??numeric),lineStyle:{...axis.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}}
+   splitLine:{...axis.splitLine,show:role==='y'&&numeric?true:(axis.splitLine?.show===false?false:(axis.splitLine?.show??numeric)),lineStyle:{...axis.splitLine?.lineStyle,color:'#e7ded7',type:'dashed',width:1}}
   };
  };
  const colorizeTree=(nodes,resolver)=>(nodes||[]).map((node,index)=>({...node,itemStyle:{...node.itemStyle,color:resolver(node.name,node.itemStyle?.color,index),borderColor:'#fffdfb',borderWidth:1},...(node.children?{children:colorizeTree(node.children,resolver)}:{})}));
