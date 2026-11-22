@@ -335,6 +335,7 @@ assert(!html.includes('ID65の2,068字') && !html.includes('ID67の2,632字'), '
 assert(html.includes('ID68の3,197字'), '最新コラムを最長記事の記述へ反映します');
 assert(!html.includes('全記事データ（157件）'), 'CSVの古い固定件数を残しません');
 assert(analysisSummaryText.includes('小雪') && analysisSummaryText.includes('ID68'), '総合分析へ最新コラムの内容を反映します');
+assert(analysisSummaryText.includes('2026年11月22日') && analysisSummaryText.includes('348日間'), '総合分析の最新公開日と対象期間を本体mainに一致させます');
 
 for (const match of chartDescriptions) {
   const labels = [...match[1].matchAll(/<strong class="chart-insight-label">([^<]+)<\/strong>/g)].map((item) => item[1]);
