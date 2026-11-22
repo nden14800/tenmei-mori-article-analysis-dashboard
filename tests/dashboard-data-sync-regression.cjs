@@ -246,7 +246,7 @@ assert(analysisSummaryText.includes(expectedTotalSummary), '総合分析の総�
 assert(analysisSummaryText.includes('ニュースは合計' + formatCount(totalNewsChars) + '字・平均約' + formatCount(Math.round(totalNewsChars / newsData.length)) + '字'), '総合分析のニュース文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColChars) + '字・平均約' + formatCount(Math.round(totalColChars / colData.length)) + '字'), '総合分析のコラム文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
-assert(analysisSummaryText.includes('ID67の2,628字'), '最長コラムの文字数を再計算した値と一致させます');
+assert(analysisSummaryText.includes('ID68の3,197字'), '最長コラムの文字数を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体状態は' + sourceHealth.overall.state), '最新の全体監視状態を本体health.jsonと一致させます');
 assert(analysisSummaryText.includes('最新の監視状態は、全体状態は' + sourceHealth.overall.state), '監視状態の要約文を最新health.jsonに合わせます');
 assert(analysisSummaryText.includes('siteは' + sourceHealth.components.site.state) &&
@@ -261,7 +261,7 @@ assert(analysisSummaryText.includes(sourceHealth.stateChangedAt), '監視状態�
 // 翻訳manifest/fingerprintの再同期は別タスクで実施するため、今回の同期監査から除外する。
 
 assert(sourceSnapshotMeta['tenmei-source-commit'] === process.env.TENMEI_SOURCE_COMMIT, '最新本体mainコミットをsource snapshot metaへ記録します');
-assert(analysisSummaryText.includes('記事データ差分はなく'), '記事データに差分がないことを総合分析へ明記します');
+assert(analysisSummaryText.includes('コラム1本が追加された'), '記事データに差分がないことを総合分析へ明記します');
 
 assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
 assert(html.includes('<dd id="print-total-summary">' + totalArticleCount + '記事・'), '印刷概要の件数を最新データと一致させます');
@@ -270,7 +270,7 @@ assert(html.includes('data-control-id="csv-export-type"') && html.includes('"lab
 assert((html.match(/<th>内容（抜粋）<\/th>/g) || []).length === 2, '両媒体の一覧説明列を統一する必要があります');
 
 const requiredHeadings = [
-  '天命乃杜 — 346日間の軌跡が語るもの',
+  '天命乃杜 — 348日間の軌跡が語るもの',
   '▍ フェーズ I — 爆発的始動期（2025年12月〜2026年1月上旬）',
   '▍ フェーズ II — インフラ・機能拡張の集中期（2026年1月中旬〜2月）',
   '▍ フェーズ III — 投稿の空白と運営再開（2026年2月〜4月）',
@@ -308,18 +308,18 @@ const synchronizedInsightFacts = [
   [6, ['10本で平均3,625字', '「新機能」が1,073字']],
   [9, ['37.4%']],
   [10, ['平均794字']],
-  [13, ['100,665字', '58,925字', '159,590字', '1,106字', '879字', '1,010字', '63.1%', '36.9%']],
+  [13, ['100,665字', '62,122字', '162,787字', '1,106字', '914字', '1,024字', '61.8%', '38.2%']],
   [16, ['ニュースは土曜日22本・日曜日17本', 'コラムは火曜日17本・土曜日14本・金曜日12本・日曜日11本']],
   [17, ['300字以下8本', '301〜500字18本', '501〜700字20本', '701〜900字16本', '901〜1,200字7本', '1,200字超22本', 'コラムは同じ順に0本、10本、20本、14本、9本、14本', '合計36本', '22.8%']],
-  [18, ['ID87のVer.4.0は4,230字', 'ID89のVer.4.2は4,185字', 'ID65は2,014字', 'ID67が2,628字', '3,346〜4,248字']],
+  [18, ['ID87のVer.4.0は4,230字', 'ID89のVer.4.2は4,185字', 'ID65は2,014字', 'ID68が3,197字', '3,346〜4,248字']],
   [19, ['1,430字', '1,222字', '1,170字', '1,110字', '1,062字', '755字', '610字', '1,112字', '1,005字', '951字', '944字', '688字', '687字', '647字']],
   [20, ['3,625字', '4,185字']],
   [21, ['1,618字', '1,508字', '1,003字', '634字']],
   [23, ['ニュース11本・コラム19本', 'ニュースは500〜999字が41本、コラムは36本']],
   [27, ['1,106字', '879字', '699字', '743字']],
   [29, ['500〜999字帯がニュース41本・コラム36本', '1,000〜1,999字はニュース11本・コラム19本', '2,000〜3,999字はニュース7本・コラム2本', 'ニュース6本、コラム0本']],
-  [30, ['ID67の2,628字']],
-  [32, ['ID67（2,628字）', '平均は2,075字']],
+  [30, ['ID68の3,197字']],
+  [32, ['ID68（3,197字）', '平均は2,449字']],
   [34, ['ニュース3,902字・コラム1,276字', 'ニュース562字・コラム582字']],
   [35, ['コラムは1月692字、2月762字、5月1,222字、6月1,370字、7月1,151字']],
   [39, ['中央値はニュース699字・コラム743字', '2,479字', '1,363字']],
@@ -332,9 +332,9 @@ for (const [number, fragments] of synchronizedInsightFacts) {
 }
 assert(!html.includes('最後に基礎知識記事が追加された点'), '最新コラムのカテゴリを古い記事のカテゴリと取り違えません');
 assert(!html.includes('ID65の2,068字') && !html.includes('ID67の2,632字'), 'コラム最長記事の旧文字数を残しません');
-assert(html.includes('ID67の2,628字'), '最新コラムを最長記事の記述へ反映します');
+assert(html.includes('ID68の3,197字'), '最新コラムを最長記事の記述へ反映します');
 assert(!html.includes('全記事データ（157件）'), 'CSVの古い固定件数を残しません');
-assert(analysisSummaryText.includes('勤労感謝の日と新嘗祭') && analysisSummaryText.includes('ID67'), '総合分析へ最新コラムの内容を反映します');
+assert(analysisSummaryText.includes('勤労感謝の日と新嘗祭') && analysisSummaryText.includes('ID68'), '総合分析へ最新コラムの内容を反映します');
 
 for (const match of chartDescriptions) {
   const labels = [...match[1].matchAll(/<strong class="chart-insight-label">([^<]+)<\/strong>/g)].map((item) => item[1]);
