@@ -247,6 +247,7 @@ assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColC
 assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('ID67の2,628字'), '最長コラムの文字数を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体状態は' + sourceHealth.overall.state), '最新の全体監視状態を本体health.jsonと一致させます');
+assert(analysisSummaryText.includes('最新の監視状態は、全体状態は' + sourceHealth.overall.state), '監視状態の要約文を最新health.jsonに合わせます');
 assert(analysisSummaryText.includes('siteは' + sourceHealth.components.site.state) &&
   analysisSummaryText.includes('Worker/APIは' + sourceHealth.components.api.state) &&
   analysisSummaryText.includes('おみくじ開始操作は' + sourceHealth.components.omikuji.state) &&
