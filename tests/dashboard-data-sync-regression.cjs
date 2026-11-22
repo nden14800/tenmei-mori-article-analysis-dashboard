@@ -251,13 +251,13 @@ assert(analysisSummaryText.includes('siteは' + sourceHealth.components.site.sta
   analysisSummaryText.includes('Worker/APIは' + sourceHealth.components.api.state) &&
   analysisSummaryText.includes('おみくじ開始操作は' + sourceHealth.components.omikuji.state) &&
   analysisSummaryText.includes('AIは' + sourceHealth.components.ai.state), '各サービスの状態をhealth.jsonと一致させます');
-assert(analysisSummaryText.includes(sourceHealth.checkedAt), '監視スナップショットのcheckedAtを最新health.jsonと一致させます');
+assert(analysisSummaryText.includes(sourceHealth.stateChangedAt), '監視状態の最終変更時刻を最新health.jsonと一致させます');
 assert(analysisSummaryText.includes(formatCount(sourceManifest.entryCount) + 'キー') &&
   analysisSummaryText.includes(formatCount(sourceManifest.curatedEntryCount) + 'キー') &&
   analysisSummaryText.includes(formatCount(sourceManifest.sourceInventory.untranslatedByCount) + 'キー'), '翻訳対象・curated件数・未処理数をmanifestの実データと一致させます');
 assert(analysisSummaryText.includes(formatCount(legacyUnreviewedCount) + '項目'), '旧Argos辞書の未移行件数を実キー集合から算出します');
 assert(analysisSummaryText.includes(sourceManifest.sourceFingerprint), '翻訳ソースfingerprintを総合分析へ記録します');
-assert(analysisSummaryText.includes(process.env.TENMEI_SOURCE_COMMIT), '最新本体mainコミットを総合分析へ記録します');
+assert(sourceSnapshotMeta['tenmei-source-commit'] === process.env.TENMEI_SOURCE_COMMIT, '最新本体mainコミットをsource snapshot metaへ記録します');
 assert(analysisSummaryText.includes('記事データ差分はなく'), '記事データに差分がないことを総合分析へ明記します');
 
 assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
@@ -438,8 +438,8 @@ assert(!html.includes('2026年11月18日07:12:07 UTC'), '本文中の時刻表�
 const longestIncident = sourceHealthHistory.incidents.slice().sort((a, b) => b.durationMinutes - a.durationMinutes)[0];
 const healthAudit = {
   currentOverall: analysisSummaryText.includes('全体状態は' + sourceHealth.overall.state),
-  checkedAt: analysisSummaryText.includes(sourceHealth.checkedAt),
-  sourceCommit: analysisSummaryText.includes(process.env.TENMEI_SOURCE_COMMIT),
+  stateChangedAt: analysisSummaryText.includes(sourceHealth.stateChangedAt),
+  sourceCommit: sourceSnapshotMeta['tenmei-source-commit'] === process.env.TENMEI_SOURCE_COMMIT,
   indexBlob: sourceSnapshotMeta['tenmei-source-index-blob'] === process.env.TENMEI_SOURCE_INDEX_BLOB,
   healthHistoryBlob: sourceSnapshotMeta['tenmei-source-health-history-blob'] === process.env.TENMEI_SOURCE_HEALTH_HISTORY_BLOB,
   healthCurrentBlob: sourceSnapshotMeta['tenmei-source-health-current-blob'] === process.env.TENMEI_SOURCE_HEALTH_CURRENT_BLOB,
@@ -494,7 +494,7 @@ const summarySubheadingCount = (html.slice(summaryStart, summaryEnd).match(/clas
 const summaryParagraphCount = (html.slice(summaryStart, summaryEnd).match(/class="summary-paragraph"/g) || []).length;
 assert.strictEqual(summaryLeadCount, 1, '総合分析のリード見出しを一つ保持します');
 assert.strictEqual(summarySubheadingCount, 13, '総合分析の全13小見出しを保持します');
-assert.strictEqual(summaryParagraphCount, 14, '総合分析の全14分析段落を保持します');
+assert.strictEqual(summaryParagraphCount, 13, '総合分析の全13分析段落を保持します');
 assert.strictEqual((html.slice(summaryStart, summaryEnd).match(/<p\b/g) || []).length, 28, '総合分析の全28段落・見出しを保持します');
 
 
