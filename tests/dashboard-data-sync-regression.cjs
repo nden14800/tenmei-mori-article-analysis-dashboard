@@ -8,6 +8,44 @@ const { spawnSync } = require('child_process');
 
 const html = fs.readFileSync('index.html', 'utf8');
 const sourceHtml = fs.readFileSync('tenmei-mori/index.html', 'utf8');
+const sourceHealth = JSON.parse(fs.readFileSync('tenmei-mori/status/public/health.json', 'utf8'));
+const sourceHealthHistory = JSON.parse(fs.readFileSync('tenmei-mori/status/health-history.json', 'utf8'));
+const sourceManifest = JSON.parse(fs.readFileSync('tenmei-mori/assets/data/static-translations/manifest.json', 'utf8'));
+const sourceCurated = JSON.parse(fs.readFileSync('tenmei-mori/assets/data/static-translations/curated.json', 'utf8'));
+const sourceLegacy = JSON.parse(fs.readFileSync('tenmei-mori/status/data/static-translations/en.json', 'utf8'));
+const sourceTranslationRuntime = fs.readFileSync('tenmei-mori/assets/js/static-translation.js', 'utf8');
+const supportedTranslationLanguages = ['en','ko','zh','zh_hant','fr','de','es','pt','vi','id','th'];
+const sourceCuratedKeys = Object.keys(sourceCurated.languages.en || {}).sort();
+for (const language of supportedTranslationLanguages) {
+  assert.deepStrictEqual(Object.keys(sourceCurated.languages[language] || {}).sort(), sourceCuratedKeys, language + ' の翻訳キー集合を一致させます');
+  assert(Object.values(sourceCurated.languages[language] || {}).every((value) => typeof value === 'string' && value.trim()), language + ' に空の翻訳を残しません');
+}
+assert.deepStrictEqual(sourceManifest.languages, supportedTranslationLanguages, 'manifestは対象11言語を正確に列挙します');
+assert.strictEqual(sourceCurated.entryCount, sourceCuratedKeys.length, 'curatedのentryCountは実データと一致します');
+assert.strictEqual(sourceManifest.curatedEntryCount, sourceCuratedKeys.length, 'manifestのcuratedEntryCountは実データと一致します');
+assert.strictEqual(sourceManifest.curatedGenerationVersion, sourceCurated.generationVersion, 'manifestとcuratedの世代番号が一致します');
+assert.strictEqual(sourceManifest.sourceInventory.untranslatedByCount, sourceManifest.entryCount - sourceCuratedKeys.length, '未処理数は辞書総件数からcuratedキー数を差し引いて算出します');
+assert.strictEqual(sourceManifest.sourceInventory.untranslatedSourceKeys, sourceManifest.entryCount - (sourceCuratedKeys.length - sourceManifest.sourceInventory.retainedCuratedKeysNotInCurrentSource), 'source内未翻訳数とsource外保持キー数を分けて検証します');
+const legacyTranslationKeys = Object.keys(sourceLegacy.translations || {});
+const legacyUnreviewedCount = legacyTranslationKeys.filter((key) => !Object.hasOwn(sourceCurated.languages.en, key)).length;
+assert(sourceTranslationRuntime.includes("fetch('/assets/data/static-translations/curated.json'"), '表示経路はcurated辞書を読み込みます');
+assert(!/status\/data\/static-translations|argos|bergamot/i.test(sourceTranslationRuntime), '旧Argosや機械翻訳辞書を表示フォールバックに残しません');
+function gitBlobSha(filePath) {
+  const buffer = fs.readFileSync(filePath);
+  return crypto.createHash('sha1').update(Buffer.from('blob ' + buffer.length + '\0')).update(buffer).digest('hex');
+}
+assert.strictEqual(gitBlobSha('tenmei-mori/index.html'), sourceManifest.sourceInventory.index.blobSha, '翻訳fingerprintのindex Blob SHAは本体mainと一致します');
+assert.strictEqual(sourceManifest.sourceInventory.index.blobSha, process.env.TENMEI_SOURCE_INDEX_BLOB, '翻訳manifestのindex Blob SHAは今回のmain snapshotと一致します');
+for (const entry of sourceManifest.sourceInventory.javascript) {
+  assert.strictEqual(gitBlobSha(path.join('tenmei-mori', entry.path)), entry.blobSha, '翻訳fingerprintのJavaScript Blob SHAが一致します: ' + entry.path);
+}
+const speechReaderPath = 'tenmei-mori/assets/js/site-speech-reader.js';
+if (fs.existsSync(speechReaderPath)) {
+  const speechReader = fs.readFileSync(speechReaderPath, 'utf8');
+  assert(!/(?:textContent|innerText|innerHTML|alert\s*\(|prompt\s*\()/i.test(speechReader), 'site-speech-reader.jsに未収録のユーザー向け表示文言を追加しません');
+}
+const sourceSnapshotMeta = Object.fromEntries([...html.matchAll(/<meta\s+name="([^"]+)"\s+content="([^"]+)">/g)].map((match) => [match[1], match[2]]));
+
 
 function extractLiteral(variableName, opener, closer) {
   const marker = 'const ' + variableName + ' =';
@@ -208,7 +246,19 @@ assert(analysisSummaryText.includes('ニュースは合計' + formatCount(totalN
 assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColChars) + '字・平均約' + formatCount(Math.round(totalColChars / colData.length)) + '字'), '総合分析のコラム文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('ID67の2,628字'), '最長コラムの文字数を再計算した値と一致させます');
-assert(analysisSummaryText.includes('最新監視では全体状態はpartial') && analysisSummaryText.includes('CSPによるインラインスクリプト実行拒否') && analysisSummaryText.includes('おみくじの重要操作もoutage'), '最新の監視状態を記事データと分離して記録します');
+assert(analysisSummaryText.includes('全体状態は' + sourceHealth.overall.state), '最新の全体監視状態を本体health.jsonと一致させます');
+assert(analysisSummaryText.includes('siteは' + sourceHealth.components.site.state) &&
+  analysisSummaryText.includes('Worker/APIは' + sourceHealth.components.api.state) &&
+  analysisSummaryText.includes('おみくじ開始操作は' + sourceHealth.components.omikuji.state) &&
+  analysisSummaryText.includes('AIは' + sourceHealth.components.ai.state), '各サービスの状態をhealth.jsonと一致させます');
+assert(analysisSummaryText.includes(sourceHealth.checkedAt), '監視スナップショットのcheckedAtを最新health.jsonと一致させます');
+assert(analysisSummaryText.includes(formatCount(sourceManifest.entryCount) + 'キー') &&
+  analysisSummaryText.includes(formatCount(sourceManifest.curatedEntryCount) + 'キー') &&
+  analysisSummaryText.includes(formatCount(sourceManifest.sourceInventory.untranslatedByCount) + 'キー'), '翻訳対象・curated件数・未処理数をmanifestの実データと一致させます');
+assert(analysisSummaryText.includes(formatCount(legacyUnreviewedCount) + '項目'), '旧Argos辞書の未移行件数を実キー集合から算出します');
+assert(analysisSummaryText.includes(sourceManifest.sourceFingerprint), '翻訳ソースfingerprintを総合分析へ記録します');
+assert(analysisSummaryText.includes(process.env.TENMEI_SOURCE_COMMIT), '最新本体mainコミットを総合分析へ記録します');
+assert(analysisSummaryText.includes('記事データ差分はなく'), '記事データに差分がないことを総合分析へ明記します');
 
 assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
 assert(html.includes('<dd id="print-total-summary">' + totalArticleCount + '記事・'), '印刷概要の件数を最新データと一致させます');
@@ -272,7 +322,7 @@ const synchronizedInsightFacts = [
   [39, ['中央値はニュース699字・コラム743字', '2,479字', '1,363字']],
   [24, ['ニュース699字、コラム743字', 'コラム562〜1,179字']],
   [42, ['0.460', '0.256', '55.4％', '36.8％', '5.7％', '11.2％']]
-];;
+];
 for (const [number, fragments] of synchronizedInsightFacts) {
   const body = chartTextAt(number);
   for (const fragment of fragments) assert(body.includes(fragment), '洞察・考察 #' + number + ' の数値を最新データと一致させます: ' + fragment);
@@ -375,14 +425,27 @@ assert(/const dashboardChartFont = "'Zen Kaku Gothic New', sans-serif";/.test(ht
 assert(!html.includes('#c0392b') && !html.includes('#8b7355') && !html.includes('#d4c4a0'), '旧配色を残さない必要があります');
 assert(!html.includes('chartDescriptionCopy') && !html.includes('chart-desc-auto'), '短文で長文説明を上書きする処理を残しません');
 
-assert(html.includes('GitHub本体リポジトリ確認基準：2026-11-20 · 0b69c0ef'), '本体リポジトリの確認コミットを最新に保ちます');
+assert.strictEqual(sourceSnapshotMeta['tenmei-source-commit'], process.env.TENMEI_SOURCE_COMMIT, '本体mainの最新コミットSHAをsnapshot metaへ記録します');
+assert.strictEqual(sourceSnapshotMeta['tenmei-source-index-blob'], process.env.TENMEI_SOURCE_INDEX_BLOB, '本体index Blob SHAをsnapshot metaへ記録します');
+assert.strictEqual(sourceSnapshotMeta['tenmei-source-health-history-blob'], process.env.TENMEI_SOURCE_HEALTH_HISTORY_BLOB, '監視履歴Blob SHAをsnapshot metaへ記録します');
+assert.strictEqual(sourceSnapshotMeta['tenmei-source-health-current-blob'], process.env.TENMEI_SOURCE_HEALTH_CURRENT_BLOB, '最新監視Blob SHAをsnapshot metaへ記録します');
+assert(html.includes('data-source-executive-summary') && html.includes('data-source-snapshot-summary'), '動的なExecutive Summaryと運用スナップショットの更新箇所を保持します');
 
 assert(html.includes('.subtitle{font-family:var(--font-main);font-style:italic;color:var(--tm-muted)}'), '副題は本体サイトと同じ明朝の編集見出しにします');
 assert(html.includes('.stat-number{color:var(--stat-accent,var(--tm-red))!important;font-family:var(--font-ui);'), '統計数値はUI書体と等幅数字で揃えます');
 assert(!html.includes('2026年11月18日07:12:07 UTC'), '本文中の時刻表記は日本語に統一します');
 
-const healthAudit = { oldBlobAbsent: !html.includes('181e5b3d'), partial: analysisSummaryText.includes('最新監視では全体状態はpartial'), siteOutage: analysisSummaryText.includes('siteはoutage'), apiOperational: analysisSummaryText.includes('Worker/APIはoperational'), checkedAt: analysisSummaryText.includes('12:52:23UTC') };
-assert(Object.values(healthAudit).every(Boolean), '最新の監視状態を正確に保持し、古いスナップショットを残しません: ' + JSON.stringify(healthAudit) + '; summary=' + analysisSummaryText.slice(-900));
+const longestIncident = sourceHealthHistory.incidents.slice().sort((a, b) => b.durationMinutes - a.durationMinutes)[0];
+const healthAudit = {
+  currentOverall: analysisSummaryText.includes('全体状態は' + sourceHealth.overall.state),
+  checkedAt: analysisSummaryText.includes(sourceHealth.checkedAt),
+  sourceCommit: analysisSummaryText.includes(process.env.TENMEI_SOURCE_COMMIT),
+  indexBlob: sourceSnapshotMeta['tenmei-source-index-blob'] === process.env.TENMEI_SOURCE_INDEX_BLOB,
+  healthHistoryBlob: sourceSnapshotMeta['tenmei-source-health-history-blob'] === process.env.TENMEI_SOURCE_HEALTH_HISTORY_BLOB,
+  healthCurrentBlob: sourceSnapshotMeta['tenmei-source-health-current-blob'] === process.env.TENMEI_SOURCE_HEALTH_CURRENT_BLOB,
+  longestIncident: analysisSummaryText.includes(formatCount(longestIncident.durationMinutes) + '分')
+};
+assert(Object.values(healthAudit).every(Boolean), '最新の監視状態・source snapshot・履歴を実データと一致させます: ' + JSON.stringify(healthAudit));
 assert(html.includes('記事文字数の経験累積分布（ECDF）'), 'ECDFのグラフ名は日本語を主表記にします');
 assert(!/#([0-9a-fA-F]{9,})\b/.test(html), '不正な9桁以上の16進カラー値を残しません');
 
@@ -426,6 +489,13 @@ const summaryEnd = html.indexOf('  <!-- ARTICLE TABLES -->', summaryStart);
 assert(summaryStart >= 0 && summaryEnd > summaryStart, '総合分析本文が必要です');
 const summaryText = html.slice(summaryStart, summaryEnd).replace(/<[^>]+>/g, '').replace(/\s+/g, '');
 assert(Array.from(summaryText).length >= 3000, '総合分析本文の文章量を維持する必要があります');
+const summaryLeadCount = (html.slice(summaryStart, summaryEnd).match(/class="summary-lead"/g) || []).length;
+const summarySubheadingCount = (html.slice(summaryStart, summaryEnd).match(/class="summary-subheading"/g) || []).length;
+const summaryParagraphCount = (html.slice(summaryStart, summaryEnd).match(/class="summary-paragraph"/g) || []).length;
+assert.strictEqual(summaryLeadCount, 1, '総合分析のリード見出しを一つ保持します');
+assert.strictEqual(summarySubheadingCount, 13, '総合分析の全13小見出しを保持します');
+assert.strictEqual(summaryParagraphCount, 14, '総合分析の全14分析段落を保持します');
+assert.strictEqual((html.slice(summaryStart, summaryEnd).match(/<p\b/g) || []).length, 28, '総合分析の全28段落・見出しを保持します');
 
 
 /* Layout regression: no lone chart or unpaired final chart may leave an empty right column. */
