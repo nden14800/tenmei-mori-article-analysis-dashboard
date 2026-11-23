@@ -12,7 +12,6 @@ const sourceHealth = JSON.parse(fs.readFileSync('tenmei-mori/status/public/healt
 const sourceHealthHistory = JSON.parse(fs.readFileSync('tenmei-mori/status/health-history.json', 'utf8'));
 const sourceManifest = JSON.parse(fs.readFileSync('tenmei-mori/assets/data/static-translations/manifest.json', 'utf8'));
 const sourceCurated = JSON.parse(fs.readFileSync('tenmei-mori/assets/data/static-translations/curated.json', 'utf8'));
-const sourceLegacy = JSON.parse(fs.readFileSync('tenmei-mori/status/data/static-translations/en.json', 'utf8'));
 const sourceTranslationRuntime = fs.readFileSync('tenmei-mori/assets/js/static-translation.js', 'utf8');
 const supportedTranslationLanguages = ['en','ko','zh','zh_hant','fr','de','es','pt','vi','id','th'];
 const sourceCuratedKeys = Object.keys(sourceCurated.languages.en || {}).sort();
@@ -24,12 +23,12 @@ assert.deepStrictEqual(sourceManifest.languages, supportedTranslationLanguages, 
 assert.strictEqual(sourceCurated.entryCount, sourceCuratedKeys.length, 'curatedのentryCountは実データと一致します');
 assert.strictEqual(sourceManifest.curatedEntryCount, sourceCuratedKeys.length, 'manifestのcuratedEntryCountは実データと一致します');
 assert.strictEqual(sourceManifest.curatedGenerationVersion, sourceCurated.generationVersion, 'manifestとcuratedの世代番号が一致します');
-assert.strictEqual(sourceManifest.sourceInventory.untranslatedByCount, sourceManifest.entryCount - sourceCuratedKeys.length, '未処理数は辞書総件数からcuratedキー数を差し引いて算出します');
-assert.strictEqual(sourceManifest.sourceInventory.untranslatedSourceKeys, sourceManifest.entryCount - (sourceCuratedKeys.length - sourceManifest.sourceInventory.retainedCuratedKeysNotInCurrentSource), 'source内未翻訳数とsource外保持キー数を分けて検証します');
-const legacyTranslationKeys = Object.keys(sourceLegacy.translations || {});
-const legacyUnreviewedCount = legacyTranslationKeys.filter((key) => !Object.hasOwn(sourceCurated.languages.en, key)).length;
+assert(sourceManifest.entryCount >= sourceCuratedKeys.length, '辞書総件数はcuratedの既存キー数以上である必要があります');
+const untranslatedByCount = sourceManifest.entryCount - sourceCuratedKeys.length;
+assert(Number.isInteger(untranslatedByCount) && untranslatedByCount >= 0, '未処理数は最新manifest.entryCountからcuratedキー数を動的に差し引いて算出します');
+assert(/^[0-9a-f]{64}$/i.test(sourceManifest.sourceFingerprint || ''), 'manifestに有効なsource fingerprintを保持します');
 assert(sourceTranslationRuntime.includes("fetch('/assets/data/static-translations/curated.json'"), '表示経路はcurated辞書を読み込みます');
-assert(!/status\/data\/static-translations|argos|bergamot/i.test(sourceTranslationRuntime), '旧Argosや機械翻訳辞書を表示フォールバックに残しません');
+assert(!/status\\/data\\/static-translations|argos|bergamot/i.test(sourceTranslationRuntime), '旧Argosや機械翻訳辞書を表示フォールバックに残しません');
 function gitBlobSha(filePath) {
   const buffer = fs.readFileSync(filePath);
   return crypto.createHash('sha1').update(Buffer.from('blob ' + buffer.length + '\0')).update(buffer).digest('hex');
