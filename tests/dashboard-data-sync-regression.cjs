@@ -28,7 +28,7 @@ const untranslatedByCount = sourceManifest.entryCount - sourceCuratedKeys.length
 assert(Number.isInteger(untranslatedByCount) && untranslatedByCount >= 0, '未処理数は最新manifest.entryCountからcuratedキー数を動的に差し引いて算出します');
 assert(/^[0-9a-f]{64}$/i.test(sourceManifest.sourceFingerprint || ''), 'manifestに有効なsource fingerprintを保持します');
 assert(sourceTranslationRuntime.includes("fetch('/assets/data/static-translations/curated.json'"), '表示経路はcurated辞書を読み込みます');
-assert(!/status\\/data\\/static-translations|argos|bergamot/i.test(sourceTranslationRuntime), '旧Argosや機械翻訳辞書を表示フォールバックに残しません');
+assert(!sourceTranslationRuntime.toLowerCase().includes('status/data/static-translations') && !/argos|bergamot/i.test(sourceTranslationRuntime), '旧Argosや機械翻訳辞書を表示フォールバックに残しません');
 function gitBlobSha(filePath) {
   const buffer = fs.readFileSync(filePath);
   return crypto.createHash('sha1').update(Buffer.from('blob ' + buffer.length + '\0')).update(buffer).digest('hex');
