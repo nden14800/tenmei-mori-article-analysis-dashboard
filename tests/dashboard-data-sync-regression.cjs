@@ -245,7 +245,8 @@ assert(analysisSummaryText.includes(expectedTotalSummary), '総合分析の総�
 assert(analysisSummaryText.includes('ニュースは合計' + formatCount(totalNewsChars) + '字・平均約' + formatCount(Math.round(totalNewsChars / newsData.length)) + '字'), '総合分析のニュース文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('コラムは合計' + formatCount(totalColChars) + '字・平均約' + formatCount(Math.round(totalColChars / colData.length)) + '字'), '総合分析のコラム文字数・平均を再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体では' + formatCount(totalArticleChars) + '字、平均約' + formatCount(Math.round(totalArticleChars / totalArticleCount)) + '字'), '総合分析の全体平均を再計算した値と一致させます');
-assert(analysisSummaryText.includes('ID68の3,197字'), '最長コラムの文字数を再計算した値と一致させます');
+const longestColumn = sourceColData.reduce((longest, article) => Number(expectedColChars[String(article.id)]) > Number(expectedColChars[String(longest.id)]) ? article : longest, sourceColData[0]);
+assert(analysisSummaryText.includes('コラムの最長はID' + longestColumn.id + 'の' + formatCount(expectedColChars[String(longestColumn.id)]) + '字'), '最長コラムのID・文字数を本体mainから再計算した値と一致させます');
 assert(analysisSummaryText.includes('全体状態は' + sourceHealth.overall.state), '最新の全体監視状態を本体health.jsonと一致させます');
 assert(analysisSummaryText.includes('最新の監視状態は、全体状態は' + sourceHealth.overall.state), '監視状態の要約文を最新health.jsonに合わせます');
 assert(analysisSummaryText.includes('siteは' + sourceHealth.components.site.state) &&
@@ -260,7 +261,7 @@ assert(analysisSummaryText.includes(sourceHealth.stateChangedAt), '監視状態�
 // 翻訳manifest/fingerprintの再同期は別タスクで実施するため、今回の同期監査から除外する。
 
 assert(sourceSnapshotMeta['tenmei-source-commit'] === process.env.TENMEI_SOURCE_COMMIT, '最新本体mainコミットをsource snapshot metaへ記録します');
-assert(analysisSummaryText.includes('コラム1本が追加された'), '新しいコラムの追加を総合分析へ明記します');
+assert(analysisSummaryText.includes('最新コラムはID' + latestColumn.id) && analysisSummaryText.includes(latestColumn.title), '最新コラムのID・タイトルを本体mainと一致させます');
 
 assert(totalNewsChars > 0 && totalColChars > 0 && totalArticleChars > 0, '記事本文の総文字数を正の値で集計します');
 assert(html.includes('<dd id="print-total-summary">' + totalArticleCount + '記事・'), '印刷概要の件数を最新データと一致させます');
